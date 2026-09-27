@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<!-- saved from url=(0092)https://effa30ea-6b60-4bfb-9fb2-8ea67748c0cf.frame.claudeusercontent.com/_f/1790492149-4d26/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style data-merge-styles="true"></style><!-- frame-runtime --><script>window.__FRAME_PREAMBLE={"v":1,"cred":"cookie","capabilities":{"artifact":"artifact.Kiow93e4.js","assets":"assets.DOAjpBS9.js","comments":"comments.DrhK3r8W.js","db":"db.zFlAA4qL.js","downloads":"downloads.axDW2QAi.js","embed":"embed.DcZf-TSv.js","endpoints":"endpoints.BPfoKaE1.js","files":"files.IkpCjcgM.js","mcp":"mcp.C8qKIFvQ.js","network":"network.B5UA9Su4.js","permissions":"permissions.CEAme3h0.js","room":"room.Dy3vHyq9.js","sample":"sample.DZwWAZDd.js","self":"artifact.Kiow93e4.js","user":"user.CB0zJsP2.js"},"transforms":"_transforms.B8A37-6L.js","comments":"_comments.DUaNQZcg.js","translate":"_translate.DqxC5ek1.js","ldx":"_ldx.B4FSryPi.js"}                                                                                                                                                                                                                          </script><script>(function(){"use strict";function cr(t){return t==="cookie"||t==="query"?t:void 0}var Gn=3e5;function ur(t,e){try{const r=t("navigation")[0],n=[r.responseStart,r.redirectEnd-r.redirectStart,r.domContentLoadedEventStart,e(),r.connectEnd-r.domainLookupStart,r.responseStart-r.requestStart];r.requestStart>0||(n.length=4);for(let a=0;a<n.length;a++)if(n[a]>=0&&n[a]<=3e5)n[a]=n[a]|0;else{if(a<4)return;n.length=4}return n}catch{return}}var fr=["light","dark","system"],dr=/^[A-Za-z0-9_-]{1,64}$/,Pt=/^[a-zA-Z_:][a-zA-Z0-9_:.-]{0,127}$/,hr=new Set(["class","hidden","value","checked","style","title","alt","placeholder","lang","dir","role","tabindex","disabled","readonly","contenteditable","open","colspan","rowspan"]);function pr(t){const e=t.toLowerCase();return e.startsWith("data-")||e.startsWith("aria-")||hr.has(e)}var Mt="data-ldx-props";function mr(t,e){if(e.toLowerCase()===Mt)return!0;const r=t.getAttribute(Mt);if(r===null)return!1;try{const n=JSON.parse(r);if(n===null||typeof n!="object"||Array.isArray(n))return!0;const a=e.toLowerCase();return Object.keys(n).some(s=>s.toLowerCase()===a)}catch{return!0}}var zn="http://www.w3.org/1999/xhtml",vr="http://www.w3.org/2000/svg",_r=new Set(["script","style","iframe","noscript","noframes","noembed","xmp","plaintext","template","title","textarea","object","embed"]),yr=new Set(["script","style"]);function gr(t){const e=t.localName.toLowerCase();return t.namespaceURI==="http://www.w3.org/1999/xhtml"?!_r.has(e):t.namespaceURI===vr?!yr.has(e):!1}function rt(t,e){return t===e||(t===160||t===32)&&(e===160||e===32)}function wr(t,e){const r=t.length,n=e.length;let a=0;for(;a<r&&a<n&&rt(t.charCodeAt(a),e.charCodeAt(a));)a++;let s=0;for(;s<r-a&&s<n-a&&rt(t.charCodeAt(r-1-s),e.charCodeAt(n-1-s));)s++;return{p:a,s}}function br(t,e){const r=t.firstChild;if(t.childNodes.length!==1||r===null||r.nodeType!==Node.TEXT_NODE){t.textContent=e;return}const n=r.data,a=n.length,s=e.length,{p:l,s:u}=wr(n,e);l===a&&u===0&&a===s||r.replaceData(l,a-l-u,e.slice(l,s-u));const R=r.data,b=t.ownerDocument.getSelection?.()??null,g=b!==null&&b.rangeCount>0&&(b.anchorNode===r||b.focusNode===r)?{anchor:b.anchorNode,anchorOffset:b.anchorOffset,focus:b.focusNode,focusOffset:b.focusOffset}:null;let p=-1,O=-1;for(let v=0;v<R.length&&v<e.length;v++){const M=R.charCodeAt(v),S=e.charCodeAt(v);M!==S&&rt(M,S)&&(p<0&&(p=v),O=v)}const T=p>=0;if(T&&r.replaceData(p,O-p+1,e.slice(p,O+1)),T&&g!==null&&g.anchor!==null&&g.focus!==null)try{b.setBaseAndExtent(g.anchor,g.anchorOffset,g.focus,g.focusOffset)}catch{}}var Er=new Set(["html","head","body","frameset"]);function Sr(t){return t.namespaceURI==="http://www.w3.org/1999/xhtml"&&Er.has(t.localName)}function Ar(t){if(t===null||typeof t!="object")return!1;const e=t;if(typeof e.target!="string"||!dr.test(e.target)||e.text!==void 0&&typeof e.text!="string")return!1;if(e.attrsSet!==void 0){if(e.attrsSet===null||typeof e.attrsSet!="object")return!1;for(const[r,n]of Object.entries(e.attrsSet))if(!Pt.test(r)||typeof n!="string")return!1}if(e.attrsRemoved!==void 0){if(!Array.isArray(e.attrsRemoved))return!1;for(const r of e.attrsRemoved)if(typeof r!="string"||!Pt.test(r))return!1}return!0}function kr(t,e){if(t===null||typeof t!="object")return!1;const{seq:r,elements:n}=t;if(typeof r!="number"||!Number.isSafeInteger(r)||!Array.isArray(n)||n.length===0||n.length>64)return!1;for(let a=0;a<n.length;a++)if(!e(n[a]))return!1;return!0}function Rr(t){return t===null||typeof t!="object"?!1:kr(t.__frame_patch,Ar)}function Tr(t){if(t===null||typeof t!="object")return!1;const e=t.__frame_init;return e!==null&&typeof e=="object"}function Lr(t){return t!==null&&typeof t=="object"&&t.__frame_size_poke===!0}function Or(t){if(t===null||typeof t!="object")return!1;const e=t.__frame_host_visible;return e!==null&&typeof e=="object"&&typeof e.visible=="boolean"}function Pr(t){if(t===null||typeof t!="object")return!1;const e=t.__frame_theme;if(e===null||typeof e!="object")return!1;const r=e.theme;return typeof r=="string"&&fr.includes(r)}var Mr=["ok","empty","snapshot_error","snapshot_timeout","unclonable","oversize","unavailable","restore_error","withheld"],Nr=["TypeError","RangeError","ReferenceError","SyntaxError","DataCloneError","QuotaExceededError","AbortError","TimeoutError","SecurityError","Error","other"];function Cr(t){return typeof t=="string"&&Nr.includes(t)?t:"other"}var jr=Object.freeze({until:null,now:!1}),Fr="__claude_hot",Ir="__claude_hot_in",xr=/^__claude_hot(?:_in)?(?::|$)/,Nt=/^[0-9a-z]{1,32}$/,nt=t=>t===void 0?Fr:"__claude_hot:"+t,Oe=t=>t===void 0?Ir:"__claude_hot_in:"+t;function Dr(t,e){const r=[];for(let n=0;n<t.length;n++){const a=t.key(n);a!==null&&a!==e&&xr.test(a)&&r.push(a)}for(const n of r)t.removeItem(n)}function Hr(t){let e=null;try{e=H(JSON.parse(t)?.hot)}catch{return null}return e===null||typeof e.k!="string"||!Nt.test(e.k)?null:he(e.g)?{k:e.k,g:e.g}:{k:e.k}}var $n=262144,qr=3e3,Br=5e3,Ct=/^[a-z0-9._:-]{1,64}$/,Ur=["none","hot-restart","hard-reload"],Kr=["asset","doc","added","removed"],Gr=1500,zr=/^[0-9a-f]{64}$/;function H(t){return t!==null&&typeof t=="object"?t:null}function he(t){return typeof t=="number"&&Number.isInteger(t)&&t>=0&&t<2**31}function jt(t){return t===void 0||typeof t=="number"&&Number.isFinite(t)}function $r(t){return t===void 0||typeof t=="string"&&Ct.test(t)}function Ft(t){const e=H(t);return e!==null&&(e.until===null||typeof e.until=="number"&&Number.isFinite(e.until))&&typeof e.now=="boolean"}function ot(t){const e=H(t);return e!==null&&typeof e.ver=="string"&&e.ver.length<=128&&jt(e.seq)&&typeof e.handoff=="string"&&Mr.includes(e.handoff)&&$r(e.note)}function It(t){const e=H(t);return e!==null&&he(e.gen)&&(e.phase==="final"||e.phase==="pending")&&(e.from===null||ot(e.from))}function Wr(t){const e=H(t);return e!==null&&e.kv===1&&he(e.gen)&&ot(e.from)&&Object.hasOwn(e,"data")}function Vr(t){const e=H(t);return e!==null&&e.__frame_hot_snapshot===!0&&he(e.gen)&&typeof e.timeoutMs=="number"&&e.timeoutMs>=0&&e.timeoutMs<=6e4&&(e.handoff===void 0||typeof e.handoff=="boolean")&&(e.deadline===void 0||Ft(e.deadline))&&jt(e.seq)&&(e.note===void 0||typeof e.note=="string")&&(e.key===void 0||typeof e.key=="string")}function Xr(t){const e=H(t);return e!==null&&e.__frame_hot_start===!0&&he(e.gen)&&ot(e.from)}function Yr(t){return typeof t=="string"&&t.length>=1&&t.length<=128}function xt(t){return H(t)!==null&&!Array.isArray(t)}function Jr(t){const e=H(t);return e!==null&&e.__frame_cap_grant===!0&&typeof e.cap=="string"&&Yr(e.ver)&&(e.grant===void 0||xt(e.grant))&&(e.budgets===void 0||xt(e.budgets)&&Object.values(e.budgets).every(Number.isFinite))&&(e.brokerGen===void 0||he(e.brokerGen))}function Zr(t){const e=H(t);return e!==null&&e.__frame_cap_rewired===!0&&(e.caps===void 0||Array.isArray(e.caps)&&e.caps.every(r=>typeof r=="string"))&&(e.brokerGen===void 0||he(e.brokerGen))}function Dt(t){const e=H(t);return e!==null&&typeof e.ver=="string"&&e.ver.length<=128&&Number.isFinite(e.seq)}function Ht(t){if(t==null||typeof t=="string")return!0;const e=H(t);return e!==null&&typeof e.doc=="string"&&typeof e.profile=="string"}function Qr(t){const e=H(t);return e!==null&&typeof e.path=="string"&&Kr.includes(e.kind)&&Ht(e.from)&&Ht(e.to)}function en(t){return t===null?null:Object.freeze(t.filter(Qr))}function tn(t){const e=H(t);return e!==null&&e.__frame_hot_update===!0&&Number.isFinite(e.id)&&Dt(e.from)&&Dt(e.to)&&(e.changed===null||Array.isArray(e.changed))&&Ur.includes(e.required)&&Ft(e.deadline)&&typeof e.verdictTimeoutMs=="number"&&e.verdictTimeoutMs>=0&&e.verdictTimeoutMs<=6e4&&(e.preflight===void 0||typeof e.preflight=="string"&&zr.test(e.preflight))}var pe=/^[\w.-]+\.js$/;function rn(t,e,r){return r?"inert":typeof e=="string"&&pe.test(e)?t?[e]:"inert":t?"inert":"framed"}var qt=Object.freeze({[Symbol("claude.hot.restart")]:!0});function Bt(t,e){let r;try{r=t??sessionStorage}catch{return null}const n=nt(e?.k),a=Oe(e?.k);let s=null;try{s=r.getItem(n)}catch{}try{r.removeItem(n)}catch{}try{Dr(r,a)}catch{}let l=null;if(s!==null&&!(e!==null&&e.g===void 0))try{const u=JSON.parse(s);Wr(u)&&(e===null||u.gen===e.g)&&(l=u)}catch{}if(l===null)try{r.removeItem(a)}catch{}return l}function Ut(){const t=/^\/_f\/([^/]{1,128})\//.exec(location.pathname);return t?t[1]:""}var nn=/^[^/\\?#]{1,128}$/,Kt=t=>nn.test(t)&&t!=="."&&t!=="..";function Gt(t,e,r){const n=new URL(t),a="/_f/"+e+"/";if(!e||!n.pathname.startsWith(a)||!Kt(r))return null;const s=n.search.slice(1).split("&").filter(l=>!/^__frame_t(?:=|$)/.test(l)).join("&");return n.origin+"/_f/"+r+"/"+n.pathname.slice(a.length)+(s?"?"+s:"")+n.hash}var ze="{}";function Pe(t){if(!t)return null;const e={ver:t.ver,handoff:t.handoff};return t.seq!==void 0&&(e.seq=t.seq),t.note!==void 0&&(e.note=t.note),e}function zt(t,e){return t!==null&&t.note===void 0&&e?.note!==void 0?{...t,note:e.note}:t}function $t(t){const e=t?.k;return e!==null&&typeof e=="object"?e:void 0}function on(t,e,r,n=null){const a=setTimeout,s=clearTimeout,l=queueMicrotask,u=performance.now.bind(performance),R=new TextEncoder;let b=null,g=null;try{b=history,g=b.replaceState.bind(b)}catch{}const p=(...o)=>{try{console.warn(...o)}catch{}};let O=Ut(),T=null;try{T=sessionStorage}catch{}const v={storage:T,fetch:typeof fetch=="function"?fetch.bind(globalThis):null,entry:location.origin+location.pathname+location.search,ver:O,key:n?.k};let M=n?.k;const S=typeof requestAnimationFrame=="function"?requestAnimationFrame:o=>a(()=>o(u()),16);let d=e?.data??{},j=Pe(e?.from),N=e?.gen??0,q=e!==null,Q=!1,$=!1,U=null,be=!1;const Fe=new AbortController;let Ie=null,x=null,Ee=null,xe=!1,le=()=>{};const ce=new Promise(o=>{le=o});let ve=!1,c=!1,E=!1,m,w=null,F=!1,W=!1,D=!1,re=!1,V=!1,_e=!1;const ye=o=>{for(const f of[nt(o),Oe(o)])try{T?.removeItem(f)}catch{}},G=(o,f)=>{try{f!==null&&r.post(o,f)}catch{}},De=()=>V||=D&&(x===null||re),X=()=>{const o={__frame_hot:!0,ready:x!==null,accept:Ee!==null,demand:!0};_e=!V,_e&&(o.booting=!0),ve&&(o.readData=!0),E&&(o.threw=!0),w?.assess&&(o.preflight=!0),G(o,U)};let He=!1,ne=!1,ue=!1,qe=!1;const Ye=()=>{He||!be||ue||(He=!0,G({__frame_reveal_hold:!0},"*"))},Se=()=>new Promise(o=>{let f,h=0;const A=I=>{if(f===void 0)f=I;else if(I!==f||++h>=8){o();return}try{S(A)}catch{o()}};try{S(A)}catch{o()}}),Be=()=>{ue=!0,G({__frame_reveal_ready:!0},"*")},Ue=o=>{ne||(ne=!0,o.then(f=>{if(f===!1)return;let h=null;try{h=w?.settle?.()??null}catch{}return(h===null?Se():new Promise(A=>{a(A,50),Promise.resolve(h).then(A,A)}).then(Se)).then(Be)}))},gt=()=>{if(qe||!ue)return;qe=!0;const o=()=>{try{w?.afterReveal?.()}catch{}};o(),Se().then(()=>{o(),Be()})},ee=(o=!1)=>{if(xe||x===null||!q||!$)return;xe=!0;const f=x,h=d;l(()=>{let A;try{A=f(h)}catch(B){throw le(!1),B}let I=!1;try{I=typeof A?.then=="function"}catch{}if(!I){le(!0);return}Promise.resolve(A).then(()=>le(!0),B=>{le(!1),l(()=>{throw B})})}),Ue(o?ce:r.dcl.then(()=>ce))},fe=o=>typeof o=="string"&&Ct.test(o)?o:void 0,Ae=o=>{const f={__frame_hot_restart:!0},h=fe(o?.note);h!==void 0&&(f.note=h),o?.required==="hard-reload"&&(f.required="hard-reload"),G(f,U)},Ke=Object.freeze({get data(){return $||(c=!0),!q&&!ve&&(ve=!0,$&&X()),d},get from(){return j},get gen(){return N},signal:Fe.signal,snapshot(o){typeof o=="function"&&(Ie=o)},ready(o){typeof o!="function"||x!==null||(x=o,Ye(),X(),Q&&G({__frame_hot_ready:!0,gen:N},U),ee())},accept(o){typeof o=="function"&&(Ee=o,X())},restart(o){const f={note:o?.note,required:o?.required};if($){Ae(f);return}const h=m;m={note:fe(h?.note)??f.note,required:h?.required==="hard-reload"||f.required==="hard-reload"?"hard-reload":void 0}}});let i=null,_=()=>{};const y=new Promise(o=>{_=o});let P=null;const Y=()=>P??=r.dcl.then(()=>{let o=!1;try{o=i!==null&&i.expect()}catch{}if(!o)return;const f=i.maxMs;return new Promise(h=>{y.then(h),a(h,f)})}),J=()=>{if(!F||W||w===null)return;W=!0;const o=w;Y().then(()=>{try{ue||o.afterStart($t(e),!1)}catch{}})},de=o=>{e!==null&&c&&(ve=!0),d={},j=null,N=0;try{T?.removeItem(Oe(n?.k))}catch{}e!==null&&!o&&Ue(r.dcl.then(()=>x!==null?ce:void 0))},Dn=()=>{F=!0,Ue(Y().then(()=>x!==null?ce:void 0)),J()};try{addEventListener("error",()=>{E||x!==null||(E=!0,X())})}catch{}const sr=()=>{a(()=>{!V&&De()&&_e&&X()},0)};try{D=document.readyState==="complete",D||addEventListener("load",()=>{D=!0,sr()},{once:!0})}catch{D=!0}De(),ce.then(()=>{re=!0,sr()});let ge=-1,wt,bt,Ge=!0,Et=!1,St,Je=null;const At=o=>{const f=Je===null;Je=Ge&&o[0]!=="withheld"?o:["withheld",o[1],ze];let h=o[0];if(Ge&&h!=="withheld"){const I={ver:O,handoff:h};wt!==void 0&&(I.seq=wt),bt!==void 0&&(I.note=bt);try{if(T===null)throw new Error("no storage");T.setItem(nt(M),'{"kv":1,"gen":'+ge+',"from":'+JSON.stringify(I)+(St!==void 0?',"k":'+JSON.stringify(St):"")+',"data":'+(h==="ok"?o[2]:ze)+"}")}catch{h="unavailable"}}else{h="withheld",ye(M);try{w?.release?.()}catch{}}const A={__frame_hot_snapshotted:!0,gen:ge,handoff:h,bytes:o[1]};o[3]!==void 0&&(A.errName=o[3]),G(A,U),f&&(h==="snapshot_error"||h==="unclonable"||h==="oversize")&&p("claude.hot: snapshot",h,o[3])},ke=o=>{try{return Cr(o?.name)}catch{return"other"}},Re=(o,f,h=0)=>At(f===void 0?[o,h,ze]:[o,h,ze,ke(f)]),Hn=o=>{if(o.gen<=ge)return;const f=ge>=0;if(ge=o.gen,wt=o.seq,bt=fe(o.note),typeof o.key=="string"&&Nt.test(o.key)&&o.key!==M&&(ye(M),M=o.key),Ge&&=o.handoff!==!1,f){Je!==null?At(Je):Et&&G({__frame_hot_held:!0,gen:ge},U);return}Fe.abort();const h=Object.freeze({handoff:Ge,timeoutMs:o.timeoutMs,deadline:o.deadline??jr}),A=Ie,I=()=>{if(Ge)try{St=w?.capture()}catch{}if(A===null){Re("empty");return}let L=!1;const K=a(()=>{L||(L=!0,Re("snapshot_timeout"))},Math.max(0,h.timeoutMs));Promise.resolve().then(()=>A(h)).then(Te=>{if(L)return;L=!0,s(K);let oe;try{oe=JSON.stringify(Te)}catch(kt){Re("unclonable",kt);return}if(typeof oe!="string"){Re("unclonable");return}let ae=oe.length;try{ae=R.encode(oe).length}catch{}if(ae>262144){Re("oversize",void 0,ae);return}At(["ok",ae,oe])},Te=>{L||(L=!0,s(K),Re("snapshot_error",Te))})};let B=null;try{B=w?.holdForIme()??null}catch{}if(B===null)I();else{Et=!0,G({__frame_hot_held:!0,gen:ge},U);const L=()=>{Et=!1,I()};B.then(L,L)}},qn=o=>{if(!Q||q||x===null||o.gen!==N)return;let f=null;try{f=Bt(T,n&&{k:n.k,g:o.gen})}catch{}if(f!==null&&f.gen!==o.gen){f=null;try{T?.removeItem(Oe(n?.k))}catch{}}d=f?.data??{},j=zt(Pe(f?.from??o.from),Pe(o.from)),f!==null&&(N=f.gen),q=!0,Q=!1;const h=$t(f);ce.then(A=>{try{A&&w?.afterStart(h,!0)}catch{}}),ee(!0)};let Ze=0;const Bn=o=>{const f=Ee;if(f===null||o.id<=Ze)return;Ze=o.id;const h=w?.assess;if(o.preflight===void 0||h===void 0){ir(o,f);return}let A=!1;const I=K=>{A||(A=!0,s(L),o.id===Ze&&ir(o,f,K))},B=()=>I(h.timeout(o)),L=a(B,Gr+100);h.run(o,window).then(I,B)},ir=(o,f,h)=>{let A,I=!1,B=!1,L,K,Te=null;const oe=k=>{if(B)return!1;if(L!==void 0&&L!==k)return p(`claude.hot: u.${k}() ignored - u.${L}() was called first`),!1;const te=L===void 0;return L=k,te},ae=k=>{L="restart",p(`claude.hot: ${k} - restarting`)},kt=()=>{if(!oe("adopt")||o.id!==Ze)return;const k=o.to.ver;if(Qe.required!=="none"){ae(`u.adopt() needs required 'none', it is '${Qe.required}'`);return}if(!Kt(k)){ae("u.adopt() cannot address this version");return}if(!O||k===O)return;const te=O,Z=v.entry;let et="",Tt,Le=null,tt;try{et=location.href,Tt=b.state,Le=Gt(et,te,k),Le!==null&&(g(Tt,"",Le),location.pathname.startsWith("/_f/"+k+"/")?Le=location.href:tt="navigate event canceled")}catch(Ot){tt=ke(Ot)}if(tt!==void 0){K="adopt_failed",ae(`adopt_failed ${tt}; URL not changed`);return}Le===null?(K="adopt_skipped",p(`claude.hot: adopt_skipped - page already left /_f/${te}/; URL not changed, update still applied`)):K="adopted",O=v.ver=k;try{v.entry=Gt(Z,te,k)??Z}catch{}const Lt=Le;Te=()=>{if(O===k){if(Lt!==null)try{if(location.href!==Lt)p("claude.hot: adopt_revert_skipped - update not applied; URL left where the page navigated");else{if(g(Tt,"",et),location.href!==et){p("claude.hot: adopt_revert_failed navigate event canceled - URL still at the new version");return}K="adopt_reverted",p("claude.hot: adopt_reverted - adopt() was called but the handler threw; URL restored")}}catch(Ot){p(`claude.hot: adopt_revert_failed ${ke(Ot)} - URL still at the new version`);return}O=v.ver=te,v.entry=Z,Lt===null&&(K=void 0)}}},Qe=Object.freeze({from:{ver:o.from.ver,seq:o.from.seq},to:{ver:o.to.ver,seq:o.to.seq},changed:en(o.changed),required:o.required,deadline:o.deadline,adopt:kt,defer(){return oe("defer")&&Qe.deadline.now&&ae("u.defer() past the deadline"),qt},restart(k){return oe("restart"),L==="restart"&&!B&&(A??=fe(k?.note),I||=k?.required==="hard-reload"),qt},...h?.update}),Un=(k,te)=>{B=!0,k==="threw"?(Te?.(),A??=ke(te).toLowerCase()):L===void 0&&p(k==="timeout"?"claude.hot: accept handler did not answer in time - restarting":"claude.hot: accept handler settled without defer/restart/adopt - restarting");const Z={__frame_hot_verdict:!0,id:o.id};Z.verdict=k==="threw"||L===void 0||L==="restart"?"restart":L==="adopt"?"applied":"deferred",Z.verdict==="restart"&&(I&&(Z.required="hard-reload"),A!==void 0&&(Z.note=A)),K!==void 0&&(Z.verdict==="applied"||K!=="adopted")&&(Z.adopt=K),G(Object.assign(Z,h?.verdict),U)};let lr=!1;const Rt=(k,te)=>lr?!1:(lr=!0,s(Kn),Un(k,te),!0),Kn=a(()=>Rt("timeout"),o.verdictTimeoutMs);Promise.resolve().then(()=>f(Qe)).then(()=>Rt("settled"),k=>{!Rt("threw",k)&&L==="adopt"&&Ae({note:ke(k).toLowerCase()}),p("claude.hot: accept",ke(k))})};try{t.hot===void 0&&Object.defineProperty(t,"hot",{value:Ke,writable:!1,configurable:!1,enumerable:!1})}catch{}return{hot:Ke,boot:v,afterConnect(){be=!0,(e!==null||x!==null)&&Ye()},onInit(o,f){U=f,$=!0;const h=It(o)?o:null;h?.phase==="final"&&e!==null&&e.gen===h.gen?(q=!0,j=zt(j,Pe(h.from)),Dn()):(Q=h?.phase==="pending",de(Q),q=!Q,N=h?.gen??0,j=Pe(h?.from)),X(),_e&&a(()=>{V||(V=!0,X())},Br),Q&&x!==null&&G({__frame_hot_ready:!0,gen:N},f),m!==void 0&&(Ae(m),m=void 0),ee()},onNoInit(){$=!0,de(!1),q=!0,ee()},onShell(o){return o?.__frame_revealed===!0?(gt(),!1):Vr(o)?(Hn(o),!0):Xr(o)?(qn(o),!0):tn(o)?(Bn(o),!0):!1},attachExtras(o){w=o,J(),o.assess&&X()},inSlot:()=>Oe(M),hydration(o,f){i??={expect:o,maxMs:f}},hydrated(){_()},carried(){return q?d:{}},presented:()=>ue}}var Wn="frame_ldx_runtime",an="frame_ldx_build",Vn="script#an-form",sn=256;function Wt(t,e,r){for(const n of t)r(n)&&t.delete(n);t.size>=sn&&!t.has(e)&&t.delete(t.values().next().value),t.add(e)}function Me(t,e,r,n){try{const a=t[e];if(typeof a!="function")return;t[e]=function(...s){if(n){let u;try{u=n(this)}catch{}if(u!==void 0)return u}const l=a.apply(this,s);try{r?.(this)}catch{}return l}}catch{}}var at;function ln(){if(at)return at;const t={media:new Set,contexts:new Set,gate:null,onStart:null,onStop:null};at=t;const e=l=>t.gate?.(l),r=l=>{t.onStop?.(l)},n=window.HTMLMediaElement?.prototype;n&&(Me(n,"play",l=>{Wt(t.media,l,u=>u.paused),t.onStart?.(l)},e),Me(n,"pause",r));const a=window.AudioContext,s=window.AudioNode?.prototype;return a&&s&&(Me(s,"connect",l=>{const u=l.context;u instanceof a&&(Wt(t.contexts,u,R=>R.state==="closed"),t.onStart?.(u))}),Me(a.prototype,"resume",void 0,e),Me(a.prototype,"suspend",r)),t}function cn(t){let e=window;for(let r=0;e.parent&&e.parent!==e&&r<8;r++)if(e=e.parent,t(e))return!0;return!1}function un(){let t=null;const e=()=>t??parent,r=n=>t?n===t:cn(a=>a===n);return{post(n,a){if(t){e().postMessage(n,a);return}let s=parent;for(let l=0;l<8&&(s.postMessage(n,a),!(!s.parent||s.parent===s));l++)s=s.parent},on(n){const a=s=>{const l=s.source;r(l)&&n(s.data,s.origin,s.isTrusted,()=>{t??=l})};return addEventListener("message",a),()=>removeEventListener("message",a)},port:n=>({post(a,s){if(s?.activation){e().postMessage(a,{targetOrigin:n,includeUserActivation:!0});return}if(s?.transfer){e().postMessage(a,n,s.transfer);return}e().postMessage(a,n)},on(a,s){const l=u=>{r(u.source)&&u.origin===n&&a(u.data,u)};return addEventListener("message",l,s),()=>removeEventListener("message",l,s)}})}}function fn(){const t={post:()=>{},on:()=>()=>{}};return{...t,port:()=>t}}var dn=500,hn=2e4,pn="data-token-reads",mn="data-frame-refused-watch",vn="data-frame-unsupported",_n=/(?:^|\s)stylesheet(?:\s|$)/i;function yn(t,e){let r="";if(t instanceof HTMLScriptElement?r=t.src:t instanceof HTMLLinkElement&&_n.test(t.rel)&&(r=t.href),!r)return null;try{const n=new URL(r);return n.origin===location.origin&&n.pathname.startsWith(e)?n.origin+n.pathname:null}catch{return null}}function gn(t,e,r){if(!t||e!=="query")return;const n="/_f/"+t+"/";document.documentElement.setAttribute(mn,"");const a=location.href,s=fetch,l=setTimeout,u={method:"HEAD",cache:"no-store",credentials:"same-origin"},R=v=>v.ok||v.status===304;let b=!1,g=!1;const p=()=>removeEventListener("error",T,!0),O=async v=>{const M=await s(v,u);if(R(M))g=!0;else if(M.status===403){const S=await s(a,u);if(R(S)){const d=(await s(v,u)).status;d===403?(g=!0,document.documentElement.setAttribute(vn,""),r()):d<500&&(g=!0)}else S.status>=400&&S.status<500&&(g=!0)}},T=v=>{if(g||b)return;if(document.documentElement.hasAttribute(pn)){g=!0,p();return}const M=yn(v.target,n);M&&(b=!0,l(()=>{O(M).catch(()=>{}).finally(()=>{b=!1,g&&p()})},dn))};addEventListener("error",T,!0),addEventListener("load",p,{once:!0}),l(p,hn)}var st="__frame_scroll",wn=150,bn=310,En=160,Sn=3e4;function An(){let t=0,e=!1,r=!1,n=!1,a=0,s=null;const l=d=>{try{sessionStorage.setItem(st,JSON.stringify({y:d}))}catch{}},u=()=>{if(clearTimeout(t),s===null)return;const d=s;s=null,l(d)},R=()=>{if(e){e=!1;return}r=!0,s=scrollY,clearTimeout(t),t=setTimeout(u,wn)};try{addEventListener("scroll",R,{passive:!0}),addEventListener("pagehide",u)}catch{}const b=()=>{let d;try{d=sessionStorage.getItem(st)}catch{return null}if(d===null)return null;let j;try{j=JSON.parse(d)}catch{j=null}const N=j?.y;if(!(typeof N=="number"&&Number.isFinite(N)&&N>=0)){try{sessionStorage.removeItem(st)}catch{}return null}return N};let g=!1;const p=d=>{try{const j=scrollY;scrollTo({top:d,left:0,behavior:"instant"}),a=d,n=!0,clearTimeout(t),s=null,l(d);const N=scrollY;N!==j&&(e=!0),N!==d&&!g&&(g=!0,addEventListener("load",()=>{try{if(scrollY===N){const q=b();p(q!==null?q:a)}}catch{}},{once:!0}))}catch{}},O=()=>{try{return!!location.hash}catch{return!0}};let T=!1;const v=()=>{try{if(T||innerWidth>bn||innerHeight>En)return;T=!0;const d=Date.now(),j=()=>{try{removeEventListener("resize",j)}catch{}if(Date.now()-d>Sn||r||O())return;const N=b();p(N!==null?N:a)};addEventListener("resize",j)}catch{}};let M=!1,S=!1;return{restore(){if(M||(M=!0,O()))return;const d=b();d!==null&&(p(d),v())},promoted(){if(S||(S=!0,O()))return;const d=b();d!==null?(p(d),v()):n&&p(a)}}}function kn(t,e,r,n){let a=null;try{a=window.trustedTypes?.createPolicy("frame-runtime",{createScriptURL:R=>R})??null}catch{}const s=window.Worker,l=s?.prototype,u=Object.freeze({Worker:s,workerOn:l?.addEventListener,workerPost:l?.postMessage,workerTerminate:l?.terminate,fetch:window.fetch.bind(window),preventDefault:Event.prototype.preventDefault,now:Date.now,policy:a,origins:e});r(t).then(R=>R?.bootTopLevel?R.bootTopLevel(u,n):n.settle()).catch(()=>n.settle())}var Xn="modulepreload",Yn=function(t){return"/"+t},Jn={},Rn=function(e,r,n){let a=Promise.resolve();function s(l){const u=new Event("vite:preloadError",{cancelable:!0});if(u.payload=l,window.dispatchEvent(u),!u.defaultPrevented)throw l}return a.then(l=>{for(const u of l||[])u.status==="rejected"&&s(u.reason);return e().catch(s)})},Tn=window===top,Vt=Object.getOwnPropertyDescriptor(window,"claude"),$e=rn(Tn,window.__FRAME_PREAMBLE?.topLevel,Vt?.writable===!1),it=typeof $e=="object"&&$e[0],C=it?fn():un();(function(){const t=Object.defineProperty,e=globalThis,r=["RTCPeerConnection","webkitRTCPeerConnection","RTCDataChannel","RTCIceCandidate","RTCSessionDescription","RTCRtpSender","RTCRtpReceiver"];let n=0;for(let a=0;a<r.length;a++){const s=r[a];try{t(e,s,{value:void 0,writable:!1,configurable:!1})}catch{try{delete e[s]}catch{}try{t(e,s,{value:void 0,writable:!1,configurable:!0})}catch{}}typeof e[s]=="function"&&n++}if(n&&$e==="framed")try{C.post({__frame_rtc_lockdown_failed:n},"*")}catch{}})();var Xt=1e4,Ln=2e3,lt=2e3,ct=Object.freeze([...window.__FRAME_PREAMBLE?.origins??["https://claude.ai","https://preview.claude.ai"]]);function Yt(t){for(const e of ct)if(e.endsWith(":*"))try{const r=new URL(t);if(`${r.protocol}//${r.hostname}:*`===e)return!0}catch{}else if(t===e)return!0;return!1}var Ne=Object.freeze({...window.__FRAME_PREAMBLE?.capabilities}),Ce=window.__FRAME_PREAMBLE?.transforms,ut=window.__FRAME_PREAMBLE?.comments,ft=window.__FRAME_PREAMBLE?.translate,me=window.__FRAME_PREAMBLE?.ldx,dt=cr(window.__FRAME_PREAMBLE?.cred);function Jt(t){return Rn(()=>import("/_runtime/"+t),void 0)}var je=new Set,Zt=setTimeout,On=fetch,Pn=AbortController,Mn=800+800*Math.random(),Nn=3e3,We=null,Qt=new Map;function Cn(t,e){let r=Qt.get(t);return r||Qt.set(t,r=jn(t,e)),r}function jn(t,e){if(We?.has(t))return Promise.resolve("csp");if(navigator.onLine===!1)return Promise.resolve("offline");const r=new Pn;let n=!1;return Zt(()=>{n=!0,r.abort()},Nn),On("/_runtime/"+t,{signal:r.signal}).then(a=>(r.abort(),a.ok?/javascript/i.test(a.headers.get("content-type")??"")?e instanceof Error&&/:\d+:\d+\)?$/m.test(e.stack??"")?"eval":"served":"mime":"http"),()=>n?"timeout":We?.has(t)?"csp":"net")}function se(t){if(!We){const e=We=new Set;try{document.addEventListener("securitypolicyviolation",r=>{const n=/\/_runtime\/([^/?#]+)/.exec(r.blockedURI);n&&r.disposition!=="report"&&e.add(n[1])})}catch{}}return Jt(t).catch(()=>new Promise(e=>Zt(e,Mn)).then(()=>Jt(t+"?r=1")).then(e=>(e!==void 0&&je.add(t),e)))}function er(t,e,r){return{contract:t.contract,changes:new Set(t.changes??[]),flags:new Set(t.flags??[]),capabilities:t.capabilities??{},capBudgets:t.capBudgets??{},brokerGen:t.brokerGen,transforms:new Map,shellOrigin:e,shell:r,mount:yt,hooks:Ve,pipe:()=>({wrap:(n,a)=>(...s)=>{try{return a(...s)}catch(l){return Promise.reject(l)}}})}}var we=null,z=null;function tr(t,e,r){try{Object.defineProperty(t,e,{value:r,writable:!1,configurable:!1,enumerable:!0})}catch{try{Object.defineProperty(t,e,{value:r,writable:!1,configurable:!0,enumerable:!0})}catch{}}}var ht=!1,Ve={editBefore:null,edit:null};function Fn(t,e,r=!1){const n=[];let a;if(r)try{Ve.editBefore?.(t)}catch{}for(const s of t.elements){const l=document.querySelector(`[data-id="${s.target}"]`);if(!l){a=s.target;break}if([...Object.keys(s.attrsSet??{}),...s.attrsRemoved??[]].some(u=>!pr(u)||mr(l,u))){a=s.target;break}if(s.text!==void 0&&(!gr(l)||Sr(l))){a=s.target;break}for(const[u,R]of Object.entries(s.attrsSet??{}))if(!nr(l,u)){try{l.setAttribute(u,R)}catch{}rr(l,u,R)}for(const u of s.attrsRemoved??[])nr(l,u)||(l.removeAttribute(u),rr(l,u,null));typeof s.text=="string"&&br(l,s.text),n.push(s.target)}if(r)try{Ve.edit?.(t.seq,n,a)}catch{}if(a!==void 0){C.post({__frame_patch_miss:{seq:t.seq}},e);return}try{document.dispatchEvent(new CustomEvent("claude:edit",{detail:{seq:t.seq,targets:n}}))}catch{}}function rr(t,e,r){if(!(t instanceof HTMLInputElement))return;const n=e.toLowerCase();n==="checked"?t.checked=r!==null:n==="value"&&t.type!=="file"&&(t.value=r??"")}function nr(t,e){const r=e.toLowerCase(),n=t;return r==="data-id"||(r==="value"||r==="checked")&&(n.__artifactSecret===!0||/^(password|hidden|file)$/.test(n.type??"")||/(^|\s)(cc-|one-time-code|current-password|new-password)/i.test(`${t.getAttribute("autocomplete")??""} ${n.autocomplete??""}`))}function or(t){const e=document.documentElement;t==="light"||t==="dark"?(e.dataset.theme=t,e.style.colorScheme=t,ht=!0):ht&&(delete e.dataset.theme,e.style.colorScheme="",ht=!1)}var ie=new Map,pt=null;function mt(){let t;const e={u:new Promise(r=>{t=r}),r:r=>{e.done=!0,t(r)},done:!1,nulled:!1};return e}function Xe(t,e){t.nulled=!0,t.ver=e,t.r(null)}function vt(t,e){for(const[r,n]of ie)n.done||(e&&n.asked?e(r,n):Xe(n,t))}function In(){for(const t of ie.values())if(t.asked&&!t.done)return!0;return!1}var xn=Object.freeze(Object.assign(Object.create(null),{call:Function.prototype.call,apply:Function.prototype.apply,bind:Function.prototype.bind})),_t=!1,yt=(t,e)=>{let r=ie.get(t);if(r?.nulled&&_t)r=mt(),ie.set(t,r);else if(!r||r.done){r?.nulled&&z&&C.post({__frame_cap_telemetry:{kind:"cap-load-error",cap:t,phase:"install"}},z);return}const n=typeof e=="function"?Object.setPrototypeOf(e,xn):Object.assign(Object.create(null),e);typeof n.then=="function"&&delete n.then,r.want=void 0,r.r(Object.freeze(n))};function ar(){const t=Vt?.value??{};tr(window,"claude",t);for(const e of Object.keys(Ne)){if(t[e]!==void 0){tr(t,e,t[e]);continue}ie.set(e,mt())}if(t.use===void 0){const e=r=>{if(typeof r!="string"||!Object.hasOwn(Ne,r))return Promise.resolve(null);let n=ie.get(r);return n?(pt&&(n.nulled||n.want!==void 0)&&(n=pt(r,n)),n.asked=!0,n.u):Promise.resolve(t[r]??null)};try{Object.defineProperty(t,"use",{value:e,writable:!0,configurable:!0,enumerable:!1})}catch{}}return t}if($e==="framed"){let t;const e=Ce&&pe.test(Ce)?se(Ce).catch(c=>{t={f:Ce,e:c}}):Promise.resolve(void 0),r=c=>{if(c.type==="auxclick"&&c.button!==1)return;const E=c.target,m=E&&E.closest?E.closest("a[href],area[href]"):null;if(!m)return;const w=m.getAttribute("href");if(!w)return;let F;try{F=new URL(w,document.baseURI)}catch{return}if((F.protocol==="http:"||F.protocol==="https:")&&F.origin!==location.origin){c.preventDefault();const W=(m.getAttribute("target")??"").toLowerCase(),D=c.type==="auxclick"||c.metaKey||c.ctrlKey||c.shiftKey||c.altKey||!["","_self","_top","_parent"].includes(W);C.post({__frame_nav:!0,url:F.href,newTab:D},"*")}};addEventListener("click",r,!0),addEventListener("auxclick",r,!0);const n={},a=c=>{c.isTrusted&&(n.pointer=!0)},s=c=>{c.isTrusted&&(n.click=!0)};addEventListener("pointermove",a,{capture:!0,passive:!0}),addEventListener("click",s,{capture:!0,passive:!0});const l={cb:null};addEventListener("keydown",c=>l.cb?.(c),!0);const u={cb:null};addEventListener("keydown",c=>u.cb?.(c));const R=ln();e.then(c=>c?.installEscapeForward?.(l,E=>{z&&C.post(E,z)})),e.then(c=>{try{c?.installFocusKeep?.()}catch{}}),e.then(c=>{if(!c?.wireNav)return;const E=C.port("*");c.wireNav(E),removeEventListener("click",r,!0),removeEventListener("auxclick",r,!0),removeEventListener("pointermove",a,!0),removeEventListener("click",s,!0),c.wireEngagement?.(n,E,R)});let b=null;try{b=An()}catch{}const g=document.readyState==="loading"?new Promise(c=>document.addEventListener("DOMContentLoaded",()=>c(),{once:!0})):Promise.resolve();let p="dcl",O=!1;g.then(()=>{O=!0});let T=null,v=null;try{v=Hr(window.name),T=Bt(null,v)}catch{}const M=ar();let S=null;try{S=on(M,T,{post:(c,E)=>C.post(c,E),dcl:g},v)}catch{}e.then(c=>{try{S&&c?.installHotExtras?.(S)}catch{}});let d=null;const j=()=>Array.isArray(d?.flags)&&d.flags.includes("frame_ldx_runtime")&&!!me&&pe.test(me)&&document.querySelector("script#an-form")!==null;try{S?.hydration(j,qr)}catch{}let N=null,q=0;const Q=C.on((c,E,m,w)=>{Yt(E)&&Tr(c)&&(w(),d=c.__frame_init,z=E,Q(),clearTimeout(q),N?.())});if(dt)for(const c of ct)try{c.endsWith(":*")||C.post({__frame_cred:dt},c)}catch{}C.post({__frame_connect:!0},"*");try{S?.afterConnect()}catch{}const $=setTimeout,U=clearTimeout;let be=()=>NaN,Fe=()=>[];try{be=performance.now.bind(performance),Fe=performance.getEntriesByType.bind(performance)}catch{}let Ie=0;const x=()=>{try{C.post({__frame_alive:!0},"*")}catch{}Ie=$(x,Ln)},Ee=()=>U(Ie);x(),addEventListener("load",Ee,{once:!0});const xe=new Promise(c=>{N=c,q=setTimeout(()=>{Q(),c()},Xt)}),le=new WeakSet;addEventListener("error",c=>{c.target&&le.add(c.target)},!0);try{gn(Ut(),dt,()=>{e.then(c=>{try{c?.drawRefusedNotice?.()}catch{}})})}catch{}const ce=()=>{let c=[];try{c=[...document.querySelectorAll("link[rel~=stylesheet]:not([rel~=alternate])")].filter(m=>!m.sheet&&!m.disabled&&!le.has(m)&&m.getAttribute("href")&&URL.canParse(m.href)&&(!m.media||matchMedia(m.media).matches))}catch{}let E=c.length;return E===0?Promise.resolve():new Promise(m=>{try{const w=lt-be();w>0&&(p="sheets");const F=$(m,w>0?w<lt?w:lt:0),W=()=>{--E===0&&(U(F),m())};for(const D of c)D.addEventListener("load",W,{once:!0}),D.addEventListener("error",W,{once:!0})}catch{m()}})};g.then(()=>{try{b?.restore()}catch{}}),Promise.all([xe,g,e]).then(([,,c])=>{if(d?.hostOverlays!==!0||!z)return;let E=!1;try{E=c?.declaresCover?.()===!0}catch{}C.post({__frame_layout:{cover:E}},z)});const ve={cb:null};C.on((c,E)=>{if(Yt(E)&&Lr(c)){try{b?.promoted()}catch{}ve.cb?.()}}),xe.then(async()=>{if(!d||!z){vt();try{S?.onNoInit()}catch{}return}if(or(d.theme),d.hostVisible===!1&&e.then(i=>i?.applyHostVisible?.(!1,R)),d.hostKeys!==void 0){const i=z,_=d.hostKeys;e.then(y=>y?.installHostKeyForward?.(u,_,P=>C.post(P,i)))}try{S?.onInit(d.hot,z)}catch{}let c;const E=()=>{try{!c&&me&&j()&&(c=se(me),c.then(i=>i?.prefetch?.()).catch(()=>{}))}catch{}};E(),g.then(E);const m=z,w=C.port(m),F=(i,_)=>C.post({__frame_cap_telemetry:{kind:"cap-load-error",cap:i,phase:_}},m),W=(i,_,y)=>{new Promise(P=>P(Cn(_,y))).then(P=>F(i,P),()=>F(i))},D=i=>C.post({__frame_cap_recovered:{cap:i}},m);let re=d.brokerGen;const V=()=>S?.boot.ver??"",_e=V(),ye=(i,_)=>{const y=V();U(_.t),_.want=y,_.t=$(()=>{_.done||Xe(_,y)},Xt),C.post({__frame_cap_want:!0,cap:i,ver:y},m)},G=(i,_)=>{const y=ie.get(i.cap),P=Ne[i.cap];if(!_||!y||y.done||y.want!==i.ver||!pe.test(P))return;if(U(y.t),y.want=void 0,re=i.brokerGen??re,i.ver!==V()){ye(i.cap,y);return}if(!i.grant||i.cap==="network"){Xe(y,i.ver);return}const Y=we,J=we={...Y,capabilities:{...Y.capabilities,[i.cap]:i.grant},capBudgets:{...Y.capBudgets,[i.cap]:{...Y.capBudgets[i.cap],...i.budgets}}};se(P).then(de=>{je.has(P)&&D(i.cap),J.brokerGen=re,_t=!0;try{de?.install?.(J)}catch{F(i.cap,"install")}finally{_t=!1}},de=>W(i.cap,P,de)).then(()=>{y.done||Xe(y,i.ver)})};let De=!1,X=!1;C.on((i,_,y)=>{if(_!==m)return;try{if(S?.onShell(i))return}catch{}if(Pr(i)&&or(i.__frame_theme.theme),Jr(i)&&G(i,y),y&&Zr(i)&&(re=i.brokerGen??re),Or(i)){const J=i.__frame_host_visible.visible;e.then(de=>de?.applyHostVisible?.(J,R))}Rr(i)&&Fn(i.__frame_patch,m,y);const P=i?.__fc_mode;P&&typeof P=="object"&&!De&&ut&&pe.test(ut)&&(De=!0,se(ut).then(J=>J.install?.(m,P.on===!0,w)).catch(()=>{}));const Y=i?.__ft_cmd;Y&&typeof Y=="object"&&!X&&ft&&pe.test(ft)&&(X=!0,se(ft).then(J=>J.install?.(m,Y,w)).catch(()=>{}))});const He=Object.keys(d.capabilities??{}).filter(i=>Object.hasOwn(Ne,i)).map(i=>[i,Ne[i]]).filter(i=>typeof i[1]=="string"&&pe.test(i[1])),ne=m;let ue=!1,qe=()=>{};const Ye=new Promise(i=>{qe=()=>{ue=!0,i()}}),Se=()=>(ue||(p="caps"),Ye),Be=T!==null||It(d.hot)||d.hostVisible===!1||d.hostOverlays===!0;O&&(p="init");const Ue=g.then(()=>Be?Se():new Promise(i=>$(i,0))).then(ce).then(()=>{let i=!0;try{i=Be||In()}catch{}return i?Se():void 0}).then(()=>{Ee();const i=ur(Fe,be);C.post(i?{__frame_ready:!0,nav:i,gate:p}:{__frame_ready:!0,gate:p},ne),e.then(_=>{_?.installSizeReporter?.(ne,ve,w),_?.installPaintReporter?.(w)})}),gt=await Promise.allSettled(He.map(([,i])=>se(i))),ee=await e;if(ee?.buildBoot||(t?W("_transforms",t.f,t.e):F("_transforms")),ee?.buildBoot)try{we=ee.buildBoot(d,ee.TRANSFORMS??{},{shellOrigin:ne,mount:yt,hooks:Ve,shell:w},i=>C.post({__frame_cap_telemetry:i},ne))}catch{F("_transforms","install"),we=er(d,ne,w)}else we=er(d,ne,w);ee?.buildBoot&&je.has(Ce??"")&&D("_transforms");const fe=we;fe.brokerGen=re,gt.forEach((i,_)=>{const[y,P]=He[_];if(i.status!=="fulfilled"){W(y,P,i.reason);return}je.has(P)&&D(y);try{i.value?.install?.(fe)}catch{F(y,"install")}});const Ae=d.capWants===!0;Ae&&(pt=(i,_)=>{const y=V();if(!y)return _;if(!_.nulled)return _.want!==y&&ye(i,_),_;if(y===_.ver)return _;const P=mt();return ie.set(i,P),ye(i,P),P}),vt(_e,Ae&&V()!==_e?ye:void 0),qe(),await Ue;let Ke=!1;try{Ke=j()}catch{}me&&Ke?(c??se(me)).then(i=>i?.boot?.({shellOrigin:m,build:fe.flags.has(an),hot:S?.hot??null,carried:S?.carried(),presented:()=>S?.presented()??!0})).catch(()=>!1).then(i=>{S?.hydrated(),i!==!0?F("_ldx"):je.has(me)&&D("_ldx")}):S?.hydrated()})}else it&&(ar(),kn(it,ct,se,{settle:vt,mount:yt}))})();</script><!-- /frame-runtime --><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Geyser Werkbuch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link rel="stylesheet" href="./css2">
+<style>
+:root{
+  --bg:#ECEFEA; --panel:#F8F9F6; --ink:#142020; --muted:#55625F; --line:#C9D1CB;
+  --pool:#0D6A98; --teal:#16837C; --sulfur:#9C7A05; --mat:#B9531A; --rust:#8A3A22; --pine:#33533A;
+  --ok:#3C7A4B; --warn:#A5650F; --todo:#7A8683;
+  --display:"Big Shoulders Display","Oswald","Arial Narrow",sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0D1414; --panel:#151F1F; --ink:#E3EAE7; --muted:#97A5A1; --line:#2A3837;
+    --pool:#62B6E2; --teal:#4FC6BA; --sulfur:#E4BF48; --mat:#EE8A4E; --rust:#D27C5E; --pine:#86B290;
+    --ok:#6DBB7F; --warn:#E3A948; --todo:#8A9794;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0D1414; --panel:#151F1F; --ink:#E3EAE7; --muted:#97A5A1; --line:#2A3837;
+  --pool:#62B6E2; --teal:#4FC6BA; --sulfur:#E4BF48; --mat:#EE8A4E; --rust:#D27C5E; --pine:#86B290;
+  --ok:#6DBB7F; --warn:#E3A948; --todo:#8A9794;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--body);padding:0 16px}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 64px;display:flex;flex-direction:column;gap:52px}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.02;text-wrap:balance}
+h1{font-size:clamp(46px,8vw,92px);font-weight:800;letter-spacing:.01em;text-transform:uppercase}
+h2{font-size:30px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+h2 small{font:500 12px var(--mono);color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h3{font-size:21px;font-weight:600;letter-spacing:.02em}
+p{margin:0;max-width:72ch}
+a{color:var(--pool)}
+.eyebrow{font:500 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--teal)}
+.muted{color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.86em}
+section{display:flex;flex-direction:column;gap:18px}
+:focus-visible{outline:2px solid var(--pool);outline-offset:2px}
+
+.hero{display:flex;flex-direction:column;gap:22px}
+.hero .txt{display:flex;flex-direction:column;gap:14px}
+.stage{position:relative;border-radius:4px;overflow:hidden;background:#0c1a2c;aspect-ratio:21/9;max-width:100%}
+.stage canvas{width:100%;height:100%;display:block}
+.stage .cap{position:absolute;left:12px;bottom:10px;font:500 11px var(--mono);color:#eef2ee;letter-spacing:.08em;text-transform:uppercase;opacity:.85;text-shadow:0 1px 2px #0009}
+.pred{position:absolute;right:10px;top:10px;background:#3a2a1ccc;color:#f4ead8;border:1px solid #f4ead855;border-radius:3px;padding:6px 10px;font:500 11px/1.35 var(--mono);letter-spacing:.06em;text-transform:uppercase;font-variant-numeric:tabular-nums}
+.pred b{display:block;font:800 20px var(--display);letter-spacing:.04em}
+.facts{display:flex;flex-wrap:wrap;gap:6px 18px;font:13px var(--mono);color:var(--muted)}
+.facts b{color:var(--ink);font-weight:500}
+
+/* Farbband einer heißen Quelle: von innen (heiß) nach außen (kühl) */
+.bands{height:12px;border-radius:2px;background:linear-gradient(90deg,#0b4f8a 0 16%,#1f9bb0 16% 28%,#8fd3cf 28% 36%,#b9cf7c 36% 44%,#e3bd2f 44% 58%,#d9701f 58% 76%,#8a3a1e 76% 100%)}
+
+.strip{display:grid;grid-template-columns:repeat(11,1fr);gap:4px}
+.strip div{height:10px;border-radius:2px;background:var(--line)}
+.strip div.done{background:var(--ok)} .strip div.now{background:var(--sulfur)}
+.strip-lbl{display:flex;justify-content:space-between;font:12px var(--mono);color:var(--muted);flex-wrap:wrap;gap:6px}
+
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.card .tag{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.card dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:7px 12px;font-size:14px}
+.card dt{font:500 11px var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0}
+.card p{font-size:14px}
+
+.ideas{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:0;border:1px solid var(--line);border-radius:4px;background:var(--panel)}
+.idea{padding:16px 18px;display:flex;flex-direction:column;gap:6px;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.idea h3{font-size:19px}
+.idea p{font-size:14px}
+.idea .k{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+
+.zones{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.zones div{padding:10px 12px;font-size:13px;display:flex;flex-direction:column;gap:2px;background:var(--panel);border-right:1px solid var(--line)}
+.zones div:last-child{border-right:0}
+.zones i{display:block;height:8px;border-radius:2px;margin-bottom:6px}
+.zones b{font:500 12px var(--mono);font-variant-numeric:tabular-nums}
+
+.diag{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:14px;overflow-x:auto}
+.diag svg{display:block;width:100%;min-width:660px;height:auto}
+.diag text{font-family:var(--mono);font-size:11px;fill:var(--ink)}
+.diag .sm{font-size:9.5px;fill:var(--muted)}
+.diag .bx{fill:var(--bg);stroke:var(--muted);stroke-width:1}
+.diag .bx.app{stroke:var(--teal);stroke-width:1.6}
+.diag .bx.atom{stroke:var(--pool);stroke-width:1.6}
+.diag .bx.db{stroke:var(--mat);stroke-width:1.6}
+.diag .ln{stroke:var(--muted);stroke-width:1.2;fill:none}
+.diag .ln.dash{stroke-dasharray:4 3}
+.diag .hd{font-weight:500}
+
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+table.t{min-width:0;font-size:13px;margin-top:12px}
+table.t td,table.t th{padding:5px 8px;text-align:left}
+table.t td:nth-child(n+2),table.t th:nth-child(n+2){text-align:right;font-variant-numeric:tabular-nums}
+th,td{text-align:left;vertical-align:top;padding:11px 14px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+td.q{font-weight:600;min-width:130px}
+td.n{font-family:var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.opt{display:block;margin-bottom:4px}
+.opt i{font-style:normal;font-family:var(--mono);font-weight:500;color:var(--muted);margin-right:6px}
+.opt.rec i{color:var(--teal)}
+.opt.rec{font-weight:500}
+.pill{display:inline-block;font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.pill.open{color:var(--warn)} .pill.done{color:var(--ok)} .pill.todo{color:var(--todo)} .pill.now{color:var(--sulfur)}
+
+.phases{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:4px;background:var(--panel)}
+.ph{display:grid;grid-template-columns:52px 1fr 150px;gap:16px;padding:16px;border-bottom:1px solid var(--line);align-items:start}
+.ph:last-child{border-bottom:0}
+.ph .n{font:800 34px var(--display);color:var(--muted);line-height:1;opacity:.6}
+.ph.now .n{color:var(--sulfur);opacity:1}
+.ph h3{margin-bottom:6px}
+.ph .body{display:flex;flex-direction:column;gap:6px}
+.ph p{font-size:14px}
+.ph .dod{font-size:13.5px;color:var(--muted)}
+.ph .dod b{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ok);margin-right:6px}
+.ph .meta{display:flex;flex-direction:column;gap:6px;align-items:flex-start;font:12px var(--mono);color:var(--muted)}
+.size{display:inline-block;font:500 12px var(--mono);min-width:30px;text-align:center;padding:1px 6px;border-radius:3px;background:color-mix(in srgb,var(--teal) 16%,var(--panel));color:var(--ink)}
+
+.risks{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.risk{border-top:3px solid var(--warn);background:var(--panel);border-radius:0 0 4px 4px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.risk h3{font-size:18px}
+.risk .fix{color:var(--muted)}
+.risk .fix b{color:var(--ok);font-weight:500}
+
+.log{display:flex;flex-direction:column;gap:8px;font-size:14px}
+.log div{display:grid;grid-template-columns:130px 1fr;gap:12px}
+.log time{font:13px var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.src{font-size:13px;color:var(--muted)}
+.src ul{margin:6px 0 0;padding-left:18px}
+.gal{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.gal figure{margin:0;display:flex;flex-direction:column;gap:6px}
+.gal img{display:block;width:100%;height:auto;border-radius:4px;border:1px solid var(--line);background:#0c1a2c}
+.gal figcaption{font:12px var(--mono);color:var(--muted)}
+.gal figure.wide{grid-column:1 / -1}
+@media (max-width:600px){.gal{grid-template-columns:1fr}}
+details.ent{border:1px solid var(--line);border-radius:4px;background:var(--panel);padding:10px 14px}
+details.ent summary{cursor:pointer;font-size:14px}
+details.ent[open] summary{margin-bottom:10px}
+.next{border:1px solid var(--teal);border-radius:4px;padding:16px 18px;background:color-mix(in srgb,var(--teal) 8%,var(--panel));display:flex;flex-direction:column;gap:8px}
+
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr}
+  .ph{grid-template-columns:40px 1fr}
+  .ph .meta{grid-column:2;flex-direction:row;flex-wrap:wrap}
+  .log div{grid-template-columns:1fr;gap:0}
+  .card dl{grid-template-columns:1fr;gap:0}
+  .card dd{margin-bottom:6px}
+  .zones{grid-template-columns:1fr 1fr}
+  .zones div{border-bottom:1px solid var(--line)}
+  .strip-lbl span:nth-child(even){display:none}
+}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="txt">
+    <span class="eyebrow">NetBeans-Projekt Geyser · Werkbuch</span>
+    <h1>Geysire von Yellowstone</h1>
+    <p>Das Upper Geyser Basin als 3D-Szene: Old Faithful und seine Nachbarn brechen nach einem physikalischen Modell aus, Tausende Tropfen fallen auf den Sinter zurück, Dampf steigt auf und fängt die Sonne, im Sprühnebel steht ein Regenbogen. Die heißen Quellen leuchten in den Farben ihrer Bakterienmatten. Die Ablagerungen am Rand werden mit dem ATOMMODEL bis auf die Atome aufgeschlüsselt. Die Kamera kreist frei, zoomt vom ganzen Becken bis an die Sinterperlen und fliegt in Fahrten über die Quellen. Dieses Werkbuch ist Plan und Fortschritt zugleich.</p>
+    <div class="facts">
+      <span>JDK <b>21</b></span>
+      <span>lib <b>FStyle.jar · ATOMMODEL.jar · ojdbc11.jar</b></span>
+      <span>DB <b>PDBORCL / DEMO</b></span>
+      <span>Stand <b>27.09.2026 · alle Phasen fertig</b></span>
+    </div>
+  </div>
+  <div class="stage" aria-label="Animierte Skizze: eine bunte heiße Quelle im Vordergrund, rechts bricht ein Geysir aus, Dampf treibt im Wind, im Sprühnebel ein Regenbogen">
+    <canvas id="hero" width="1350" height="578"></canvas>
+    <div class="pred" id="pred" aria-hidden="true">Nächste Eruption<b id="predT">läuft</b></div>
+    <span class="cap">Stimmungsskizze, kein Bild aus dem Projekt</span>
+  </div>
+</header>
+
+<div class="bands" aria-hidden="true"></div>
+
+<section>
+  <h2>Stand <small>fertig · Phase 10 bei dir bestätigt, 35 Bilder/s</small></h2>
+  <div class="strip" aria-hidden="true">
+    <div class="done"></div><div class="done"></div><div class="done"></div><div class="done"></div><div class="done"></div><div class="done"></div><div class="done"></div><div class="done"></div><div class="done"></div><div class="done"></div><div class="done"></div>
+  </div>
+  <div class="strip-lbl"><span>0 Konzept</span><span>Fundament</span><span>Engine</span><span>Becken</span><span>Wasser</span><span>Dampf+Licht</span><span>Kamera</span><span>Mineralien</span><span>Zugaben</span><span>UI + DB</span><span>10 Schliff</span></div>
+  <p>Die Geysire brechen aus. Old Faithful, Beehive, Castle, Grand und Riverside rechnen je ein Röhrenmodell: Das Wasser am Grund siedet erst beim Druck der Säule darüber. Schwappt im Vorspiel Wasser über, sinkt der Druck, und die Säule schießt heraus. Tropfen, Gischt, Dampf und Spritzer fliegen mit Luftwiderstand im Wind, landen, nässen den Sinter und laufen bergab ab. Das Becken steht: Kegel, Quellen mit Geyseritrand, 10 500 Drehkiefern, tote Stämme mit weißen „Bobby Socks“, Stege und Brücken. In Midway liegen Grand Prismatic und der Krater von Excelsior, am Hang darüber der Aussichtspunkt. Die Farben der Quellen folgen einem Temperaturfeld nach den Angaben des NPS: tiefblau, wo es heiß und tief ist, dann gelbgrün, orange, rost und braun.</p>
+  <p>Neu mit Phase 5 und 6: Im Sprühnebel steht der Regenbogen bei 42° um den Gegenpunkt der Sonne, bei Vollmond blass als Mondregenbogen. Dampfwolken werfen Schatten in sich selbst. Die Luft folgt den Klimanormalwerten am Old Faithful: Im Winter liegt Schnee, der über warmem Boden taut, und an den Bäumen nahe den Quellen Raureif. Nachts stehen die hellen Sterne an ihren Örtern, die Milchstraße mit dem Großen Riss. Die Regie fliegt Blickpunkte an, zeigt vier Kamerafahrten, einen Rundgang auf den Stegen und das Drehbuch „Ein Tag am Old Faithful“ mit Tafeln und Quellen.</p>
+  <p>Neu mit Phase 7: Die Mineral-Lupe zeigt, woraus die Ablagerungen bestehen, bis zu den Atomen, die sich mit dem <code>FAtomView</code> des ATOMMODEL drehen. Die Elementdaten liest sie aus der öffentlichen View <code>am_element</code>; ohne Datenbank nimmt sie eingebaute Werte. Ein Zeitraffer baut in der Szene Terrasse und Kegel von Castle Geyser auf.</p>
+  <p>Neu mit Phase 8, jede einzeln schaltbar: der Schnitt durch die Röhre mit Siedekurve, ein Wärmebild, gerechneter Klang und Bisons und Wapitis auf den Wiesen.</p>
+  <p>Mit Phase 9 steht die Datenbank: elf Tabellen mit <code>GEY_</code> in DEMO, die Orte als <code>SDO_GEOMETRY</code>, das Package <code>GEY_API</code> und vier Views. Der Einrichter meldet bei dir „alles in Ordnung“. Tafeln, Kennwerte, Mineralien und Klima kommen aus den Tabellen; jede Sitzung und jeder Ausbruch wird protokolliert.</p>
+  <p>Neu mit Phase 10: Steht die Kamera, behält der Bildrechner das Licht aus dem vorigen Bild und rechnet nur neu, was sich bewegt. Das Bild nah an einem Ausbruch braucht hier 165 statt 422 ms. Qualität Auto hält jetzt auch im Stillstand 30 Bilder/s. Dazu kommen sechs Farbstile, ein schnellerer Kinomodus, das Programmsymbol als Datei und das README mit Bildern für GitHub.</p>
+</section>
+
+<section id="phase10">
+  <h2>Phase 10 · Schliff <small>geliefert und bestätigt 27.09.2026</small></h2>
+  <div class="gal">
+    <figure class="wide"><img src="./p10_status.jpg" alt="Statusbild vom Rechner des Nutzers: Old Faithful bricht aus, Blick über das Becken mit Tafeln; die Statusleiste zeigt 35 Bilder pro Sekunde, 27 ms je Bild, Licht zu 100 % behalten" loading="lazy"><figcaption>Dein Statusbild: Ausbruch von Old Faithful, 35 Bilder/s, 27 ms je Bild, Licht zu 100 % behalten, 946 × 571 (Auto)</figcaption></figure>
+    <figure class="wide"><img src="./p10_regenbogen.jpg" alt="Old Faithful bricht am Vormittag aus, die Sonne im Rücken des Betrachters, im unteren Teil der Säule steht ein Regenbogen; vorn der Steg" loading="lazy"><figcaption>Aufmacher im README: der Regenbogen aus dem Drehbuch, mit <code>StillRender</code> in 1600 × 900</figcaption></figure>
+    <figure class="wide"><img src="./p10_farbstile.jpg" alt="Sechs Fassungen desselben Abendbilds von Old Faithful: Natürlich, Neutral, Kodachrome, Abendgold, Winterblau und Schwarzweiß" loading="lazy"><figcaption>Die sechs Farbstile an Old Faithful im Abendlicht</figcaption></figure>
+    <figure><img src="./p10_prismatic.jpg" alt="Grand Prismatic Spring von oben: blaue Mitte, gelber Saum, orange Matten in Fingern zum Fluss" loading="lazy"><figcaption>Grand Prismatic von oben (README)</figcaption></figure>
+    <figure><img src="./p10_winter.jpg" alt="Old Faithful im Januar: Schnee, dichte Dampfsäule, oben ein Stück Regenbogen" loading="lazy"><figcaption>Januar am Old Faithful (README)</figcaption></figure>
+    <figure><img src="./p10_excelsior.jpg" alt="Krater von Excelsior am Morgen mit blauem Wasser und orangen Abflüssen" loading="lazy"><figcaption>Excelsior am Morgen (README)</figcaption></figure>
+    <figure><img src="./p10_symbol.jpg" alt="Das Programmsymbol in sieben Größen von 256 bis 16 Pixel: Geysirsäule mit Dampfkrone, Regenbogen, Wald, bunte Quelle" loading="lazy"><figcaption>Das Symbol in allen Größen, jetzt auch als <code>geyser.ico</code></figcaption></figure>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <span class="tag" style="color:var(--teal)">Messen</span>
+      <dl>
+        <dt>Aufbau</dt><dd>Nah an einem Ausbruch von Old Faithful, 1246 × 752 Bildpunkte, 14 000 Teilchen, 2 Kerne; Java Flight Recorder über 40 Bilder.</dd>
+        <dt>Befund</dt><dd>Das Licht kostete zwei Drittel. Davon ein Drittel das Temperaturfeld der Quellen, je Bildpunkt zweimal über alle Quellen gerechnet (Farbe und Nässe), dazu Bodenfarbe, Schattenkarte, Himmel und Dunst.</dd>
+      </dl>
+      <table class="t">
+        <tbody><tr><th></th><th>vorher</th><th>nachher</th></tr>
+        <tr><td>Kamera in Bewegung</td><td>422 ms</td><td>338 ms</td></tr>
+        <tr><td>Kamera steht</td><td>422 ms</td><td>165 ms</td></tr>
+        <tr><td>davon Licht</td><td>276 ms</td><td>42 ms</td></tr>
+        <tr><td>davon Strahlen</td><td>40 ms</td><td>23 ms</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--pool)">Beschleunigen</span>
+      <dl>
+        <dt>Temperaturfeld</dt><dd>In Kacheln von 8 × 8 m mit 25 cm Raster, gebacken erst wenn sie ins Bild kommen (rund 600 Kacheln, 4 MB). Zerlegt in Anteil und Randtemperatur, darum gilt es für jede Lufttemperatur. Mittlerer Fehler 0,14 K.</dd>
+        <dt>Licht behalten</dt><dd>Steht die Kamera, übernimmt jeder Bildpunkt Bodenfarbe, Wasserfilm, Sonnenanteil, Himmel und Dunst aus dem vorigen Bild, solange dort dieselbe Fläche in derselben Tiefe liegt. Bäume im Wind, Gischt, Wasser und Dampf werden weiter jedes Bild gerechnet.</dd>
+        <dt>Strahlen</dt><dd>Sonnenanteil und Bodennebel je Schritt ebenso behalten; der Dampf der Ausbrüche bleibt lebendig.</dd>
+        <dt>Kleinkram</dt><dd>Starre Ecken nicht neu drehen, Filmkurve als Tabelle, Teilchen nur innerhalb ihres Kreises.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--sulfur)">Qualität Auto</span>
+      <dl>
+        <dt>Vorher</dt><dd>Im Stillstand immer volle Auflösung: nah am Ausbruch bei dir 13 Bilder/s.</dd>
+        <dt>Jetzt</dt><dd>Zwei Maßstäbe, einer für Bewegung, einer für Stillstand, beide auf 30 Bilder/s geregelt. Das erste Bild nach einem Wechsel zählt nicht. Die Statusleiste zeigt, wie viel Licht behalten wurde.</dd>
+        <dt>Standbilder</dt><dd>P rechnet weiter in doppelter Auflösung, ohne Zwischenspeicher.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--rust)">Farbstil, Kino, Symbol, README</span>
+      <dl>
+        <dt>Farbstil</dt><dd>Unter BILD: Natürlich, Neutral, Kodachrome, Abendgold, Winterblau, Schwarzweiß mit Gelbfilter nach Ansel Adams' Old Faithful aus dem Mural Project 1941–42.</dd>
+        <dt>Kinomodus</dt><dd>Rechnet nur noch das Band zwischen den Balken (2,39 : 1), je nach Fenster ein Viertel und mehr weniger Bildpunkte.</dd>
+        <dt>Symbol</dt><dd><code>geyser.ico</code> mit sieben Größen und <code>geyser_256.png</code>, aus demselben gemalten Symbol wie das Fenster.</dd>
+        <dt>README</dt><dd>Nach dem Muster von Caracalla: Aufmacher, Galerien, Datenbank, Tasten, Bauen, Technik mit Messung, Projektaufbau, Quellen. Die Bilder rechnet <code>tools/StillRender</code>, auch Einstellungen aus dem Drehbuch.</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="card">
+    <span class="tag" style="color:var(--teal)">Prüfung</span>
+    <dl>
+      <dt>Bauen</dt><dd>58 Quelldateien.</dd>
+      <dt>Gleiches Bild</dt><dd>Bild mit behaltenem Licht gegen neu gerechnetes: mittlere Abweichung 0,5 von 255, Unterschiede nur im Zufallsmuster der Strahlen.</dd>
+      <dt>App</dt><dd>Unter Xvfb gestartet: Statusleiste mit „Licht zu 100 % behalten“, Kinomodus mit Band, Tastenübersicht.</dd>
+      <dt>Bei dir</dt><dd>35 Bilder/s, 27 ms je Bild im Ausbruch von Old Faithful, Licht zu 100 % behalten. Auto hat dafür 61 % der Fensterbreite gewählt (946 × 571); vorher waren es 13 Bilder/s. Das Ziel 30 Bilder/s ist erreicht.</dd>
+    </dl>
+  </div>
+</section>
+
+<section id="phase9">
+  <h2>Phase 9 · Datenbank <small>geliefert 27.09.2026 · bei dir „alles in Ordnung“</small></h2>
+  <div class="cols">
+    <div class="card">
+      <span class="tag" style="color:var(--teal)">Ausgangspunkt</span>
+      <dl>
+        <dt>Verbindung</dt><dd>Oracle 21c, Service PDBORCL, Schema DEMO, <code>db/db.properties</code> steht. Die Lupe liest schon <code>am_element</code> (11 von 11, dein Statusbild).</dd>
+        <dt>Nachbarn</dt><dd>In DEMO liegen nach Semiramis und Caracalla auch <code>SEM_</code> und <code>CAR_</code>. <code>GEY_</code> sollte frei sein; das prüft die Bestandsaufnahme.</dd>
+        <dt>Bestandsaufnahme</dt><dd><code>com.dan.geyser.tools.DbBestand</code>, nur lesend (Run File): Präfixe, alles mit <code>GEY_</code>, Spatial, Rechte, Quote, Zugriff auf ATOMMODEL. Ergebnis in <code>db/bestand.txt</code>.</dd>
+        <dt>Entschieden</dt><dd>Aus Phase 0 (Frage 13): eigene Phase, Präfix <code>GEY_</code> in DEMO, Sequence und Trigger, App läuft ohne DB.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--mat)">Themen</span>
+      <dl>
+        <dt>1 Orte und Geysire</dt><dd>Die sieben Stellen mit WGS-84-Punkt und Höhe, die Kennwerte der fünf Röhrenmodelle, die Quellen mit Temperatur und Maßen.</dd>
+        <dt>2 Belege</dt><dd>Jede Quelle (NPS, USGS, Wikipedia, Fachartikel) einmal, jede Kennzahl mit ihrer Quelle: dieselben Texte für Tafeln, Lupe und Drehbuch.</dd>
+        <dt>3 Mineralien</dt><dd>Die sechs Ablagerungen und ihre Elemente (Ordnungszahl, Anzahl, Spur), gegen <code>am_element</code> geprüft.</dd>
+        <dt>4 Klima</dt><dd>Die zwölf Monatsnormalwerte am Old Faithful.</dd>
+        <dt>5 Protokoll</dt><dd>Sitzungen und jeder Ausbruch mit Vorhersage und Abweichung, Auswertung über alle Sitzungen.</dd>
+        <dt>6 Zustand</dt><dd>Der Zustand beim Beenden und benannte Zustände zum Laden.</dd>
+      </dl>
+    </div>
+  </div>
+  <h3>Tabellenentwurf <small style="color:var(--muted);font-weight:400">Vorschlag, noch nicht angelegt</small></h3>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Thema</th><th>Tabelle</th><th>Inhalt</th><th>Zeilen</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><code>GEY_SITE</code></td><td>Stelle: Code, Name, Art (Geysir, Quelle), Breite, Länge, Höhe ü. M., <code>SDO_GEOMETRY</code> 8307, größte Höhe, Tafeltext, Quelle</td><td>7</td></tr>
+        <tr><td>1</td><td><code>GEY_GEYSER</code></td><td>Röhrenmodell je Geysir: Kegel oder Fontäne, Röhrentiefe, Höhe, Dauern kurz/lang, Anteil kurz, Abstände, Streuung, Dampfphase, Neigung, Stöße; zu <code>GEY_SITE</code></td><td>5</td></tr>
+        <tr><td>1</td><td><code>GEY_SPRING</code></td><td>Quelle: Name, Art (Becken, Schlot, Krater), Temperatur am Mund, Abfall, Halbachsen, Tiefe, Abfluss, Punkt</td><td>11</td></tr>
+        <tr><td>2</td><td><code>GEY_SOURCE</code></td><td>Beleg: Titel, Herausgeber, URL, abgerufen am</td><td>~25</td></tr>
+        <tr><td>2</td><td><code>GEY_FACT</code></td><td>Kennzahl: Thema, Bezug (Stelle, Mineral, Klima …), Text, Wert, Einheit, Beleg</td><td>~80</td></tr>
+        <tr><td>3</td><td><code>GEY_MINERAL</code></td><td>Ablagerung: Code, Name, Formel, Art, hier im Becken ja/nein, Ort, Text, Farbe</td><td>6</td></tr>
+        <tr><td>3</td><td><code>GEY_MINERAL_ELEMENT</code></td><td>Ordnungszahl, Anzahl je Formeleinheit, Spur ja/nein; Schlüssel Mineral + Ordnungszahl</td><td>~22</td></tr>
+        <tr><td>4</td><td><code>GEY_CLIMATE</code></td><td>Monat, mittlerer Höchst- und Tiefstwert (°F wie in der Quelle), Beleg</td><td>12</td></tr>
+        <tr><td>5</td><td><code>GEY_SESSION</code></td><td>Sitzung: Beginn, Ende, Rechner, Java, Bilder, mittlere Bilder/s</td><td>wächst</td></tr>
+        <tr><td>5</td><td><code>GEY_ERUPTION</code></td><td>Ausbruch: Sitzung, Geysir, Szenentag und -uhrzeit, Beginn und Dauer (s), größte Höhe, Vorhersage, Abstand zum vorigen, von Hand ja/nein; Abweichung als virtuelle Spalte</td><td>wächst</td></tr>
+        <tr><td>6</td><td><code>GEY_STATE</code></td><td>Zustand: Name („Beim Beenden“ reserviert), Tag, Uhrzeit, Ort, Kamera (6 Werte), Dunst, Wind, Beschriftung, Zugaben, gespeichert am</td><td>wenige</td></tr>
+        <tr><td>Sicht</td><td><code>GEY_ERUPTION_V</code>, <code>GEY_PREDICTION_V</code>, <code>GEY_MINERAL_CHECK_V</code></td><td>Ausbrüche mit Namen und Abweichung; Güte der Vorhersage je Geysir (Mittel, Anteil ±10 min); Mineral-Elemente ohne Treffer in <code>am_element</code></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>Fragen <small style="color:var(--muted);font-weight:400">entschieden 27.09.2026 · alles A</small></h3>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>#</th><th>Frage</th><th>Optionen</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="n">1</td><td class="q">Ausgangspunkt</td><td><span class="opt rec"><i>A</i>Erst die Bestandsaufnahme bei dir laufen lassen (<code>db/bestand.txt</code>), dann Entwurf danach prüfen</span><span class="opt"><i>B</i>Ohne Bestandsaufnahme weiter</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">2</td><td class="q">Umfang</td><td><span class="opt rec"><i>A</i>Alle sechs Themen wie oben</span><span class="opt"><i>B</i>Nur Protokoll und Zustand</span><span class="opt"><i>C</i>Wie A, dazu Regie (Blickpunkte, Tafeln des Drehbuchs)</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">3</td><td class="q">Rolle der Stammdaten</td><td><span class="opt rec"><i>A</i>Mit DB gelten beim Start die Werte aus <code>GEY_</code> (Kennwerte, Tafeln, Mineralien, Klima), der Code bleibt der Rückfall</span><span class="opt"><i>B</i>DB nur zum Nachschlagen und Auswerten, die App rechnet immer mit dem Code</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">4</td><td class="q">Orte</td><td><span class="opt rec"><i>A</i><code>SDO_GEOMETRY</code>-Punkt SRID 8307, Eintrag in <code>USER_SDO_GEOM_METADATA</code>, Spatial-Index (V2)</span><span class="opt"><i>B</i>Nur Breite und Länge als Zahlen</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">5</td><td class="q">Mineral und Element</td><td><span class="opt rec"><i>A</i>Ordnungszahl ohne Fremdschlüssel; Einrichter und <code>GEY_MINERAL_CHECK_V</code> prüfen gegen <code>am_element</code></span><span class="opt"><i>B</i>Fremdschlüssel über das Schema hinweg (braucht <code>REFERENCES</code>-Recht von ATOMDATA, dessen Konto gesperrt ist)</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">6</td><td class="q">Protokoll</td><td><span class="opt rec"><i>A</i>Sitzungen und jeder Ausbruch, geschrieben im Hintergrund (die App wartet nie); der Protokolldialog zeigt auch frühere Sitzungen und die Güte der Vorhersage</span><span class="opt"><i>B</i>Nur Ausbrüche, nur diese Sitzung im Dialog</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">7</td><td class="q">Zugriff</td><td><span class="opt rec"><i>A</i>Package <code>GEY_API</code> (Version, Sitzung beginnen/enden, Ausbruch schreiben, Zustand speichern/laden) plus Sichten; Lesen der Stammdaten per SQL</span><span class="opt"><i>B</i>Alles als SQL aus Java</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">8</td><td class="q">Einrichtung</td><td><span class="opt rec"><i>A</i>SQL-Skripte in <code>db/sql</code> (Tabellen, Sequenzen und Trigger, Spatial, Stammdaten, API und Sichten, Rückbau) und ein Java-Einrichter mit Durchstich und Bericht <code>db/einrichtung.txt</code>, wie bei Caracalla</span><span class="opt"><i>B</i>Nur Skripte, die du selbst in SQL*Plus startest</span></td><td><span class="pill done">A</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <span class="tag" style="color:var(--sulfur)">Schon jetzt, ohne DB</span>
+      <dl>
+        <dt>Eruptionsprotokoll</dt><dd>Knopf unter GEYSIRE: jeder beendete Ausbruch dieser Sitzung mit Beginn, Dauer, Höhe, Abstand, Vorhersage und Abweichung; darunter je Geysir die Güte (bei Old Faithful: Anteil innerhalb ±10 min). Von Hand ausgelöste Ausbrüche zählen nicht für die Vorhersage.</dd>
+        <dt>Zustand beim Beenden</dt><dd>Tag, Uhrzeit, Ort, Kamera, Beschriftung und Zugaben in <code>~/.geyser/zustand.properties</code>; beim nächsten Start geht es dort weiter.</dd>
+        <dt>Geprüft</dt><dd>Drei Stunden Geysir-Uhr durchgerechnet: drei Ausbrüche von Old Faithful protokolliert (154 s, 268 s, 139 s), die Vorhersage nach dem 268-s-Ausbruch lag 8 min zu spät.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--pool)">Danach</span>
+      <dl>
+        <dt>1</dt><dd>Du antwortest (etwa „alles A“) und schickst <code>db/bestand.txt</code>.</dd>
+        <dt>2</dt><dd>Ich passe den Entwurf an und lege ihn dir mit allen Spalten vor.</dd>
+        <dt>3</dt><dd>Nach deiner Freigabe: Skripte, Einrichter, Anbindung in der App, Bedienfeld DATENBANK.</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section id="entwurf">
+  <h2>Entwurf mit allen Spalten <small>freigegeben 27.09.2026 · umgesetzt</small></h2>
+  <div class="cols">
+    <div class="card">
+      <span class="tag" style="color:var(--sulfur)">Umgesetzt</span>
+      <dl>
+        <dt>Skripte</dt><dd><code>db/sql/01_tabellen.sql</code> (11 Tabellen, 9 Sequenzen, 9 Trigger, 46 Anweisungen), <code>02_spatial.sql</code> (Metadaten, 2 Indizes V2), <code>03_inhalte.sql</code> (128 Anweisungen, aus dem Code erzeugt), <code>04_api.sql</code> (<code>GEY_API</code> und 4 Sichten), <code>99_abbau.sql</code>.</dd>
+        <dt>Inhalte</dt><dd>24 Belege, 40 Kennzahlen (19 allgemein, 21 zu Mineralien), 7 Stellen, 5 Geysire, 11 Quellen (3 mit genäherter Lage), 6 Mineralien mit 22 Elementzeilen, 12 Klimamonate.</dd>
+        <dt>Einrichter</dt><dd><code>com.dan.geyser.db.DbSetup</code>: erzeugt 03 aus dem Code, führt 01 bis 04 aus, prüft Übersetzungsfehler und macht den Durchstich (Zeilen, Geometrien, Spatial-Suche um Old Faithful und Grand Prismatic, Mineral-Prüfung gegen <code>am_element</code>, Tafeln, Kennwerte, Mineralien und Klima gleich wie im Code, Sitzung und Ausbruch mit Abweichung schreiben und löschen, Zustand speichern, ersetzen, laden, löschen). Bericht <code>db/einrichtung.txt</code>.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--teal)">In der App</span>
+      <dl>
+        <dt>Start</dt><dd>Auf eigenem Faden: verbinden, <code>GEY_API</code> prüfen, Stammdaten laden und übernehmen (Tafeln, Kennwerte der Geysire, Mineralien mit Belegen, Klima samt Schneedecke), Sitzung beginnen. Die Quellen formen das Gelände und bleiben daher im Code; in der DB stehen sie zum Nachschlagen.</dd>
+        <dt>Laufend</dt><dd>Jeder beendete Ausbruch geht im Hintergrund in <code>GEY_ERUPTION</code>.</dd>
+        <dt>Beenden</dt><dd>„Beim Beenden“ und das Ende der Sitzung (Bilder, Bilder/s) werden geschrieben, höchstens 3 s Wartezeit; die Datei im Benutzerordner bleibt.</dd>
+        <dt>DATENBANK</dt><dd>Neuer Abschnitt im Bedienfeld: Zustand der Verbindung, „Zustand speichern unter …“, „Zustand laden …“ (mit Löschen), „Protokoll aller Sitzungen“ mit der Güte der Vorhersage aus <code>GEY_PREDICTION_V</code>.</dd>
+        <dt>Geprüft hier</dt><dd>Übersetzt, Skripte zerlegt wie im Einrichter (keine offenen Reste), App ohne Datenbank gestartet und beendet. Gegen deine Datenbank läuft es erst bei dir.</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <span class="tag" style="color:var(--teal)">Bestandsaufnahme (db/bestand.txt)</span>
+      <dl>
+        <dt>Datenbank</dt><dd>Oracle 21c EE 21.3, PDBORCL, Zeichensatz AL32UTF8, Längensemantik BYTE. Deshalb alle Texte als <code>VARCHAR2(n CHAR)</code>, damit Umlaute und die Tiefzahlen der Formeln (SiO₂) passen.</dd>
+        <dt>Platz und Rechte</dt><dd>USERS unbegrenzt; CREATE TABLE, SEQUENCE, TRIGGER, VIEW, PROCEDURE vorhanden. Spatial und Indextyp V2 da.</dd>
+        <dt>Präfix</dt><dd><code>GEY_</code> ist frei. In DEMO liegen 15 andere Präfixe, 109 Tabellen; eine Sicht ist ungültig (nicht von uns, die Einrichtung fasst sie nicht an).</dd>
+        <dt>ATOMMODEL</dt><dd>AM_API 1.0 (19.09.2026), alle 11 Elemente der Lupe lesbar, öffentliche Synonyme vorhanden.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--mat)">Regeln</span>
+      <dl>
+        <dt>Schlüssel</dt><dd><code>…_id NUMBER</code>, Sequenz <code>GEY_&lt;TABELLE&gt;_SEQ</code>, Trigger <code>GEY_&lt;TABELLE&gt;_BI</code> setzt sie, wenn leer (Frage 13).</dd>
+        <dt>Namen</dt><dd>Schlüssel englisch, Inhalte deutsch wie bei CAR_: <code>name</code>, <code>art</code>, <code>quelle</code>. Ja/Nein als <code>CHAR(1)</code> J/N. Codes groß mit Unterstrich (<code>OLD_FAITHFUL</code>).</dd>
+        <dt>Koordinaten</dt><dd><code>lage SDO_GEOMETRY</code>, Punkt 8307, aus Breite und Länge; Quellen, deren Lage im Code nur genähert ist, tragen <code>genaehert = 'J'</code>.</dd>
+        <dt>Inhalte</dt><dd>Werden aus dem Code erzeugt (Orte, Kennwerte, Mineralien, Klima, Belege), damit DB und Code gleich sind; der Einrichter vergleicht beides.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <h3>1 · Belege</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Spalte</th><th>Typ</th><th>Regel</th><th>Bedeutung</th></tr></thead>
+    <tbody>
+      <tr><td colspan="4"><b><code>GEY_SOURCE</code></b> · ein Beleg einmal · rund 25 Zeilen</td></tr>
+      <tr><td>source_id</td><td>NUMBER</td><td>PK</td><td>Schlüssel</td></tr>
+      <tr><td>code</td><td>VARCHAR2(30 CHAR)</td><td>NN, UK</td><td>etwa <code>NPS_BISON</code>, <code>JVGR_2021</code></td></tr>
+      <tr><td>titel</td><td>VARCHAR2(300 CHAR)</td><td>NN</td><td>Titel wie verlinkt</td></tr>
+      <tr><td>herausgeber</td><td>VARCHAR2(100 CHAR)</td><td></td><td>NPS, USGS, Wikipedia, Zeitschrift</td></tr>
+      <tr><td>url</td><td>VARCHAR2(400 CHAR)</td><td>NN</td><td>Adresse</td></tr>
+      <tr><td>art</td><td>VARCHAR2(12)</td><td>CK BEHOERDE, LEXIKON, FACHARTIKEL, DATEN</td><td>Art der Quelle</td></tr>
+      <tr><td>abgerufen</td><td>DATE</td><td></td><td>Tag des Nachschlagens</td></tr>
+      <tr><td colspan="4"><b><code>GEY_FACT</code></b> · Kennzahl mit Beleg, für Tafeln, Lupe und Drehbuch · rund 80</td></tr>
+      <tr><td>fact_id</td><td>NUMBER</td><td>PK</td><td></td></tr>
+      <tr><td>thema</td><td>VARCHAR2(10)</td><td>NN, CK GEYSIR, QUELLE, MINERAL, KLIMA, TIER, LICHT</td><td></td></tr>
+      <tr><td>bezug</td><td>VARCHAR2(30 CHAR)</td><td></td><td>Code der Stelle oder des Minerals</td></tr>
+      <tr><td>text</td><td>VARCHAR2(400 CHAR)</td><td>NN</td><td>der Satz, wie er in der App steht</td></tr>
+      <tr><td>wert, einheit</td><td>NUMBER, VARCHAR2(12 CHAR)</td><td></td><td>Zahl zum Rechnen, falls es eine gibt</td></tr>
+      <tr><td>reihenfolge</td><td>NUMBER(3)</td><td></td><td>Folge in der Anzeige</td></tr>
+      <tr><td>source_id</td><td>NUMBER</td><td>NN, FK GEY_SOURCE</td><td>Beleg; Index (thema, bezug)</td></tr>
+    </tbody></table></div>
+
+  <h3>2 · Orte, Geysire, Quellen</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Spalte</th><th>Typ</th><th>Regel</th><th>Bedeutung</th></tr></thead>
+    <tbody>
+      <tr><td colspan="4"><b><code>GEY_SITE</code></b> · die sieben Stellen · Spatial-Index V2</td></tr>
+      <tr><td>site_id</td><td>NUMBER</td><td>PK</td><td></td></tr>
+      <tr><td>code</td><td>VARCHAR2(30 CHAR)</td><td>NN, UK</td><td><code>OLD_FAITHFUL</code> …</td></tr>
+      <tr><td>name</td><td>VARCHAR2(60 CHAR)</td><td>NN</td><td></td></tr>
+      <tr><td>art</td><td>VARCHAR2(8)</td><td>CK GEYSIR, QUELLE</td><td></td></tr>
+      <tr><td>becken</td><td>VARCHAR2(8)</td><td>CK UPPER, MIDWAY</td><td>Ort in der App</td></tr>
+      <tr><td>breite, laenge</td><td>NUMBER(10,7), NUMBER(11,7)</td><td>NN</td><td>WGS 84</td></tr>
+      <tr><td>hoehe_m</td><td>NUMBER(6,1)</td><td></td><td>über dem Meer (Riverside leer)</td></tr>
+      <tr><td>lage</td><td>SDO_GEOMETRY</td><td>Punkt 8307</td><td>aus Breite und Länge</td></tr>
+      <tr><td>saeule_max_m</td><td>NUMBER(5,1)</td><td></td><td>größte Höhe, 0 bei Quellen</td></tr>
+      <tr><td>tafel</td><td>VARCHAR2(200 CHAR)</td><td></td><td>Zeile unter dem Namen auf der Tafel</td></tr>
+      <tr><td>taste</td><td>NUMBER(1)</td><td>UK</td><td>1 bis 7</td></tr>
+      <tr><td colspan="4"><b><code>GEY_GEYSER</code></b> · Röhrenmodell je Geysir · 5 Zeilen</td></tr>
+      <tr><td>geyser_id</td><td>NUMBER</td><td>PK</td><td></td></tr>
+      <tr><td>site_id</td><td>NUMBER</td><td>NN, UK, FK GEY_SITE</td><td></td></tr>
+      <tr><td>typ</td><td>VARCHAR2(8)</td><td>CK KEGEL, FONTAENE</td><td></td></tr>
+      <tr><td>roehre_m, schlot_r_m</td><td>NUMBER(5,1), NUMBER(4,2)</td><td>NN</td><td>Tiefe der Röhre, Radius des Schlots</td></tr>
+      <tr><td>kurz_min_s, kurz_max_s, lang_min_s, lang_max_s</td><td>NUMBER(6)</td><td></td><td>Dauern kurzer und langer Ausbrüche</td></tr>
+      <tr><td>anteil_kurz</td><td>NUMBER(3,2)</td><td>CK 0..1</td><td></td></tr>
+      <tr><td>abstand_kurz_s, abstand_lang_s, streuung_s</td><td>NUMBER(7)</td><td></td><td>Abstände und Streuung</td></tr>
+      <tr><td>dampfphase_s</td><td>NUMBER(6)</td><td></td><td></td></tr>
+      <tr><td>neigung_grad</td><td>NUMBER(4,1)</td><td></td><td>Riverside 28°</td></tr>
+      <tr><td>stoesse_min, stoesse_max</td><td>NUMBER(2)</td><td></td><td>Fontänen (Grand)</td></tr>
+      <tr><td colspan="4"><b><code>GEY_SPRING</code></b> · Quellen des Temperaturfelds · 11 Zeilen · Spatial-Index V2</td></tr>
+      <tr><td>spring_id</td><td>NUMBER</td><td>PK</td><td></td></tr>
+      <tr><td>code, name</td><td>VARCHAR2(30/60 CHAR)</td><td>NN, code UK</td><td></td></tr>
+      <tr><td>art</td><td>VARCHAR2(8)</td><td>CK BECKEN, SCHLOT, KRATER</td><td></td></tr>
+      <tr><td>site_id</td><td>NUMBER</td><td>FK GEY_SITE, leer erlaubt</td><td>Crested, Doublet, Heart haben keine Stelle</td></tr>
+      <tr><td>temp_c, abfall_k</td><td>NUMBER(4,1)</td><td></td><td>am Mund, bis zum Rand</td></tr>
+      <tr><td>halbachse_x_m, halbachse_z_m, tiefe_m</td><td>NUMBER(5,1)</td><td></td><td>Becken</td></tr>
+      <tr><td>abfluss_m, saum_m</td><td>NUMBER(5,1)</td><td></td><td>Reichweite und Breite der Matten</td></tr>
+      <tr><td>lage</td><td>SDO_GEOMETRY</td><td>Punkt 8307</td><td></td></tr>
+      <tr><td>genaehert</td><td>CHAR(1)</td><td>J/N</td><td>Lage genähert</td></tr>
+    </tbody></table></div>
+
+  <h3>3 · Mineralien und Klima</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Spalte</th><th>Typ</th><th>Regel</th><th>Bedeutung</th></tr></thead>
+    <tbody>
+      <tr><td colspan="4"><b><code>GEY_MINERAL</code></b> · 6 Zeilen; Kennzahlen in GEY_FACT (thema MINERAL)</td></tr>
+      <tr><td>mineral_id</td><td>NUMBER</td><td>PK</td><td></td></tr>
+      <tr><td>code, name</td><td>VARCHAR2(30/60 CHAR)</td><td>NN, code UK</td><td><code>SINTER</code>, Kieselsinter (Geyserit)</td></tr>
+      <tr><td>formel</td><td>VARCHAR2(40 CHAR)</td><td>NN</td><td>mit Tiefzahlen: SiO₂ · n H₂O</td></tr>
+      <tr><td>art</td><td>VARCHAR2(60 CHAR)</td><td></td><td>Opal-A, amorph</td></tr>
+      <tr><td>hier</td><td>CHAR(1)</td><td>J/N</td><td>in den Becken der Szene</td></tr>
+      <tr><td>ort, text</td><td>VARCHAR2(160/1000 CHAR)</td><td></td><td></td></tr>
+      <tr><td>farbe_hex</td><td>VARCHAR2(7)</td><td>CK #RRGGBB</td><td>Farbfeld in der Liste</td></tr>
+      <tr><td>reihenfolge</td><td>NUMBER(2)</td><td></td><td></td></tr>
+      <tr><td colspan="4"><b><code>GEY_MINERAL_ELEMENT</code></b> · rund 22 Zeilen</td></tr>
+      <tr><td>mineral_id</td><td>NUMBER</td><td>PK, FK GEY_MINERAL, ON DELETE CASCADE</td><td></td></tr>
+      <tr><td>atomic_number</td><td>NUMBER(3)</td><td>PK, CK 1..118</td><td>ohne FK; Prüfung gegen <code>am_element</code> (Frage 5)</td></tr>
+      <tr><td>anzahl</td><td>NUMBER(7,4)</td><td>CK &gt; 0 oder Spur</td><td>je Formeleinheit (Wasser im Opal 0,3706)</td></tr>
+      <tr><td>spur</td><td>CHAR(1)</td><td>J/N</td><td>Arsen, Antimon im Sinter</td></tr>
+      <tr><td>reihenfolge</td><td>NUMBER(2)</td><td></td><td>wie in der Formel</td></tr>
+      <tr><td colspan="4"><b><code>GEY_CLIMATE</code></b> · 12 Zeilen</td></tr>
+      <tr><td>monat</td><td>NUMBER(2)</td><td>PK, CK 1..12</td><td></td></tr>
+      <tr><td>hoch_f, tief_f</td><td>NUMBER(4,1)</td><td>NN</td><td>Normalwerte 1991–2020 wie in der Quelle</td></tr>
+      <tr><td>hoch_c, tief_c</td><td>NUMBER</td><td>virtuell</td><td>(°F − 32) / 1,8</td></tr>
+      <tr><td>source_id</td><td>NUMBER</td><td>FK GEY_SOURCE</td><td></td></tr>
+    </tbody></table></div>
+
+  <h3>4 · Protokoll und Zustand</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Spalte</th><th>Typ</th><th>Regel</th><th>Bedeutung</th></tr></thead>
+    <tbody>
+      <tr><td colspan="4"><b><code>GEY_SESSION</code></b> · eine Zeile je Start der App</td></tr>
+      <tr><td>session_id</td><td>NUMBER</td><td>PK</td><td></td></tr>
+      <tr><td>beginn, ende</td><td>TIMESTAMP</td><td>beginn NN, DEFAULT SYSTIMESTAMP</td><td></td></tr>
+      <tr><td>rechner, benutzer</td><td>VARCHAR2(64 CHAR)</td><td></td><td>Rechnername, Anmeldename</td></tr>
+      <tr><td>java, aufloesung</td><td>VARCHAR2(40/20)</td><td></td><td>Version, Bildgröße</td></tr>
+      <tr><td>bilder, bilder_s</td><td>NUMBER(9), NUMBER(5,1)</td><td></td><td>gerechnete Bilder, Mittel je Sekunde</td></tr>
+      <tr><td colspan="4"><b><code>GEY_ERUPTION</code></b> · jeder beendete Ausbruch · Index auf geyser_id, session_id</td></tr>
+      <tr><td>eruption_id</td><td>NUMBER</td><td>PK</td><td></td></tr>
+      <tr><td>session_id</td><td>NUMBER</td><td>NN, FK GEY_SESSION, ON DELETE CASCADE</td><td></td></tr>
+      <tr><td>geyser_id</td><td>NUMBER</td><td>NN, FK GEY_GEYSER</td><td></td></tr>
+      <tr><td>szenentag, szenenzeit_h</td><td>NUMBER(3), NUMBER(6,4)</td><td>CK 1..366, 0..24</td><td>Tag und Uhrzeit in der Szene beim Beginn</td></tr>
+      <tr><td>beginn_s, dauer_s</td><td>NUMBER(12,1), NUMBER(7,1)</td><td>dauer NN</td><td>Geysir-Uhr in Sekunden</td></tr>
+      <tr><td>hoehe_max_m</td><td>NUMBER(5,1)</td><td></td><td></td></tr>
+      <tr><td>vorhersage_s</td><td>NUMBER(12,1)</td><td></td><td>leer bei „von Hand“</td></tr>
+      <tr><td>abstand_s</td><td>NUMBER(9,1)</td><td></td><td>zum vorigen Beginn</td></tr>
+      <tr><td>von_hand</td><td>CHAR(1)</td><td>J/N</td><td></td></tr>
+      <tr><td>abweichung_min</td><td>NUMBER</td><td>virtuell</td><td>(beginn_s − vorhersage_s) / 60</td></tr>
+      <tr><td>angelegt</td><td>TIMESTAMP</td><td>DEFAULT SYSTIMESTAMP</td><td></td></tr>
+      <tr><td colspan="4"><b><code>GEY_STATE</code></b> · benannte Zustände; „Beim Beenden“ ist reserviert</td></tr>
+      <tr><td>state_id</td><td>NUMBER</td><td>PK</td><td></td></tr>
+      <tr><td>name</td><td>VARCHAR2(60 CHAR)</td><td>NN, UK</td><td></td></tr>
+      <tr><td>tag, stunde</td><td>NUMBER(3), NUMBER(6,4)</td><td>CK</td><td></td></tr>
+      <tr><td>ort</td><td>NUMBER(1)</td><td>CK 0, 1</td><td>Upper, Midway</td></tr>
+      <tr><td>dreh_x, dreh_y, dreh_z, gier_grad, nick_grad, abstand_m</td><td>NUMBER(9,2)</td><td></td><td>Kamera wie im Orbit</td></tr>
+      <tr><td>dunst, wind</td><td>NUMBER(3,2)</td><td>CK 0..1</td><td></td></tr>
+      <tr><td>beschriftung, schnitt, waermebild, tiere</td><td>CHAR(1)</td><td>J/N</td><td>Schalter</td></tr>
+      <tr><td>rechner, gespeichert</td><td>VARCHAR2(64 CHAR), TIMESTAMP</td><td>DEFAULT SYSTIMESTAMP</td><td></td></tr>
+    </tbody></table></div>
+
+  <h3>5 · Sichten, Package, Skripte</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Objekt</th><th>Inhalt</th></tr></thead>
+    <tbody>
+      <tr><td><code>GEY_SITE_V</code></td><td>Stellen mit Abstand zu Old Faithful in m (<code>SDO_GEOM.SDO_DISTANCE</code>)</td></tr>
+      <tr><td><code>GEY_ERUPTION_V</code></td><td>Ausbrüche mit Geysirname, Sitzungsbeginn und Abweichung</td></tr>
+      <tr><td><code>GEY_PREDICTION_V</code></td><td>je Geysir: Ausbrüche, davon mit Vorhersage, mittlere Abweichung (Betrag), Anteil innerhalb ±10 min, kürzester und längster Abstand</td></tr>
+      <tr><td><code>GEY_MINERAL_CHECK_V</code></td><td>Mineral-Elemente mit Symbol und Namen aus <code>am_element</code>; Zeilen ohne Treffer sind ein Fehler (Einrichter meldet)</td></tr>
+      <tr><td><code>GEY_API</code></td><td><code>version</code>, <code>session_begin</code> → id, <code>session_end</code>, <code>log_eruption</code> (Geysir per Code) → id, <code>save_state</code> (MERGE per Name), <code>delete_state</code>; Lesen der Stammdaten und Zustände per SQL</td></tr>
+      <tr><td><code>db/sql</code></td><td><code>01_tabellen.sql</code> (mit Sequenzen und Triggern, bricht ab, wenn es schon GEY_ gibt), <code>02_spatial.sql</code>, <code>03_inhalte.sql</code> (aus dem Code erzeugt), <code>04_api.sql</code> (Package und Sichten), <code>99_abbau.sql</code> (nur GEY_). Jede Anweisung endet mit „/“: läuft in SQL*Plus, SQL Developer und im Einrichter.</td></tr>
+      <tr><td>Einrichter</td><td><code>com.dan.geyser.db.DbSetup</code> (Run File): führt die Skripte aus und prüft: Zeilen je Tabelle, Geometrien gültig, Spatial-Suche (Stellen im Umkreis von 2 km um Old Faithful), Mineral-Prüfung leer, Kennwerte in DB gleich Code, Sitzung und Ausbruch schreiben/lesen/löschen, Zustand speichern/laden/löschen. Bericht in <code>db/einrichtung.txt</code>, Schlusszeile „alles in Ordnung“.</td></tr>
+      <tr><td>App</td><td>Abschnitt DATENBANK im Bedienfeld (Verbindung, Zustand speichern unter …, laden …, Protokoll aller Sitzungen); schreiben auf eigenem Faden; ohne DB wie bisher.</td></tr>
+    </tbody></table></div>
+</section>
+
+<section id="phase8">
+  <h2>Phase 8 · Zugaben <small>geliefert 27.09.2026</small></h2>
+  <div class="gal">
+    <figure class="wide"><img src="./p8_schnitt.jpg" alt="Old Faithful bricht aus, rechts der Schnitt durch die 22 m tiefe Röhre: Wassersäule rot bis orange mit Blasen, daneben die Kurven von Siedepunkt und Wassertemperatur über der Tiefe" loading="lazy"><figcaption>Schnitt im Ausbruch: das Wasser am Grund ist heißer als sein Siedepunkt, Blasen in der ganzen Säule</figcaption></figure>
+    <figure class="wide"><img src="./p8_waerme.jpg" alt="Wärmebild der App: die Säule von Old Faithful gelb und weiß, das Becken rot, der Himmel violett, unten rechts die Farbskala" loading="lazy"><figcaption>Wärmebild in der App, mit Schnitt und Farbskala von −20 bis 100 °C</figcaption></figure>
+    <figure><img src="./p8_waerme2.jpg" alt="Wärmebild von oben: heller Sinter kühler als die Wiese, der Fluss als kühles Band, die Säule heiß" loading="lazy"><figcaption>Von oben: Sinter kühler als die Wiese, der Fluss als kühles Band</figcaption></figure>
+    <figure><img src="./p8_bisons.jpg" alt="Bisonherde grasend auf einer Wiese am Rand des Beckens" loading="lazy"><figcaption>Bisonherde im September auf der Wiese</figcaption></figure>
+    <figure><img src="./p8_wapitis.jpg" alt="Wapitirudel mit einem Bullen mit Geweih auf der Wiese" loading="lazy"><figcaption>Wapitirudel mit Bulle, in der Brunft röhrt er</figcaption></figure>
+    <figure><img src="./p8_status_schnitt.jpg" alt="Statusbild vom Rechner des Nutzers: Old Faithful bricht aus, rechts der Schnitt, 13 Bilder pro Sekunde" loading="lazy"><figcaption>Dein Statusbild: Schnitt im Ausbruch, 13 Bilder/s</figcaption></figure>
+    <figure><img src="./p8_status_waerme.jpg" alt="Statusbild vom Rechner des Nutzers: Wärmebild mit dem warmen Abfluss von Old Faithful" loading="lazy"><figcaption>Dein Statusbild: Wärmebild mit dem Abfluss von Old Faithful</figcaption></figure>
+    <figure><img src="./p8_bisons_winter.jpg" alt="Bisons im Januar auf dem warmen, fleckig schneefreien Boden am Fluss" loading="lazy"><figcaption>Im Januar: die Bisons auf warmem Boden bei den Quellen</figcaption></figure>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <span class="tag" style="color:var(--rust)">Schnitt durch die Röhre · C</span>
+      <dl>
+        <dt>Links</dt><dd>Kegel oder Becken, die Röhre mit Engstelle, die Wassersäule nach Temperatur gefärbt. Blasen steigen, wo das Wasser siedet; im Vorspiel sinkt der Spiegel beim Überschwappen.</dd>
+        <dt>Rechts</dt><dd>Siedepunkt über der Tiefe aus dem Druck der Säule (Antoine-Gleichung, 77 kPa an der Oberfläche) und die Wassertemperatur. Kreuzen sich die Kurven, kippt die Säule.</dd>
+        <dt>Zahlen</dt><dd>Grundtemperatur, Siedepunkt am Grund, wie viel fehlt oder wie weit überhitzt, Füllung, Druck. Der Temperaturverlauf zwischen Spiegel und Grund ist linear genähert; das steht auf der Tafel.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--sulfur)">Wärmebild · I</span>
+      <dl>
+        <dt>Quelle</dt><dd>Die Temperaturen kommen aus dem Modell der App, nicht aus Messungen: Temperaturfeld der Quellen, Luft nach den Klimanormalwerten, Sonne je nach Neigung und Schatten, heller Sinter wärmt sich weniger als Wiese.</dd>
+        <dt>Teilchen</dt><dd>Tropfen kühlen langsam, Dampf rasch auf die Luft ab; ihre Temperatur wird wie ihre Farbe gemischt.</dd>
+        <dt>Skala</dt><dd>„Ironbow“ von −30 bis 100 °C, im Kalten gestreckt, Legende unten rechts. Lichtstrahlen und Überstrahlen ruhen im Wärmebild.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--pool)">Klang · O</span>
+      <dl>
+        <dt>Gerechnet</dt><dd>Keine Tondateien: Tosen der Säule in Stößen, Zischen der Dampfphase, Schwappen im Vorspiel, Blasen in heißen Quellen, der Firehole, Wind in Böen. Lautstärke und Richtung nach dem Ort der Kamera, in Stereo.</dd>
+        <dt>Tiere</dt><dd>Wapitibullen röhren von Anfang September bis Mitte Oktober, Bisons brüllen im Juli und August (Brunftzeiten nach NPS).</dd>
+        <dt>Ohne Tonausgang</dt><dd>bleibt der Klang aus, die App sagt es.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--pine)">Bisons und Wapitis · N</span>
+      <dl>
+        <dt>Herden</dt><dd>9 Bisons (im Sommer 3 Kälber), 6 Wapitikühe und ein Bulle. Sie grasen, gehen ein Stück, bleiben beisammen, auf Wiesen fern von Quellen, Fluss und Wald.</dd>
+        <dt>Jahreszeit</dt><dd>Im Winter suchen die Bisons den warmen Boden bei den Quellen, vom Rudel bleiben 3 Kühe (im Winter sind weniger als 2000 Wapitis im Park). Kein Geweih zwischen Abwurf im Frühjahr und Sommer.</dd>
+        <dt>Bild</dt><dd>Schattenrisse in einer Ebene, die sich zur Kamera dreht, mit schwingenden Beinen, Licht aus der Schattenkarte und Schattenfleck. Aus der Nähe flach, aus Stegentfernung stimmig.</dd>
+        <dt>Regel</dt><dd>Beim Einschalten: im Park mindestens 23 m (25 Yards) Abstand zu Bisons und Wapitis (NPS).</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="card">
+    <span class="tag" style="color:var(--teal)">Prüfung</span>
+    <dl>
+      <dt>Bauen</dt><dd>48 Quelldateien (neu <code>TubeSection</code>, <code>GeyserSound</code>, <code>Animals</code>, <code>Fauna</code>).</dd>
+      <dt>Aus heißt aus</dt><dd>Schnitt, Wärmebild und Klang kosten nichts, solange sie aus sind; die Tiere (Standard an) kosten unter einer Millisekunde.</dd>
+      <dt>Klang</dt><dd>Hier ohne Tonausgang geprüft: alle acht Quellen offline gerechnet, Pegel ohne Übersteuern, das Röhren im Spektrogramm mit Anstieg, Pfeifton und Grunzern.</dd>
+      <dt>Bei dir</dt><dd>Mit Kopfhörern den Klang anschalten und zu Old Faithful fliegen (1), Ausbruch mit X. Ein Statusbild mit Schnitt und Wärmebild.</dd>
+    </dl>
+  </div>
+</section>
+
+<section id="phase7">
+  <h2>Phase 7 · Mineralien und ATOMMODEL <small>geliefert 27.09.2026</small></h2>
+  <div class="gal">
+    <figure class="wide"><img src="./p7_lupe.jpg" alt="Die Mineral-Lupe: links sechs Ablagerungen, in der Mitte Kieselsinter mit Formel, Massenanteilen von Silicium, Sauerstoff und Wasserstoff und belegten Kennzahlen, rechts ein blau leuchtendes Siliciumatom mit seinen Daten" loading="lazy"><figcaption>Die Lupe am Rand von Grand Geyser: Kieselsinter, Massenanteile, Kennzahlen mit Quellen, rechts Silicium aus dem ATOMMODEL</figcaption></figure>
+    <figure class="wide"><img src="./p7_skorodit.jpg" alt="Die Lupe mit Skorodit: Eisen, Arsen, Sauerstoff und Wasserstoff, rechts das Eisenatom" loading="lazy"><figcaption>Zum Vergleich Skorodit aus Norris: Fe, As, O, H; rechts Eisen mit 26 Protonen und 30 Neutronen</figcaption></figure>
+    <figure><img src="./p7_zr1.jpg" alt="Zeitraffer: die Sinterterrasse von Castle Geyser um 226 v. Chr., flach" loading="lazy"><figcaption>Zeitraffer, um 226 v. Chr.: die Terrasse wächst</figcaption></figure>
+    <figure class="wide"><img src="./p7_status.jpg" alt="Statusbild vom Rechner des Nutzers: die Lupe mit Travertin, unten die Zeile ATOMMODEL am_element 11 von 11 Elementen, verbunden als DEMO" loading="lazy"><figcaption>Dein Statusbild: Elementdaten aus der Datenbank, 11 von 11</figcaption></figure>
+    <figure><img src="./p7_zr4.jpg" alt="Zeitraffer: um 1432 n. Chr. wächst auf der Terrasse der Kegel von Castle Geyser" loading="lazy"><figcaption>Um 1432 n. Chr.: der Kegel wächst auf der Terrasse</figcaption></figure>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <span class="tag" style="color:var(--pool)">Lupe</span>
+      <dl>
+        <dt>Öffnen</dt><dd>Knopf „Mineral-Lupe“ im neuen Abschnitt MINERALIEN, Taste U (Quelle am Drehpunkt) oder Strg+Klick in die Szene (Quelle dort). Oben steht, an welcher Quelle man ist und wie heiß sie ist.</dd>
+        <dt>Inhalt</dt><dd>Formel und Formelmasse, Anteile an der Masse als Balken, die Elemente als Kacheln mit Anzahl und Prozent. Ein Klick auf eine Kachel zeigt das Atom rechts. Dazu Text, Kennzahlen und Quellen mit Links.</dd>
+        <dt>Atom</dt><dd><code>FAtomView</code> aus <code>lib/ATOMMODEL.jar</code>: Kern mit Protonen und Neutronen, Schalen, kreisende Elektronen. Ziehen dreht, Rad zoomt, Doppelklick spielt den Aufbau ab.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--mat)">Die sechs Ablagerungen</span>
+      <dl>
+        <dt>Hier im Becken</dt><dd>Kieselsinter (Geyserit), SiO₂·nH₂O: Opal-A mit rund 10 % Wasser, reift zu Quarz; Mikroben bis 50 % des Volumens; junger Sinter reicher an Arsen und Antimon.</dd>
+        <dt>Zum Vergleich</dt><dd>Travertin CaCO₃ (Mammoth, rund 3 mm am Tag), Schwefel S₈ und Eisen(III)-oxid (saure Quellen in Norris), Skorodit FeAsO₄·2H₂O (Porcelain Basin, Gap Spring), Alunit KAl₃(SO₄)₂(OH)₆ (saure Umwandlung).</dd>
+        <dt>Geändert</dt><dd>Statt Gips steht Alunit in der Liste: Für Gips in Yellowstone fand sich kein Beleg, Alunit nennt der USGS ausdrücklich.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--sulfur)">Zeitraffer an Castle</span>
+      <dl>
+        <dt>Zahlen</dt><dd>Rund 5000 t Sinter, 470 bis 940 kg im Jahr; nur rund 2 % der ausgeschütteten Kieselsäure bleiben liegen. Der Kegel ist um 1022 datiert.</dd>
+        <dt>Ablauf</dt><dd>Erst die Terrasse, dann der Kegel, wie die Schichtfolge es zeigt. Die Dauer der Terrasse (rund 6000 Jahre) ist aus Masse und mittlerer Rate gerechnet, nicht gemessen; das sagt auch die Tafel. Die letzten 1000 Jahre laufen langsamer, am Ende steht die Kamera 5 s still.</dd>
+        <dt>Technik</dt><dd>Die 3982 Ecken von Sockel und Kegel werden im Netz der Szene gehoben, Normalen und Schatten ziehen mit. Taste Z oder Knopf in der Lupe.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--teal)">Datenbank und Prüfung</span>
+      <dl>
+        <dt>Nur lesend</dt><dd>Die Lupe liest 11 Elemente aus <code>am_element</code> (öffentlich über das Synonym), angemeldet als DEMO aus <code>db/db.properties</code>. Kein Skript, kein neues Objekt; die <code>GEY_</code>-Tabellen plant Phase 9 mit dir.</dd>
+        <dt>Ohne DB</dt><dd>Eingebaute Werte (IUPAC-Massen, häufigstes Isotop, Pauling). Unten in der Lupe steht, welche Quelle gilt und warum.</dd>
+        <dt>Projekt</dt><dd><code>ATOMMODEL.jar</code> nach <code>lib/</code> kopiert und im Klassenpfad eingetragen, <code>db/db.properties</code> und <code>db/LIESMICH.txt</code> angelegt (die Datei steht in <code>.gitignore</code>). 44 Quelldateien.</dd>
+        <dt>Geprüft</dt><dd>Hier ohne Datenbank: Lupe, Wechsel der Ablagerungen und Elemente, Zeitraffer bis zum heutigen Kegel. Die Abfrage gegen <code>am_element</code> nutzt dieselben Spalten wie das ATOMMODEL selbst; laufen sehen kann ich sie nur bei dir.</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="card">
+    <span class="tag" style="color:var(--pool)">Bei dir</span>
+    <dl>
+      <dt>1</dt><dd>Clean and Build, dann F6. Bei laufender Datenbank die Lupe öffnen: Unten sollte „ATOMMODEL · am_element (11 von 11 Elementen)“ stehen.</dd>
+      <dt>2</dt><dd>Strg+Klick auf Morning Glory oder Grand Prismatic, Elemente durchklicken, dann in der Lupe „Zeitraffer am Castle Geyser“.</dd>
+      <dt>3</dt><dd>Ein Statusbild der Lupe mit Datenbank.</dd>
+    </dl>
+  </div>
+</section>
+
+<section id="phase56">
+  <h2>Phasen 5 und 6 · Dampf, Licht, Regie <small>geliefert 27.09.2026</small></h2>
+  <div class="gal">
+    <figure class="wide"><img src="./p5_regenbogen.jpg" alt="Old Faithful bricht am Morgen aus, die Sonne im Rücken des Betrachters, in der Gischt ein Regenbogen von Rot außen bis Violett innen" loading="lazy"><figcaption>19. Juli, 7:30 MDT: die Sonne 15° hoch im Rücken, der Bogen läuft durch die Säule, Rot außen</figcaption></figure>
+    <figure><img src="./p5_schatten.jpg" alt="Old Faithful mit Dampfwolke, deren sonnenabgewandte Seite grauer ist" loading="lazy"><figcaption>Eigenschatten: die sonnenabgewandte Seite der Wolke wird grau</figcaption></figure>
+    <figure><img src="./p5_ohne.jpg" alt="Dieselbe Szene ohne Eigenschatten, die Wolke gleichmäßig weiß" loading="lazy"><figcaption>Dieselbe Szene ohne Eigenschatten: flach und gleichmäßig weiß</figcaption></figure>
+    <figure class="wide"><img src="./p5_winter.jpg" alt="Old Faithful im Januar: Schnee auf dem Becken, über warmem Sinter getaut, beschneite Kiefern, große Dampfwolke" loading="lazy"><figcaption>20. Januar, −13 °C: Schnee nach den Normalwerten, über dem warmen Sinter fleckig getaut; der Dampf steht hoch</figcaption></figure>
+    <figure><img src="./p5_milch.jpg" alt="Nachthimmel im August bei Neumond, die Milchstraße mit dunklem Riss über einem bewaldeten Hügel" loading="lazy"><figcaption>12. August, 23:30, Neumond: Milchstraße mit dem Großen Riss</figcaption></figure>
+    <figure><img src="./p5_mond.jpg" alt="Old Faithful bei Vollmond, in der Gischt ein blasser Mondregenbogen" loading="lazy"><figcaption>29. Juli, 22:30, Vollmond: blasser Mondregenbogen</figcaption></figure>
+    <figure class="wide"><img src="./p6_app.jpg" alt="Die App im Drehbuch: Old Faithful bricht aus, in der Gischt ein Regenbogen, links unten die Tafel mit Quelle und die Zeitleiste" loading="lazy"><figcaption>Die App im Drehbuch: Tafel mit Quelle, Zeitleiste mit Schnitten, Regenbogen in der Säule</figcaption></figure>
+    <figure><img src="./p6_db1.jpg" alt="Morgengrauen über dem Becken" loading="lazy"><figcaption>Drehbuch 1 · Morgengrauen</figcaption></figure>
+    <figure><img src="./p6_db3.jpg" alt="Old Faithful mit Regenbogen vom Steg aus" loading="lazy"><figcaption>Drehbuch 3 · Regenbogen, Kamera aus dem Sonnenstand gesetzt</figcaption></figure>
+    <figure><img src="./p6_db5.jpg" alt="Grand Geyser als Fontäne" loading="lazy"><figcaption>Drehbuch 5 · Grand Geyser, 14 Uhr</figcaption></figure>
+    <figure><img src="./p6_db6.jpg" alt="Grand Prismatic von der Plattform aufsteigend" loading="lazy"><figcaption>Drehbuch 6 · Grand Prismatic</figcaption></figure>
+    <figure><img src="./p6_db7.jpg" alt="Old Faithful im Gegenlicht der Abendsonne" loading="lazy"><figcaption>Drehbuch 7 · Abend im Gegenlicht</figcaption></figure>
+    <figure><img src="./p6_db8.jpg" alt="Old Faithful unter dem Nachthimmel" loading="lazy"><figcaption>Drehbuch 8 · Nacht</figcaption></figure>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <span class="tag" style="color:var(--sulfur)">Phase 5 · Licht</span>
+      <dl>
+        <dt>Regenbogen</dt><dd>Jedes Wasserteilchen fragt seinen Winkel zum Gegenpunkt der Sonne ab. Hauptbogen Rot 42,2°, Grün 41,5°, Blau 40,8°, innen heller; Nebenbogen bei 50,5 bis 52,8° umgekehrt und schwächer; dazwischen Alexanders dunkles Band. Nachts leuchtet der Mond, der Bogen wird blass.</dd>
+        <dt>Eigenschatten</dt><dd>Ein grobes Dichteraster (3-m-Zellen) aus allen Dampf- und Gischtteilchen, neu in jedem Bild. Jedes Teilchen misst die Wolke zwischen sich und der Sonne und wie dicht es um sich herum ist.</dd>
+        <dt>Halbe Auflösung</dt><dd>Teilchen werden in halber Auflösung gezeichnet und tiefengerecht ins volle Bild gemischt; nahe Tropfen bleiben scharfe Striche. Das zielt auf dein Statusbild mit 13 Bilder/s nah an der Säule.</dd>
+        <dt>Sterne</dt><dd>137 helle Sterne an ihren Örtern (J2000), dazu Cassiopeia und Schwan; der galaktische Pol und das Zentrum legen die Milchstraße, mit Sternwolken und dem Großen Riss. Mondlicht wäscht sie aus.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--muted)">Phase 5 · Luft und Schnee</span>
+      <dl>
+        <dt>Klima</dt><dd>Normalwerte 1991–2020 am Old Faithful (NOAA): Januar im Mittel −2 bis −17 °C, Juli 24 bis 4 °C. Tagesgang mit dem Tiefstwert um 6:30 und dem Höchstwert um 15:30.</dd>
+        <dt>Dampf</dt><dd>Je kälter, desto dichter: an Wintermorgen volle Wolken, an Sommernachmittagen dünne Fahnen.</dd>
+        <dt>Schnee</dt><dd>Ein Tagesmodell über die Monatsmittel ergibt die Schneedecke von Ende Oktober bis Mitte Mai. Auf flachem Boden geschlossen, im Wald fleckig, auf Stegen festgetreten; über warmem Sinter und Abfluss getaut.</dd>
+        <dt>Raureif</dt><dd>Friert die Luft, setzt sich der Dampf an den Bäumen nahe den Quellen fest.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--teal)">Phase 6 · Regie</span>
+      <dl>
+        <dt>Blickpunkte</dt><dd>11 Blickpunkte, 7 im Upper Basin (Bänke, Geyser Hill, Castle, Grand, Riverside, Morning Glory, Luftbild) und 3 in Midway (Plattform, Excelsior, Luftbild), dazu die Übersicht. Weite Wege im Bogen über das Becken. Taste G.</dd>
+        <dt>Fahrten</dt><dd>Kranfahrt am Old Faithful mit Ausbruch, den Firehole hinab, um Grand Prismatic, von Midway ins Upper Basin. Taste F.</dd>
+        <dt>Rundgang</dt><dd>Auf den Brettern in Augenhöhe: Halbrund um Old Faithful, der dabei ausbricht, Brücke, Runde über Geyser Hill; der Blick wendet sich den Geysiren zu. Rund 6 Minuten, Taste T.</dd>
+        <dt>Drehbuch</dt><dd>„Ein Tag am Old Faithful“, 2:46 Minuten, 8 Einstellungen: Morgengrauen, Ausbruch, Regenbogen, Castle, Grand, Grand Prismatic, Abend im Gegenlicht, Nacht. Uhrzeiten aus dem Sonnenstand des eingestellten Tages. Taste B.</dd>
+        <dt>Übernahme</dt><dd>Jede Maus- oder Tasteneingabe beendet ein Programm; der Orbit übernimmt genau dort. Die Vorhersagetafel zeigt jetzt den Ausbruch, der der Kamera am nächsten ist.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--pool)">Prüfung</span>
+      <dl>
+        <dt>Bauen</dt><dd>37 Quelldateien, übersetzt gegen dein <code>FStyle.jar</code>, in deinen Ordner kopiert.</dd>
+        <dt>Bodenabstand</dt><dd>Alle Wege alle 0,1 s abgefahren: Kranfahrt mindestens 2,2 m über dem Boden, Firehole 48 m, Grand Prismatic 88 m, Midway–Upper 75 m, Rundgang 2,1 m (Augenhöhe auf den Brettern), Drehbuch 1,4 m. Die Regie hält das Auge zusätzlich immer 1,2 m über dem Gelände.</dd>
+        <dt>App</dt><dd>Unter Xvfb: Taste B startet das Drehbuch, Tafeln, Zeitleiste, Blenden und Ausbruch mit Regenbogen erscheinen wie geplant.</dd>
+        <dt>Teilchen</dt><dd>Hier mit 2 Kernen: der Teilchendurchgang nah an der Säule 45–100 ms bei 14 000 Teilchen, der Eigenschatten kostet davon wenige Prozent. Wie es bei dir läuft, zeigt dein Statusbild.</dd>
+        <dt>Genähert</dt><dd>Lage der Blickpunkte auf den Stegen, Tagesgang der Temperatur, Schneemodell, Helligkeit der Milchstraße.</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="card">
+    <span class="tag" style="color:var(--pool)">Bei dir</span>
+    <dl>
+      <dt>1</dt><dd>Clean and Build, dann F6. Im Bedienfeld unter REGIE das Drehbuch starten (oder Taste B), am besten im Kinomodus (K).</dd>
+      <dt>2</dt><dd>Den Tag auf Januar stellen: Schnee, Raureif, dichter Dampf. Nachts bei Neumond (12. August) die Milchstraße.</dd>
+      <dt>3</dt><dd>Ein Statusbild im Drehbuch nah an der Säule, damit wir sehen, was die halbe Auflösung bei dir bringt.</dd>
+    </dl>
+  </div>
+</section>
+
+<section id="phase234">
+  <h2>Phasen 2 bis 4 · Engine, Becken, Ausbrüche <small>geliefert 26.09.2026</small></h2>
+  <div class="gal">
+    <figure class="wide"><img src="./p4_of_morgen.jpg" alt="Old Faithful bricht im Gegenlicht der Morgensonne aus, die Säule leuchtet golden, Dampf zieht ab" loading="lazy"><figcaption>Old Faithful um 8:12 MDT im Gegenlicht: die Säule leuchtet, der Dampf zieht mit dem Wind</figcaption></figure>
+    <figure><img src="./p4_castle.jpg" alt="Castle Geyser bricht aus, davor Crested Pool mit orangen Abflussrinnen zum Fluss" loading="lazy"><figcaption>Castle, 90 s nach Beginn; vorn Crested Pool mit Rinnen zum Fluss</figcaption></figure>
+    <figure><img src="./p4_grand.jpg" alt="Grand Geyser als Fontäne in der Abendsonne, lange Schatten der Kiefern auf dem Sinter" loading="lazy"><figcaption>Grand am Abend: Fontäne in Stößen, lange Baumschatten</figcaption></figure>
+    <figure class="wide"><img src="./p4_gps.jpg" alt="Grand Prismatic Spring vom Aussichtspunkt am Hang: blaue Mitte, grüner und gelber Ring, oranges Vorfeld, links Kiefern" loading="lazy"><figcaption>Grand Prismatic vom Aussichtspunkt: Blau aus der Tiefe, Gelb und Orange aus den Matten</figcaption></figure>
+    <figure><img src="./p4_mg.jpg" alt="Morning Glory Pool von oben: grüngelber Rand, blaugrüne Mitte, Kaustiknetz am Grund" loading="lazy"><figcaption>Morning Glory aus 17 m: 69,8 °C, darum grüngelb mit Kaustik am Grund</figcaption></figure>
+    <figure><img src="./p4_riverside.jpg" alt="Riverside Geyser bricht am Ufer aus, der Firehole im Vordergrund" loading="lazy"><figcaption>Riverside, schräg über den Firehole</figcaption></figure>
+    <figure><img src="./p4_nebel.jpg" alt="Morgendunst über dem Becken bei Sonnenaufgang, Wald und Sinterflächen" loading="lazy"><figcaption>7:18 MDT: Dunst im Becken, Kiefern am Rand</figcaption></figure>
+    <figure><img src="./p4_nacht.jpg" alt="Old Faithful bei Nacht im Mondlicht, bläulich, dunkler Wald" loading="lazy"><figcaption>1:00 Uhr: Old Faithful im Licht des Vollmonds</figcaption></figure>
+    <figure class="wide"><img src="./p4_alle.jpg" alt="Übersicht mit fünf gleichzeitigen Ausbrüchen entlang des Flusses" loading="lazy"><figcaption>Belastungstest: alle fünf Geysire zugleich, 52 500 Teilchen</figcaption></figure>
+    <figure class="wide"><img src="./p4_app.jpg" alt="Die App: Old Faithful bricht aus, Tafel oben rechts zeigt 38 m, die Tafeln zeigen Zustand und nächste Ausbrüche" loading="lazy"><figcaption>Die App: Tafel oben rechts wie im Visitor Center, an den Geysiren Röhre, Grundtemperatur und Siedepunkt</figcaption></figure>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <span class="tag" style="color:var(--teal)">Phase 2 · Engine</span>
+      <dl>
+        <dt>Teilchen</dt><dd>Eigener Durchgang nach dem Undurchsichtigen: weiche Scheiben mit Tiefenprüfung und weichem Übergang an Flächen, beleuchtet mit Schattenkarte und Streufunktion (im Gegenlicht hell, gedeckelt). Nahe Tropfen als kurze Striche in Flugrichtung. Bis 90 000 Teilchen.</dd>
+        <dt>Quellwasser</dt><dd>Der Sehstrahl wird an der Oberfläche gebrochen (n = 1,333) und läuft zum Grund. Wasser schluckt Rot stark und Blau kaum, Kieselsäure streut Blau. Das ergibt das tiefe Blau der Mitte und Türkis über dem gelben Schelf. Dazu Kaustik am flachen Grund, Spiegelung nach Fresnel, Wallen über heißen Schloten.</dd>
+        <dt>Nässe</dt><dd>Ein Raster von 0,8 m um jeden Geysir. Landende Tropfen nässen, das Wasser läuft zur tiefsten Nachbarzelle und trocknet in der Sonne. Nasser Sinter wird dunkler, glatter und glänzt; der warme Film im Abfluss auch.</dd>
+        <dt>Licht</dt><dd>Die Säulen gehen ins Streulicht ein, Sonnenstrahlen fangen sich in der Gischt. Die feine Schattenkarte wandert mit der Ortswahl nach Midway.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--mat)">Phase 3 · Becken</span>
+      <dl>
+        <dt>Fluss</dt><dd>Neu gelegt nach den Ufern: Old Faithful, Castle und Morning Glory links (Südwesten), Beehive, Grand und Riverside rechts. Die Prüfung meldet jede Stelle auf ihrem Ufer.</dd>
+        <dt>Höhen</dt><dd>Old Faithful 2240 m, Beehive 2244, Castle 2235, Grand 2234, Morning Glory 2225, Grand Prismatic 2216, Excelsior 2212: der Boden ist dort genau auf diese Höhen geebnet.</dd>
+        <dt>Kegel</dt><dd>Hügel von Old Faithful mit Spaltschlot, Beehive als Bienenkorb, Castle auf breitem Sockel mit neun Zinnen, Riverside am Ufer. Geyserit perlig, mit Lagen und braunen Läufen.</dd>
+        <dt>Quellen</dt><dd>Grand, Crested Pool, Morning Glory, Doublet Pool, Heart Spring, Grand Prismatic (110 m), Excelsior als Krater mit steilen Wänden. Ränder aus perligem Geyserit.</dd>
+        <dt>Wald</dt><dd>10 500 Drehkiefern an den Waldrändern (Stamm, zwei Kegel, Wind), dahinter die Kronendecke als Bodenfarbe; tote Kiefern am Sinterrand, unten weiß.</dd>
+        <dt>Stege</dt><dd>Halbrund um Old Faithful, Brücke nach Geyser Hill mit Runde um Beehive, Weg an Castle, Brücke zu Grand, zurück aufs Westufer gegenüber Riverside, Ende bei Morning Glory; Midway mit Brücke, Excelsior-Rand und Bogen um Grand Prismatic; Plattform am Hang.</dd>
+        <dt>Midway</dt><dd>Zweites Feingitter (8 m), Ortswahl im Bedienfeld oder Taste M.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--pool)">Phase 4 · Wasser und Ausbruch</span>
+      <dl>
+        <dt>Röhre</dt><dd>Luftdruck auf 2240 m nach der Standardatmosphäre: 77 kPa, Siedepunkt 92,5 °C. Am Grund der 22 m tiefen Röhre von Old Faithful siedet das Wasser erst bei rund 132 °C. Vorspiel mit Überschwappen senkt den Druck, dann folgt der Ausbruch.</dd>
+        <dt>Kennzahlen</dt><dd>Old Faithful 30–55 m, 1,5–5 min, danach 65 oder 91 min; Beehive bis 61 m, 5 min, 8–24 h; Castle 27 m, 20 min, Dampfphase 35 min, 15–17 h; Grand bis 61 m in 2 bis 4 Stößen, 9–12 min, 6–7 h; Riverside 23 m, 28° geneigt über den Fluss, 20 min, 5–7 h.</dd>
+        <dt>Säule</dt><dd>Kern aus dichten Strängen, Gischt, Tropfen und Dampf; die Anfangsgeschwindigkeit ist mit Luftwiderstand gerechnet, damit die Säule die Höhe erreicht. Spritzer beim Aufprall, Riverside landet im Fluss.</dd>
+        <dt>Farben</dt><dd>Temperaturfeld je Quelle mit Rinnen, die in Metern schmal bleiben, mäandern und verzweigen. Über 75 °C blass, bis 73 °C gelbgrün, dann orange, rost, braun (NPS). Im Sommer kräftiger, im Winter olivgrün. Feine Sinterterrassen quer zum Abfluss.</dd>
+        <dt>Bedienung</dt><dd>Abschnitt GEYSIRE: Geysir wählen, „Ausbruch jetzt“, „Warten abkürzen“ (60-fach bis zum nächsten Ausbruch, Taste V), Taste X löst den Geysir am Drehpunkt aus. Die Uhr läuft jetzt in Echtzeit mit. Tafel oben rechts wie im Visitor Center.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--sulfur)">Prüfung</span>
+      <dl>
+        <dt>Bauen</dt><dd>30 Quelldateien, 6368 Zeilen, übersetzt gegen dein <code>FStyle.jar</code>. 677 000 Dreiecke, Aufbau hier 5,8 s (bei dir etwa eine Sekunde).</dd>
+        <dt>Ufer</dt><dd>Alle sieben Stellen auf ihrem Ufer; Abstände zum Wasser 14 m (Riverside) bis 155 m (Grand Prismatic).</dd>
+        <dt>Teilchen</dt><dd>Alle fünf Geysire zugleich: 52 500 bis 55 300 Teilchen, ein Simulationsschritt 2,9 ms, Zeichnen aus der Ferne 31–37 ms mit 2 Kernen. Nah an einer Säule 115–185 ms hier. Ob bei dir die 30 Bilder/s halten, zeigt dein Statusbild.</dd>
+        <dt>App</dt><dd>Unter Xvfb: Old Faithful beginnt nach 50 s mit dem Vorspiel und bricht aus; die Tafeln zeigen Zustand, Temperatur und Vorhersage.</dd>
+        <dt>Behoben</dt><dd>Löcher an der Grenze zwischen feinem und mittlerem Gitter: durch sie schien der Himmel, in deinem Statusbild die gerade Kante. Jetzt hängen auch an den Lochrändern Säume. Außerdem ein NaN im Rand der Becken, das ein Bild schwarz machte.</dd>
+        <dt>Genähert</dt><dd>Linien von Fluss und Stegen, Lage von Crested Pool, Doublet Pool und Heart Spring, Größe des Excelsior-Kraters, Lufttemperatur (bestimmt, wie viel Dampf man sieht) und die Temperatur der Röhre am Grund. Die Lufttemperatur belegt Phase 5.</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="card">
+    <span class="tag" style="color:var(--pool)">Bei dir</span>
+    <dl>
+      <dt>1</dt><dd>Clean and Build, dann F6. Nach etwa 50 s beginnt Old Faithful mit dem Vorspiel; Taste 1 fliegt hin.</dd>
+      <dt>2</dt><dd>Im Abschnitt GEYSIRE Grand oder Castle auslösen, „Warten abkürzen“ probieren, mit M nach Midway wechseln und mit 7 zu Grand Prismatic fliegen.</dd>
+      <dt>3</dt><dd>Ein Statusbild nah an einem Ausbruch (Teilchen, Bilder/s) und eins in der Übersicht.</dd>
+    </dl>
+  </div>
+</section>
+
+<section id="phase1">
+  <h2>Phase 1 · Fundament <small>geliefert 26.09.2026</small></h2>
+  <div class="gal">
+    <figure class="wide"><img src="./p1_app.jpg" alt="Die App: das Becken von Südosten um 9 Uhr, der Firehole River, Sinterflächen, sieben beschriftete Stellen, rechts das Bedienfeld" loading="lazy"><figcaption>Die App um 9:00 MDT: Übersicht mit Absteckung, rechts das Bedienfeld</figcaption></figure>
+    <figure><img src="./p1_oldfaithful.jpg" alt="Old Faithful aus 170 m: Sinterfläche mit rostbraunen Rinnen, dahinter der Fluss und die bewaldeten Hänge" loading="lazy"><figcaption>Taste 1: Old Faithful, Sinter mit Abflussrinnen</figcaption></figure>
+    <figure><img src="./p1_sinter.jpg" alt="Aus 12 m: der Pfosten am Schlot von Old Faithful auf rissigem Sinter" loading="lazy"><figcaption>Aus 12 m: Pfosten am Schlot, Risse im Sinter</figcaption></figure>
+    <figure><img src="./p1_abend.jpg" alt="Sonnenuntergang von den Hängen im Osten: das Becken im Gegenlicht, der Fluss glänzt" loading="lazy"><figcaption>18:48 MDT von den Hängen im Osten, Sonne 3,9° hoch</figcaption></figure>
+    <figure><img src="./p1_nacht.jpg" alt="Nacht im Mondlicht: das Becken bläulich, die Sinterflächen hell" loading="lazy"><figcaption>23:00 MDT: Vollmond 40° hoch, Mondschatten</figcaption></figure>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <span class="tag" style="color:var(--teal)">Was drin ist</span>
+      <dl>
+        <dt>Start</dt><dd>FFrame maximiert, Startbild mit aufsteigendem Dampf und zwei Schritten (Gelände, Sonne und Schatten), Bedienfeld mit FScrollBar, Statuszeile mit Sonne, Höhe der Kamera über dem Meer, Dreiecken, Bildern je Sekunde.</dd>
+        <dt>Gelände</dt><dd>Drei Gitter ineinander: 8 m über dem Becken (2,1 × 2,4 km), 48 m über dem Tal bis Midway, 672 m bis 60 km. 334 000 Dreiecke, Säume gegen Ritzen, Himmelssicht je Knoten (Mulden und Hangfüße dunkler). Höhen bezogen auf Old Faithful (2240 m): Castle −5,6 m, Morning Glory −16,4 m, passend zu 2235 m und 2225 m.</dd>
+        <dt>Boden</dt><dd>Eine Bodenkarte mit 4 m und 24 m Rastern: Sinter cremeweiß bis grau mit feinen Rissen und rostbraunen Abflussrinnen, strohige Spätsommerwiese, Wald als dunkle Kronendecke mit toten Flecken (die Bäume kommen in Phase 3), nasses Ufer, rötlicher Rhyolith an steilen Hängen.</dd>
+        <dt>Fluss</dt><dd>Der Firehole aus 20 Stützpunkten mit leichtem Mäander: zwischen Old Faithful und Geyser Hill, nordöstlich an Castle vorbei, Grand am Nordufer, Riverside am Ostufer, Morning Glory am Westufer, dann über Biscuit Basin nach Midway. Wellen wandern mit der Strömung, das Wasser spiegelt Hänge und Himmel. An kalten Morgen dampft er.</dd>
+        <dt>Sonne, Mond</dt><dd>NOAA-Formeln für 44,46° N, 110,83° W. Die Uhr zeigt Mountain Time, bis 1. November 2026 MDT, danach MST. Der Mond steht nach seiner Phase, gerechnet vom Neumond am 6. Januar 2000: am 26. September 2026 ist Vollmond. Zwei Schattenkarten, 0,6 m über dem Becken und knapp 7 m über dem Tal für die langen Hangschatten am Abend.</dd>
+        <dt>Absteckung</dt><dd>Sieben Stellen nach WGS 84 mit Pfosten, Tafeln mit Kennzahlen aus NPS und Wikipedia. Tafeln weichen einander aus, verdeckte werden blass. Tasten 1 bis 7 fliegen hin, L blendet aus.</dd>
+        <dt>Engine</dt><dd>Kern aus Semiramis: Rasterung auf allen Kernen, Schattenkarten, Lichtstrahlen, Überstrahlen, Belichtung, Filmkurve, Qualität Auto, Standbild (P), Kinomodus (K). Neu: Der Boden ist ein Netz statt einer Ebene, und die Luft passt zu 2240 m, also dünner und im Zenit blauer.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--sulfur)">Prüfung</span>
+      <dl>
+        <dt>Bauen</dt><dd>23 Quelldateien, 4278 Zeilen, übersetzt mit JDK 21 gegen dein <code>FStyle.jar</code>.</dd>
+        <dt>Oberfläche</dt><dd>Unter Xvfb gestartet: Startbild, Übersicht, Beschriftung, Bedienfeld. Das große Bild oben stammt aus der App, die anderen aus demselben Bildrechner.</dd>
+        <dt>Sonne</dt><dd>26.09.2026: um 9:00 MDT 17,8° hoch aus 110°, um 18:48 MDT noch 3,9°. Um 23:00 steht der Vollmond 40° hoch.</dd>
+        <dt>Tempo hier</dt><dd>Mit nur 2 Kernen: Aufbau 3,6 bis 5,4 s, ein Bild in 1280 × 720 rund 350 ms. Auf deinem Rechner mit mehr Kernen geht das deutlich schneller; dein Statusbild zeigt, wie schnell.</dd>
+        <dt>Vorläufig</dt><dd>Der Flusslauf zwischen den Geysiren ist aus ihren Lagen abgeleitet. In Phase 3 prüfe ich ihn gegen Karten, zusammen mit Stegen, Kegeln und Wald.</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="card">
+    <span class="tag" style="color:var(--pool)">Bei dir</span>
+    <dl>
+      <dt>1</dt><dd>Clean and Build, dann F6. <code>main.class</code> steht auf <code>com.dan.geyser.GeyserApp</code>, <code>run.jvmargs</code> auf <code>-Xmx4g</code>. Außerhalb von NetBeans startet <code>Geyser.bat</code> das Jar.</dd>
+      <dt>2</dt><dd>1 bis 7 durchgehen, mit + und − die Uhrzeit schieben, Zeitraffer einmal an. Ein Statusbild der Übersicht zeigt mir das Tempo.</dd>
+      <dt>3</dt><dd>Freigabe für Phase 2 (Engine), gern mit weiteren Phasen zusammen.</dd>
+    </dl>
+  </div>
+</section>
+
+<section>
+  <h2>Befund <small>Ausgangslage vor Phase 1</small></h2>
+  <div class="cols">
+    <div class="card">
+      <span class="tag" style="color:var(--teal)">Geyser</span>
+      <dl>
+        <dt>Projekt</dt><dd>Ant, <code>Geyser.jar</code>, <code>javac.source/target 21</code>, Plattform JDK_21, UTF-8</dd>
+        <dt>Klassenpfad</dt><dd><code>lib/FStyle.jar</code> (14,8 MB) und <code>lib/ojdbc11.jar</code></dd>
+        <dt>Quellen</dt><dd>keine; <code>main.class</code> ist leer</dd>
+        <dt>Datenbank</dt><dd>Oracle 21c, Service <code>PDBORCL</code>, Schema <code>DEMO</code>. Präfix <code>GEY_</code> ist nach dem Stand von Semiramis frei; das prüft das Bestandswerkzeug vor dem Einrichten.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--mat)">Vorbilder</span>
+      <dl>
+        <dt>Semiramis</dt><dd>46 Quelldateien in <code>com.dan.semiramis</code>: <code>core</code> (Engine3D, ShadowMap, Sprites, PointLights, Noise, MeshBuilder), <code>camera</code> (Blickpunkte, Fahrten, Drehbuch), <code>effects</code>, <code>world</code>, <code>ui</code>, <code>db</code>, <code>tools</code>. Qualität Auto mit Ziel 30 Bilder/s, Farbstil, Kinomodus, Standbilder mit Metadaten.</dd>
+        <dt>Caracalla</dt><dd>Wasser, Dampf und Lichteinfall durch Fenster, Thermografie, Schnitt, Datenbank <code>CAR_</code> mit Einrichter und Durchstich.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <span class="tag" style="color:var(--pool)">ATOMMODEL</span>
+      <dl>
+        <dt>Jar</dt><dd><code>dist/ATOMMODEL.jar</code> und <code>ATOMMODEL-palette.jar</code> mit <code>FAtomView</code>, <code>FPeriodicTable</code>, Renderer und Animator; gebaut für Java 8, läuft unter 21</dd>
+        <dt>Datenbank</dt><dd>Öffentliche Sichten <code>AM_ELEMENT_V</code>, <code>AM_ISOTOPE_V</code>, <code>AM_CATEGORY_V</code> und Package <code>AM_API</code> (<code>element_no</code>, <code>electron_config</code>, <code>shells</code>, <code>nucleus</code>, <code>color_hex</code>) per Public Synonym</dd>
+        <dt>Zugang</dt><dd>Die ATOMMODEL-App meldet sich schon als DEMO an. Ein Fremdschlüssel von <code>GEY_</code> auf ATOMDATA geht ohne Zusatzrecht nicht; die Prüfung übernimmt der Einrichter.</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Ideen <small>zum Aussuchen in den Fragen</small></h2>
+  <div class="ideas">
+    <div class="idea"><span class="k" style="color:var(--teal)">Schauplatz</span><h3>Upper Geyser Basin</h3><p>Old Faithful, Castle, Grand, Beehive und Morning Glory Pool am Firehole River, mit Holzstegen, Lodgepole-Kiefern und dem Hügel dahinter. Als zweiter Ort per Schalter die Grand Prismatic Spring im Midway Geyser Basin, 110 m breit, 50 m tief, rund 70 °C.</p></div>
+    <div class="idea"><span class="k" style="color:var(--pool)">Ausbruch</span><h3>Physik statt Keyframes</h3><p>Ein einfaches Modell der Röhre: Wasser wird von unten geheizt, der Siedepunkt steigt mit dem Druck. Kocht es oben über, fällt der Druck, das Wasser darunter verdampft schlagartig und die Säule schießt hoch. Daraus ergeben sich Vorspiel, Hauptsäule (bei Old Faithful 30 bis 55 m, 1,5 bis 5 Minuten) und Dampfphase.</p></div>
+    <div class="idea"><span class="k" style="color:var(--pool)">Wasser</span><h3>Tropfen, Gischt, Abfluss</h3><p>Zehntausende Tropfen im Flug mit Wind, Aufprall als Spritzer, nasser Sinter glänzt und trocknet langsam. Das Wasser läuft in flachen Rinnen über die Terrassen zum Fluss. Die Becken spiegeln Himmel und Dampf.</p></div>
+    <div class="idea"><span class="k" style="color:var(--muted)">Dampf</span><h3>Dampf nach Lufttemperatur</h3><p>Wie viel Dampf man sieht, hängt an der Luft: an einem kalten Wintermorgen verschwindet das ganze Becken in Wolken, im Sommermittag ist es fast klar. Dampf wird von der Sonne durchleuchtet, auf der Schattenseite grau.</p></div>
+    <div class="idea"><span class="k" style="color:var(--sulfur)">Licht</span><h3>Regenbogen im Sprühnebel</h3><p>Sonnenstand über Yellowstone nach Datum und Uhrzeit. Steht die Sonne im Rücken, erscheint der Bogen bei 42° um den Gegenpunkt der Sonne, nur dort, wo Tropfen in der Luft sind. Dazu Lichtstrahlen durch den Dampf, nachts Mondregenbogen und Milchstraße.</p></div>
+    <div class="idea"><span class="k" style="color:var(--mat)">Farben</span><h3>Bakterienmatten nach Temperatur</h3><p>Ein Temperaturfeld je Quelle bestimmt die Farbe: tiefblau in der heißen Mitte, nach außen gelb, orange, rostbraun. Im Sommer leuchten die Matten orange, im Winter werden sie dunkler grün. Das Band oben auf der Seite zeigt die Abfolge.</p></div>
+    <div class="idea"><span class="k" style="color:var(--pool)">ATOMMODEL</span><h3>Die Mineral-Lupe</h3><p>Ein Klick auf den Rand einer Quelle öffnet die Ablagerung: Kieselsinter (Geyserit, SiO₂·nH₂O), Travertin (CaCO₃), Schwefel, Eisenoxide, Arsen. Daneben dreht sich jedes beteiligte Element als animiertes Atom aus ATOMMODEL, mit Daten aus <code>AM_ELEMENT_V</code>.</p></div>
+    <div class="idea"><span class="k" style="color:var(--pool)">ATOMMODEL</span><h3>Sinter wächst im Zeitraffer</h3><p>Sinter wächst nur Millimeter im Jahr. Ein Zeitraffer über Jahrhunderte baut den Kegel von Castle Geyser Schicht für Schicht auf, jede Schicht mit ihrer Zusammensetzung. Dazu die „Bobby-Socks“-Bäume: Kiefern, die Kieselsäure aufsaugen, sterben und unten weiß werden.</p></div>
+    <div class="idea"><span class="k" style="color:var(--teal)">Kamera</span><h3>Vom Becken bis zur Perle</h3><p>Orbit und Zoom über fünf Größenordnungen: das ganze Becken aus der Luft, der Steg, der Kraterrand, die Sinterperlen im Abfluss. Fahrten wie der Blick vom Overlook Trail auf die Grand Prismatic, ein Rundgang auf den Stegen und das Drehbuch „Ein Tag am Old Faithful“.</p></div>
+    <div class="idea"><span class="k" style="color:var(--rust)">Schnitt</span><h3>Blick in die Röhre</h3><p>Ein Schnitt durch den Boden zeigt Röhre, Kammer und aufsteigende Blasen, die Temperatur als Farbe und den Druck als Kurve. Man sieht, wie der Ausbruch unten beginnt, bevor oben etwas passiert.</p></div>
+    <div class="idea"><span class="k" style="color:var(--sulfur)">Vorhersage</span><h3>Tafel wie im Visitor Center</h3><p>Die Szene sagt die nächste Eruption voraus, so wie die Ranger es tun: aus der Dauer des letzten Ausbruchs. Jede Eruption landet im Protokoll, auf Wunsch in der Datenbank.</p></div>
+    <div class="idea"><span class="k" style="color:var(--pine)">Jahreszeiten</span><h3>Sommer und Winter</h3><p>Im Winter Schnee auf dem Sinter, Raureif an den Bäumen („Ghost Trees“), Bisons, die sich im warmen Dampf aufhalten. Im Sommer Gras, Wapitis, flirrende Hitze über dem Sinter.</p></div>
+  </div>
+
+  <h3>Farbzonen einer heißen Quelle</h3>
+  <div class="zones">
+    <div><i style="background:#0b4f8a"></i><b>über ~73 °C</b>zu heiß für Photosynthese; Wasser in eigener Farbe, tiefblau</div>
+    <div><i style="background:#8fd3cf"></i><b>Rand der Mitte</b>helles Türkis über weißem Sinter im Flachwasser</div>
+    <div><i style="background:#e3bd2f"></i><b>heiß</b>gelbe und gelbgrüne Matten mit Cyanobakterien</div>
+    <div><i style="background:#d9701f"></i><b>warm</b>orange; mehr Carotinoide, im Sommer kräftiger</div>
+    <div><i style="background:#8a3a1e"></i><b>kühler</b>rostbraun bis rot, am Ende des Abflusses</div>
+  </div>
+  <p class="src">Richtwerte für die Skizze. Die Temperaturgrenzen je Farbe werden in Phase 4 mit Quellen belegt und dann als Parameter in Code und Datenbank geführt.</p>
+</section>
+
+<section>
+  <h2>ATOMMODEL einbinden <small>Vorschlag zu Frage 9</small></h2>
+  <div class="diag">
+    <svg viewBox="0 0 760 250" role="img" aria-label="Die App Geyser nutzt ATOMMODEL.jar für die Atomansicht und liest über DEMO die öffentlichen Sichten von ATOMMODEL sowie die eigenen Tabellen GEY_">
+      <rect class="bx app" x="20" y="90" width="190" height="80" rx="4"></rect>
+      <text class="hd" x="34" y="114">Geyser (App)</text>
+      <text class="sm" x="34" y="134">com.dan.geyser</text>
+      <text class="sm" x="34" y="150">Mineral-Lupe · Zeitraffer</text>
+
+      <rect class="bx atom" x="290" y="20" width="200" height="80" rx="4"></rect>
+      <text class="hd" x="304" y="44">ATOMMODEL.jar</text>
+      <text class="sm" x="304" y="64">lib/ im Projekt Geyser</text>
+      <text class="sm" x="304" y="80">FAtomView: Kern, Schalen, Elektronen</text>
+
+      <rect class="bx db" x="290" y="150" width="200" height="80" rx="4"></rect>
+      <text class="hd" x="304" y="174">DEMO.GEY_MINERAL</text>
+      <text class="sm" x="304" y="194">GEY_MINERAL_ELEMENT</text>
+      <text class="sm" x="304" y="210">Formel, Anteil, Fundort (8307)</text>
+
+      <rect class="bx atom" x="560" y="150" width="180" height="80" rx="4"></rect>
+      <text class="hd" x="574" y="174">ATOMMODEL (public)</text>
+      <text class="sm" x="574" y="194">AM_ELEMENT_V · AM_API</text>
+      <text class="sm" x="574" y="210">Schalen, Konfiguration, Farbe</text>
+
+      <path class="ln" d="M210 115 C250 115 250 60 290 60"></path>
+      <path class="ln" d="M210 145 C250 145 250 190 290 190"></path>
+      <path class="ln dash" d="M490 190 L560 190"></path>
+      <text class="sm" x="496" y="182">Symbol</text>
+      <path class="ln dash" d="M390 100 L390 150"></path>
+      <text class="sm" x="398" y="130">Z je Element</text>
+      <text class="sm" x="20" y="200">ohne DB: Mineralien</text>
+      <text class="sm" x="20" y="214">und Elementdaten</text>
+      <text class="sm" x="20" y="228">als Rückfall im Code</text>
+    </svg>
+  </div>
+  <p class="src">Die Lupe kennt sechs Ablagerungen: Kieselsinter (Si, O, H), Travertin (Ca, C, O), Schwefel (S), Eisenoxid/Ferrihydrit (Fe, O, H), Skorodit (Fe, As, O, H) und Gips (Ca, S, O, H). Die Zuordnung Mineral zu Element steht in <code>GEY_MINERAL_ELEMENT</code> und wird beim Einrichten gegen <code>AM_ELEMENT_V</code> geprüft, weil ein Fremdschlüssel über Schemas hinweg ein Zusatzrecht bräuchte.</p>
+</section>
+
+<section>
+  <h2>Entscheidungen <small>entschieden 26.09.2026 · alles A</small></h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>#</th><th>Frage</th><th>Optionen</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="n">1</td><td class="q">Schauplatz</td><td><span class="opt rec"><i>A</i>Upper Geyser Basin (Old Faithful, Castle, Grand, Beehive, Morning Glory, Firehole River), Grand Prismatic als zweiter Ort per Schalter</span><span class="opt"><i>B</i>Nur Old Faithful mit Umgebung</span><span class="opt"><i>C</i>Ein erfundenes Becken, das alle Höhepunkte vereint</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">2</td><td class="q">Geometrie</td><td><span class="opt rec"><i>A</i>Parametrisch im Code, Lage der Quellen nach echten Koordinaten (8307) auf eine lokale Ebene umgerechnet</span><span class="opt"><i>B</i>Gelände und Kegel in Blender modellieren und einlesen (wie FWaterfall)</span><span class="opt"><i>C</i>Höhenmodell vom USGS, das du herunterlädst</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">3</td><td class="q">Engine</td><td><span class="opt rec"><i>A</i>Engine aus Semiramis übernehmen nach <code>com.dan.geyser.core</code> und erweitern (Transparenz, nasse Flächen, Teilchen in größerer Zahl)</span><span class="opt"><i>B</i>Neu schreiben</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">4</td><td class="q">Ausbruch</td><td><span class="opt rec"><i>A</i>Physikalisch angelehntes Röhrenmodell (Druck, Siedepunkt, Entspannung) steuert Zeitpunkt, Höhe und Dauer; jeder Geysir hat eigene Kennwerte</span><span class="opt"><i>B</i>Feste Kurven je Geysir</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">5</td><td class="q">Wasser</td><td><span class="opt rec"><i>A</i>Tropfen als Teilchen mit Wind, Aufprall und Spritzern, nasser Sinter, Abflussrinnen, spiegelnde Becken, Firehole River mit Strömung</span><span class="opt"><i>B</i>Nur Sprites für die Säule, Becken ohne Spiegelung</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">6</td><td class="q">Dampf</td><td><span class="opt rec"><i>A</i>Menge nach Lufttemperatur und Feuchte, von der Sonne durchleuchtet, Lichtstrahlen darin, Schwaden über Becken und Fluss</span><span class="opt"><i>B</i>Gleichbleibender Dampf</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">7</td><td class="q">Licht</td><td><span class="opt rec"><i>A</i>Sonnenstand über Yellowstone nach Datum und Uhrzeit, Regenbogen im Sprühnebel, Nacht mit Mond, Mondregenbogen und Milchstraße</span><span class="opt"><i>B</i>Vier feste Tageszeiten</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">8</td><td class="q">Farben der Quellen</td><td><span class="opt rec"><i>A</i>Aus einem Temperaturfeld je Quelle, mit Jahreszeit, leichtem Schimmern und Strömung im Abfluss</span><span class="opt"><i>B</i>Gemalte Farbringe</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">9</td><td class="q">ATOMMODEL</td><td><span class="opt rec"><i>A</i>Beides: <code>ATOMMODEL.jar</code> in <code>lib/</code> für die Atomansicht in der Mineral-Lupe, Elementdaten aus <code>AM_ELEMENT_V</code>/<code>AM_API</code>, Mineralien in <code>GEY_</code>; ohne DB Rückfall im Code</span><span class="opt"><i>B</i>Nur die Daten aus der DB, Atome selbst gezeichnet</span><span class="opt"><i>C</i>Nur das Jar, Daten fest im Code</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">10</td><td class="q">Kamera</td><td><span class="opt rec"><i>A</i>Orbit und Zoom vom Becken bis zur Sinterperle, Blickpunkte, Fahrten, Rundgang auf den Stegen, Drehbuch „Ein Tag am Old Faithful“</span><span class="opt"><i>B</i>Nur Orbit und Zoom</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">11</td><td class="q">Jahreszeiten</td><td><span class="opt rec"><i>A</i>Sommer und Winter umschaltbar (Schnee, Raureif, Bisons, Wapitis, Mattenfarben)</span><span class="opt"><i>B</i>Nur Sommer</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">12</td><td class="q">Oberfläche</td><td><span class="opt rec"><i>A</i>FFrame maximiert, Bedienfeld mit FAccordion und FScrollBar, Eingaben über FOptionPane/FDialog, wie bei Semiramis</span><span class="opt"><i>B</i>Nur Tasten und Statuszeile</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">13</td><td class="q">Datenbank</td><td><span class="opt rec"><i>A</i>Eigene Phase mit eigener Planung, Präfix <code>GEY_</code> in DEMO, Sequence und Trigger, <code>db/db.properties</code>, Einrichter mit Durchstich; die App läuft ohne DB</span><span class="opt"><i>B</i>DB von Anfang an Pflicht</span></td><td><span class="pill done">A</span></td></tr>
+        <tr><td class="n">14</td><td class="q">Zugaben</td><td><span class="opt rec"><i>A</i>Alle: Schnitt durch die Röhre, Thermografie, Sinter-Zeitraffer, Vorhersagetafel, Klang (Grollen, Zischen, Prasseln), Tiere</span><span class="opt"><i>B</i>Nur Schnitt und Vorhersagetafel</span></td><td><span class="pill done">A</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Phasen <small>jede Phase endet mit einer lauffähigen App</small></h2>
+  <div class="phases">
+    <div class="ph"><span class="n">0</span><div class="body"><h3>Konzept</h3><p>Befund, Ideen, Fragen, Plan. Dieses Werkbuch.</p><p class="dod"><b>Fertig, wenn</b>alle 14 Fragen entschieden sind.</p></div><div class="meta"><span class="pill done">erledigt</span><span class="size">S</span></div></div>
+    <div class="ph"><span class="n">1</span><div class="body"><h3>Fundament</h3><p><code>GeyserApp</code> im FFrame, maximiert, Bildschleife, Himmel mit Sonne nach Datum und Uhrzeit bei 44,46° N, 110,83° W, Boden des Beckens.</p><p class="dod"><b>Fertig, wenn</b>F6 ein Fenster mit Himmel und Boden zeigt, in dem sich die Sonne richtig bewegt.</p></div><div class="meta"><span class="pill done">geliefert</span><span class="size">S</span></div></div>
+    <div class="ph"><span class="n">2</span><div class="body"><h3>Engine</h3><p>Der Kern aus Semiramis steckt seit Phase 1 im Projekt. Jetzt wird er erweitert: Durchsichtiges nach dem Undurchsichtigen, weiche Teilchen an Flächen, nasse Glanzstellen, Spiegelung in Becken.</p><p class="dod"><b>Fertig, wenn</b>ein Probebecken spiegelt und 50 000 Teilchen die 30 Bilder/s halten.</p></div><div class="meta"><span class="pill done">geliefert</span><span class="size">M</span></div></div>
+    <div class="ph"><span class="n">3</span><div class="body"><h3>Becken</h3><p>Gelände, Sinterflächen und Terrassen, Kegel von Old Faithful und Castle, Quelltöpfe, Firehole River, Stege, Kiefernwald, Bobby-Socks-Bäume. Grand Prismatic mit Overlook als zweiter Ort.</p><p class="dod"><b>Fertig, wenn</b>beide Orte vollständig stehen und die Lage der Quellen zu den Koordinaten passt.</p></div><div class="meta"><span class="pill done">geliefert</span><span class="size">L</span></div></div>
+    <div class="ph"><span class="n">4</span><div class="body"><h3>Wasser und Ausbruch</h3><p>Röhrenmodell, Tropfensäule, Spritzer, Abfluss, Farben der Quellen aus dem Temperaturfeld, Strömung im Fluss.</p><p class="dod"><b>Fertig, wenn</b>Old Faithful in Höhe, Dauer und Abstand in den belegten Bereichen ausbricht.</p></div><div class="meta"><span class="pill done">geliefert</span><span class="size">L</span></div></div>
+    <div class="ph"><span class="n">5</span><div class="body"><h3>Dampf und Licht</h3><p>Dampf nach belegter Lufttemperatur mit Selbstschatten in der Wolke, Regenbogen bei 42° im Sprühnebel, Mondregenbogen, echte Sterne und Milchstraße, Winter mit Schnee und Raureif.</p><p class="dod"><b>Fertig, wenn</b>der Regenbogen bei Sonne im Rücken an der richtigen Stelle steht.</p></div><div class="meta"><span class="pill done">geliefert</span><span class="size">L</span></div></div>
+    <div class="ph"><span class="n">6</span><div class="body"><h3>Kamera und Regie</h3><p>Orbit und Zoom bis zur Sinterperle, Blickpunkte, Fahrten, Rundgang auf den Stegen, Drehbuch „Ein Tag am Old Faithful“.</p><p class="dod"><b>Fertig, wenn</b>keine Fahrt durch Gelände oder Bäume geht.</p></div><div class="meta"><span class="pill done">geliefert</span><span class="size">M</span></div></div>
+    <div class="ph"><span class="n">7</span><div class="body"><h3>Mineralien und ATOMMODEL</h3><p>Mineral-Lupe mit <code>FAtomView</code>, Sinter-Zeitraffer am Kegel von Castle Geyser, Ablagerungen am Rand der Quellen.</p><p class="dod"><b>Fertig, wenn</b>jede der sechs Ablagerungen ihre Atome zeigt, mit und ohne DB.</p></div><div class="meta"><span class="pill done">geliefert</span><span class="size">M</span></div></div>
+    <div class="ph"><span class="n">8</span><div class="body"><h3>Zugaben</h3><p>Schnitt durch die Röhre, Thermografie, Vorhersagetafel, Klang, Bisons und Wapitis.</p><p class="dod"><b>Fertig, wenn</b>jede Zugabe einzeln schaltbar ist und nichts bremst, was aus ist.</p></div><div class="meta"><span class="pill done">geliefert</span><span class="size">M</span></div></div>
+    <div class="ph"><span class="n">9</span><div class="body"><h3>Oberfläche und Datenbank</h3><p>Startbild, Bedienfeld, Planung der <code>GEY_</code>-Tabellen mit dir, Skripte, Einrichter, Zustand beim Beenden, Eruptionsprotokoll.</p><p class="dod"><b>Fertig, wenn</b>der Einrichter bei dir „alles in Ordnung“ meldet.</p></div><div class="meta"><span class="pill done">geliefert</span><span class="size">M</span></div></div>
+    <div class="ph"><span class="n">10</span><div class="body"><h3>Schliff</h3><p>Messen und beschleunigen, Farbstil, Kinomodus, README mit Bildern für GitHub, Icon.</p><p class="dod"><b>Fertig, wenn</b>das README steht und die Statusleiste bei dir 30 Bilder/s zeigt.</p></div><div class="meta"><span class="pill done">erledigt</span><span class="size">S</span></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Risiken</h2>
+  <div class="risks">
+    <div class="risk"><h3>Viele Teilchen in Software</h3><p>Säule, Spritzer und Dampf kosten auf der CPU am meisten.</p><p class="fix"><b>Gegenmittel:</b> feste Budgets je Effekt, Dampf in halber Auflösung, Qualität Auto wie bei Semiramis, Teilchen parallel auf allen Kernen.</p></div>
+    <div class="risk"><h3>Durchsichtiges im Tiefenpuffer</h3><p>Dampf und Gischt müssen hinter Kegeln verschwinden und vor dem Himmel weich bleiben.</p><p class="fix"><b>Gegenmittel:</b> eigener Durchgang nach dem Undurchsichtigen, weiche Kanten dort, wo Teilchen Flächen berühren.</p></div>
+    <div class="risk"><h3>Kopplung an ATOMMODEL</h3><p>Ändert sich das Jar, bricht die Lupe.</p><p class="fix"><b>Gegenmittel:</b> eine feste Kopie in <code>lib/</code>, Zugriff nur über eine kleine Hülle in <code>com.dan.geyser.atom</code>.</p></div>
+    <div class="risk"><h3>Echtheit der Zahlen</h3><p>Höhen, Temperaturen und Farben sollen stimmen.</p><p class="fix"><b>Gegenmittel:</b> jede Kennzahl wird vor der Phase nachgeschlagen und im Werkbuch mit Quelle geführt, nichts aus dem Gedächtnis.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Protokoll</h2>
+  <div class="log">
+    <div><time>26.09.2026 20:06</time><span>Auftrag: Geysire von Yellowstone mit Dampf, Wasser und Lichteinfall, Kamera mit Zoom und Rundumblick, Semiramis und Caracalla als Vorbild, ATOMMODEL für die Ablagerungen, DB PDBORCL/DEMO.</span></div>
+    <div><time>26.09.2026</time><span>Werkbuch angelegt. Ordner Geyser, Semiramis, CaracalasTherme und ATOMMODEL angesehen; Kennzahlen zu Old Faithful und Grand Prismatic beim NPS nachgeschlagen.</span></div>
+    <div><time>26.09.2026 20:17</time><span>Entscheidung: alles A. Phase 1 begonnen.</span></div>
+    <div><time>26.09.2026</time><span>Phase 1 geliefert: 23 Quelldateien in <code>src/com/dan/geyser</code>, <code>Geyser.bat</code>, <code>.gitignore</code>, Bilder unter <code>docs/bilder/phase1</code>. Koordinaten und Kennzahlen von Castle, Grand, Beehive, Riverside und Morning Glory nachgeschlagen.</span></div>
+    <div><time>26.09.2026 20:48</time><span>Absturz beim ersten Start bei dir: mit vielen Kernen gibt es mehr Bildstreifen als Zeilen, das Leeren der letzten, leeren Streifen brach ab. Behoben in <code>Engine3D.clearStrip</code>, geprüft mit 64 simulierten Kernen.</span></div>
+    <div><time>26.09.2026 20:55</time><span>Statusbild Phase 1: 22 Bilder/s, 43 ms je Bild, Aufbau 0,8 s. Phasen 2, 3 und 4 freigegeben.</span></div>
+    <div><time>26.09.2026</time><span>Phasen 2 bis 4 geliefert: 30 Quelldateien, Bilder unter <code>docs/bilder/phase4</code>. Nachgeschlagen: Farben der Matten nach Temperatur (NPS), Lage und Höhe von Excelsior.</span></div>
+    <div><time>27.09.2026</time><span>Statusbilder Phase 2 bis 4: Übersicht 36 Bilder/s (26 ms), nah an einem Ausbruch 13 Bilder/s (72 ms) mit 15 000 Teilchen. Daraus die Teilchen in halber Auflösung. Phasen 5 und 6 freigegeben.</span></div>
+    <div><time>27.09.2026</time><span>Phasen 5 und 6 geliefert: 37 Quelldateien (neu <code>SteamGrid</code>, <code>Climate</code>, <code>Stars</code>, <code>CameraPath</code>, <code>Director</code>, <code>Viewpoint</code>, <code>Regie</code>), Bilder unter <code>docs/bilder/phase5</code> und <code>phase6</code>. Nachgeschlagen: Klimanormalwerte am Old Faithful, Winkel des Regenbogens, Kennzahlen für die Tafeln des Drehbuchs.</span></div>
+    <div><time>27.09.2026 01:41</time><span>Phase 7 freigegeben.</span></div>
+    <div><time>27.09.2026</time><span>Phase 7 geliefert: 44 Quelldateien (neu <code>com.dan.geyser.atom</code> mit Lupe, Mineralien, Elementen, Zeitraffer; <code>com.dan.geyser.db.DbConfig</code>), <code>lib/ATOMMODEL.jar</code>, <code>db/db.properties</code>, Bilder unter <code>docs/bilder/phase7</code>. Nachgeschlagen: Zusammensetzung und Reifung des Sinters (USGS), Masse und Wachstum von Castle (J. Volcanol. Geotherm. Res. 2021), Travertin (USGS), saure Quellen in Norris (Frontiers 2012), saure Umwandlung (USGS). Gips durch Alunit ersetzt.</span></div>
+    <div><time>27.09.2026 02:00</time><span>Statusbild Phase 7: Die Lupe liest bei dir alle 11 Elemente aus <code>am_element</code> (verbunden als DEMO). Mit offener Lupe 14 Bilder/s (73 ms). Phase 8 freigegeben.</span></div>
+    <div><time>27.09.2026</time><span>Phase 8 geliefert: 48 Quelldateien, Bilder unter <code>docs/bilder/phase8</code>. Nachgeschlagen: Bison und Wapiti beim NPS (Größen, Winter an den Quellen, Brunftzeiten, Winterbestand der Wapitis, Geweihabwurf), Abstandsregel 25 Yards.</span></div>
+    <div><time>27.09.2026 07:30</time><span>Statusbilder Phase 8: Schnitt im Ausbruch (13 Bilder/s, 78 ms, 12 900 Teilchen) und Wärmebild (12 Bilder/s) mit sichtbarem Abfluss von Old Faithful. Phase 9 freigegeben.</span></div>
+    <div><time>27.09.2026</time><span>Phase 9 begonnen: Plan für die Datenbank mit Tabellenentwurf und acht offenen Fragen; Bestandsaufnahme <code>tools/DbBestand</code> (nur lesend), Eruptionsprotokoll der Sitzung, Zustand beim Beenden als Datei. 50 Quelldateien.</span></div>
+    <div><time>27.09.2026 07:49</time><span>Entwurf freigegeben. Skripte, Einrichter, Anbindung und Abschnitt DATENBANK umgesetzt; 57 Quelldateien.</span></div>
+    <div><time>27.09.2026 07:55</time><span>Einrichtung bei dir: <code>DbSetup</code> meldet „ERGEBNIS: alles in Ordnung“ (<code>db/einrichtung.txt</code>), die Abstände der Stellen in der Datenbank stimmen mit der Szene überein. Phase 10 freigegeben.</span></div>
+    <div><time>27.09.2026</time><span>Phase 10 geliefert: 58 Quelldateien (neu <code>tools/StillRender</code>), <code>README.md</code> mit 14 neuen Bildern unter <code>docs/bilder/readme</code>, <code>geyser.ico</code> und <code>geyser_256.png</code>, Bilder unter <code>docs/bilder/phase9</code> und <code>phase10</code>. Gemessen mit Java Flight Recorder; Licht, Temperaturfeld und Strahlen beschleunigt. Nachgeschlagen: Ansel Adams' Old Faithful im Mural Project 1941–42 (Library of Congress, National Archives).</span></div>
+    <div><time>27.09.2026 08:55</time><span>Statusbild Phase 10: 35 Bilder/s, 27 ms je Bild, 7 800 Teilchen, Licht zu 100 % behalten, 946 × 571 (Auto). Phase 10 erfüllt, das Projekt ist fertig.</span></div>
+    <div><time>27.09.2026 07:45</time><span>Entscheidung: alles A. Bestandsaufnahme vom 07:36 gelesen: GEY_ frei, Spatial V2 da, Rechte und Platz reichen, Längensemantik BYTE (daher CHAR-Semantik für Texte). Tabellenentwurf mit allen Spalten vorgelegt.</span></div>
+  </div>
+  <div class="next">
+    <span class="eyebrow">Nächster Schritt</span>
+    <p>Keiner mehr im Plan. Das Projekt kann mit dem README auf GitHub; <code>_to_delete/</code> und <code>db/db.properties</code> bleiben dabei draußen.</p>
+  </div>
+  <div class="src">Quellen
+    <ul>
+      <li><a href="https://home.nps.gov/articles/old-faithful-geyser.htm" target="_blank" rel="noopener">NPS: Old Faithful Geyser</a> (Höhe 30–55 m, Dauer 1,5–5 min, Abstand 50–127 min, 14 000–32 000 l, 76,5 °C)</li>
+      <li><a href="https://en.wikipedia.org/wiki/Grand_Prismatic_Spring" target="_blank" rel="noopener">Wikipedia: Grand Prismatic Spring</a> (110 m, 50 m tief, 70 °C, Mattenfarben nach Jahreszeit)</li>
+      <li><a href="https://www.nps.gov/places/000/grand-prismatic-spring.htm" target="_blank" rel="noopener">NPS: Grand Prismatic Spring</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Old_Faithful" target="_blank" rel="noopener">Wikipedia: Old Faithful</a> (44,46047° N, 110,82814° W, 2240 m; Vorhersage 65 min nach Ausbrüchen unter 2½ min, sonst 91 min)</li>
+      <li><a href="https://en.wikipedia.org/wiki/Castle_Geyser" target="_blank" rel="noopener">Wikipedia: Castle Geyser</a> (2235 m, 27 m, alle 15–17 h, Kegel rund 1000 Jahre)</li>
+      <li><a href="https://www.nps.gov/yell/learn/nature/thermophilic-communities.htm" target="_blank" rel="noopener">NPS: Thermophilic Communities</a> (alkalische Becken: über 75 °C blasse Fäden, darunter orange Cyanobakterien, im Winter olivgrün)</li>
+      <li><a href="https://www.nps.gov/features/yell/tours/fountainpaint/bacteria.htm" target="_blank" rel="noopener">NPS: Bakterien am Fountain Paint Pot</a> (Cyanobakterien bis 73 °C gelbgrün, kühler orange, rost, braun)</li>
+      <li><a href="https://en.wikipedia.org/wiki/Excelsior_Geyser" target="_blank" rel="noopener">Wikipedia: Excelsior Geyser</a> (44,526321° N, 110,8368778° W, 2212 m, 93 °C, 15 100–17 000 l/min in den Firehole)</li>
+      <li><a href="https://www.nationalparked.com/yellowstone/thermal-areas/upper-geyser-basin-north" target="_blank" rel="noopener">National Parked: Upper Geyser Basin North</a> (Brücken, Riverside über dem Fluss, Morning Glory am Ende des Weges)</li>
+      <li><a href="https://www.currentresults.com/Weather/Wyoming/Places/yellowstone-park-temperatures-by-month-average.php" target="_blank" rel="noopener">Current Results: Yellowstone-Temperaturen nach Monat</a> (Normalwerte 1991–2020 der NOAA, Station Old Faithful)</li>
+      <li><a href="https://en.wikipedia.org/wiki/Rainbow" target="_blank" rel="noopener">Wikipedia: Rainbow</a> (Hauptbogen Rot 42°, Violett 40,6°; Nebenbogen 50–53° umgekehrt; Alexanders Band; Mondregenbogen)</li>
+      <li><a href="https://www.nps.gov/features/yell/ofvec/exhibits/treasures/ugb/index.htm" target="_blank" rel="noopener">NPS: Upper Geyser Basin</a> (mindestens 150 Geysire auf einer Quadratmeile)</li>
+      <li><a href="https://www.usgs.gov/news/geysers-what-exactly-are-they-made" target="_blank" rel="noopener">USGS: Geysers—what exactly are they made of?</a> (Opal-A, rund 10 % Wasser, Reifung zu Quarz, Mikroben bis 50 %)</li>
+      <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0377027321002201" target="_blank" rel="noopener">J. Volcanol. Geotherm. Res. 2021: Structure and volume of large geysers</a> (Castle rund 5 kt, 470–940 kg/Jahr, 2 % abgelagert, junger Sinter reich an As und Sb)</li>
+      <li><a href="https://usgs.gov/observatories/yvo/news/travertine-yellowstones-hydrothermal-timekeeper" target="_blank" rel="noopener">USGS: Travertine—Yellowstone's hydrothermal timekeeper</a> (CaCO₃, rund 3 mm am Tag)</li>
+      <li><a href="https://www.frontiersin.org/journals/microbiology/articles/10.3389/fmicb.2012.00109/full" target="_blank" rel="noopener">Frontiers in Microbiology 2012: Microbial iron cycling in acidic geothermal springs</a> (Norris: pH 2,4–3,6, Schwefel am Quellmund, Eisenoxidmatten, Skorodit)</li>
+      <li><a href="https://www.usgs.gov/news/alterations-go-hydrothermal-alteration-yellowstone" target="_blank" rel="noopener">USGS: Alterations go hydrothermal</a> (Opal, Kaolinit, Alunit, Pyrit)</li>
+      <li><a href="https://www.usgs.gov/observatories/yvo/news/diverse-chemistry-yellowstones-hydrothermal-features" target="_blank" rel="noopener">USGS: The diverse chemistry of Yellowstone's hydrothermal features</a> (Wasserarten, Arsen im neutral-chloridischen Wasser)</li>
+      <li><a href="https://www.nps.gov/yell/learn/nature/bison.htm" target="_blank" rel="noopener">NPS: Bison</a> (bis 2000 lb, im Winter an Quellen, Brunft Juli und August)</li>
+      <li><a href="https://www.nps.gov/yell/learn/nature/elk.htm" target="_blank" rel="noopener">NPS: Elk</a> (Bullen rund 700 lb, fünf Fuß Schulterhöhe; Brunft Anfang September bis Mitte Oktober; im Winter unter 2000 im Park; Geweihabwurf März und April)</li>
+      <li><a href="https://www.nps.gov/yell/planyourvisit/safety.htm" target="_blank" rel="noopener">NPS: Safety</a> (mindestens 25 Yards zu Bisons und Wapitis, auf den Stegen bleiben)</li>
+      <li><a href="https://www.loc.gov/item/2021669745" target="_blank" rel="noopener">Library of Congress: Ansel Adams, Old Faithful Geyser, Yellowstone National Park</a> und <a href="https://unwritten-record.blogs.archives.gov/2021/04/27/79-aa-ansel-adams-photographs-of-national-parks-and-monuments-1941-1942/" target="_blank" rel="noopener">National Archives: 79-AA, Ansel Adams Photographs of National Parks and Monuments, 1941–1942</a> (Vorbild für den Farbstil Schwarzweiß)</li>
+      <li><a href="https://en.wikipedia.org/wiki/Grand_Geyser" target="_blank" rel="noopener">Wikipedia: Grand Geyser</a>, <a href="https://en.wikipedia.org/wiki/Beehive_Geyser" target="_blank" rel="noopener">Beehive Geyser</a>, <a href="https://en.wikipedia.org/wiki/Riverside_Geyser" target="_blank" rel="noopener">Riverside Geyser</a>, <a href="https://en.wikipedia.org/wiki/Morning_Glory_Pool" target="_blank" rel="noopener">Morning Glory Pool</a></li>
+    </ul>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var cv=document.getElementById('hero'), ctx=cv.getContext('2d');
+  var predT=document.getElementById('predT'), pred=document.getElementById('pred');
+  var W=0,H=0,dpr=1,bg=null,mask=null,mctx=null,fx=null,fctx=null,puff=null;
+  var CYCLE=16, t=3, drops=[], steam=[], last=0;
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function rnd(a,b){return a+Math.random()*(b-a);}
+  function mk(w,h){var c=document.createElement('canvas');c.width=Math.max(1,w|0);c.height=Math.max(1,h|0);return c;}
+
+  function makePuff(){
+    puff=mk(64,64);var p=puff.getContext('2d');
+    var g=p.createRadialGradient(32,32,0,32,32,32);
+    g.addColorStop(0,'rgba(255,250,244,1)');g.addColorStop(.45,'rgba(246,244,242,.55)');g.addColorStop(1,'rgba(240,240,240,0)');
+    p.fillStyle=g;p.fillRect(0,0,64,64);
+  }
+
+  function hills(c,y0,amp,col,seed,pines){
+    c.fillStyle=col;c.beginPath();c.moveTo(0,H);
+    for(var x=0;x<=W;x+=4){
+      var y=y0-amp*(0.5+0.3*Math.sin(x*0.011+seed)+0.2*Math.sin(x*0.029+seed*2.3));
+      c.lineTo(x,y);
+    }
+    c.lineTo(W,H);c.closePath();c.fill();
+    if(pines){
+      for(var x2=0;x2<W;x2+=rnd(3,7)){
+        var yb=y0-amp*(0.5+0.3*Math.sin(x2*0.011+seed)+0.2*Math.sin(x2*0.029+seed*2.3));
+        var h=rnd(pines*0.5,pines);
+        c.beginPath();c.moveTo(x2-h*0.16,yb+1);c.lineTo(x2,yb-h);c.lineTo(x2+h*0.16,yb+1);c.fill();
+      }
+    }
+  }
+
+  function drawStatic(){
+    bg=mk(W*dpr,H*dpr);var c=bg.getContext('2d');c.scale(dpr,dpr);
+    var hz=H*0.44;
+    var sky=c.createLinearGradient(0,0,0,hz);
+    sky.addColorStop(0,'#16345c');sky.addColorStop(.55,'#4f7ca6');sky.addColorStop(1,'#e9c7a2');
+    c.fillStyle=sky;c.fillRect(0,0,W,hz+2);
+    hills(c,hz+2,H*0.10,'#3f5560',1.3,0);
+    hills(c,hz+6,H*0.06,'#243a33',4.1,H*0.05);
+    // Sinterboden
+    var gr=c.createLinearGradient(0,hz,0,H);
+    gr.addColorStop(0,'#8e988f');gr.addColorStop(.35,'#c4c6b8');gr.addColorStop(1,'#e2e0d2');
+    c.fillStyle=gr;c.fillRect(0,hz+4,W,H-hz);
+    // Grand-Prismatic-artige Quelle
+    var cx=W*0.37, cy=H*0.76, rx=W*0.27, ry=H*0.105;
+    c.save();c.translate(cx,cy);c.scale(1,ry/rx);
+    for(var i=0;i<160;i++){
+      var a=i/160*Math.PI*2+rnd(-.05,.05), l=rx*rnd(1.04,1.28), w=rnd(0.03,0.07);
+      var g=c.createLinearGradient(Math.cos(a)*rx,Math.sin(a)*rx,Math.cos(a)*l,Math.sin(a)*l);
+      g.addColorStop(0,'rgba(150,66,30,.55)');g.addColorStop(.5,'rgba(196,112,44,.22)');g.addColorStop(1,'rgba(206,120,44,0)');
+      c.fillStyle=g;c.beginPath();c.moveTo(Math.cos(a-w)*rx*0.96,Math.sin(a-w)*rx*0.96);
+      c.lineTo(Math.cos(a)*l,Math.sin(a)*l);c.lineTo(Math.cos(a+w)*rx*0.96,Math.sin(a+w)*rx*0.96);c.fill();
+    }
+    var rings=[[1.0,'#8a3a1e'],[0.9,'#d06a1c'],[0.8,'#e3b52c'],[0.71,'#bcd07c'],[0.64,'#98d6cf'],[0.54,'#2aa3b6'],[0.42,'#136fa6'],[0.3,'#0a4b86']];
+    for(var k=0;k<rings.length;k++){
+      var r=rx*rings[k][0];
+      var rg=c.createRadialGradient(0,0,r*0.82,0,0,r);
+      rg.addColorStop(0,rings[k][1]);rg.addColorStop(1,rings[k][1]);
+      c.fillStyle=rings[k][1];c.beginPath();c.arc(0,0,r,0,Math.PI*2);c.fill();
+    }
+    // Himmelsspiegelung in der Mitte
+    var sp=c.createRadialGradient(-rx*0.1,-rx*0.15,0,0,0,rx*0.42);
+    sp.addColorStop(0,'rgba(200,225,245,.35)');sp.addColorStop(1,'rgba(200,225,245,0)');
+    c.fillStyle=sp;c.beginPath();c.arc(0,0,rx*0.42,0,Math.PI*2);c.fill();
+    c.restore();
+    // Geysirkegel
+    var gx=W*0.8, gy=H*0.64;
+    var cg=c.createRadialGradient(gx,gy,2,gx,gy,W*0.09);
+    cg.addColorStop(0,'#f1eee4');cg.addColorStop(.6,'#d8d4c4');cg.addColorStop(1,'rgba(200,196,180,0)');
+    c.fillStyle=cg;c.beginPath();c.ellipse(gx,gy+4,W*0.09,H*0.035,0,0,Math.PI*2);c.fill();
+    c.fillStyle='#e9e5d8';c.beginPath();c.ellipse(gx,gy,W*0.028,H*0.014,0,0,Math.PI*2);c.fill();
+    c.fillStyle='#6d6a60';c.beginPath();c.ellipse(gx,gy,W*0.008,H*0.004,0,0,Math.PI*2);c.fill();
+    // Holzsteg im Vordergrund
+    c.strokeStyle='#6b5037';c.lineWidth=Math.max(3,H*0.012);
+    c.beginPath();c.moveTo(W*0.58,H);c.quadraticCurveTo(W*0.7,H*0.84,W*1.02,H*0.8);c.stroke();
+    c.strokeStyle='#4a3726';c.lineWidth=1;
+    for(var s=0;s<14;s++){var u=s/13;var px=(1-u)*(1-u)*W*0.58+2*(1-u)*u*W*0.7+u*u*W*1.02;var py=(1-u)*(1-u)*H+2*(1-u)*u*H*0.84+u*u*H*0.8;
+      c.beginPath();c.moveTo(px,py);c.lineTo(px,py+H*0.03*(1-u*0.6));c.stroke();}
+    var sw=mk(W/2,H/2); mask=sw; mctx=sw.getContext('2d');
+    fx=mk(W/2,H/2); fctx=fx.getContext('2d');
+  }
+
+  function resize(){
+    var r=cv.getBoundingClientRect();
+    dpr=Math.min(2,window.devicePixelRatio||1);
+    W=Math.max(200,r.width);H=Math.max(125,r.height);
+    cv.width=W*dpr;cv.height=H*dpr;
+    drawStatic();
+  }
+
+  function intensity(p){
+    if(p<4) return 0;
+    if(p<5.6) return (Math.sin(p*23)>0.55?0.28:0.06);
+    if(p<6.4) return (p-5.6)/0.8;
+    if(p<11) return 1-0.12*Math.sin(p*3);
+    if(p<12.2) return 1-(p-11)/1.2;
+    return 0;
+  }
+
+  function step(dt){
+    t+=dt; var p=t%CYCLE, I=intensity(p);
+    var gx=W*0.8, gy=H*0.64, g=H*1.1, wind=W*0.03;
+    var n=Math.floor(I*900*dt+(Math.random()<(I*900*dt%1)?1:0));
+    var hMax=H*0.5*(0.85+0.15*Math.sin(t*2.1));
+    for(var i=0;i<n;i++){
+      var v=Math.sqrt(2*g*hMax*I)*rnd(0.7,1.0);
+      drops.push({x:gx+rnd(-2,2),y:gy,vx:rnd(-1,1)*v*0.06,vy:-v,l:0});
+    }
+    for(var j=drops.length-1;j>=0;j--){
+      var d=drops[j];d.vy+=g*dt;d.vx+=(wind-d.vx)*0.6*dt;d.x+=d.vx*dt;d.y+=d.vy*dt;d.l+=dt;
+      if(d.y>gy+H*0.02&&d.vy>0){drops.splice(j,1);}
+    }
+    // Dampf aus der Säule
+    var top=hMax*I;
+    var ns=I*38*dt+(p>11&&p<CYCLE?6*dt:0);
+    while(ns>0){ if(Math.random()<ns){
+        var hh=rnd(0,Math.max(top,H*0.05));
+        steam.push({x:gx+rnd(-6,6),y:gy-hh,r:rnd(8,18),vr:rnd(9,16),vx:rnd(8,20),vy:rnd(-22,-10),a:0,life:0,max:rnd(5,8),pk:rnd(.28,.42)});
+      } ns-=1; }
+    // Dampf über der Quelle
+    if(Math.random()<7*dt){
+      var a=rnd(0,Math.PI*2),rr=Math.sqrt(Math.random());
+      steam.push({x:W*0.37+Math.cos(a)*W*0.24*rr,y:H*0.76+Math.sin(a)*H*0.09*rr,r:rnd(6,12),vr:rnd(6,10),vx:rnd(6,14),vy:rnd(-14,-8),a:0,life:0,max:rnd(6,9),pk:rnd(.12,.2)});
+    }
+    for(var k=steam.length-1;k>=0;k--){
+      var s=steam[k];s.life+=dt;s.x+=(s.vx+wind*0.4)*dt;s.y+=s.vy*dt;s.r+=s.vr*dt;s.vy*=0.995;
+      var u=s.life/s.max; s.a=s.pk*(u<0.15?u/0.15:1-(u-0.15)/0.85);
+      if(s.life>=s.max) steam.splice(k,1);
+    }
+    // Vorhersage
+    var left=4-p; if(left<0) left+=CYCLE;
+    if(p>=4&&p<12.2){ predT.textContent='läuft'; }
+    else { var sec=Math.ceil(left*6); predT.textContent=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0'); }
+  }
+
+  function draw(){
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.drawImage(bg,0,0);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    var p=t%CYCLE, I=intensity(p);
+    // Schimmern auf der Quelle
+    ctx.save();ctx.translate(W*0.37,H*0.76);ctx.scale(1,0.105*H/(0.27*W));
+    ctx.globalAlpha=0.12;ctx.strokeStyle='#ffffff';ctx.lineWidth=1.2;
+    for(var i=0;i<5;i++){var rr=W*0.27*(0.2+((t*0.03+i*0.17)%0.8));ctx.beginPath();ctx.arc(0,0,rr,Math.PI*1.05,Math.PI*1.6);ctx.stroke();}
+    ctx.restore();ctx.globalAlpha=1;
+
+    // Maske für Licht im Dampf (halbe Auflösung)
+    var mw=mask.width, mh=mask.height, sx=mw/W, sy=mh/H;
+    mctx.setTransform(1,0,0,1,0,0);mctx.clearRect(0,0,mw,mh);
+    mctx.setTransform(sx,0,0,sy,0,0);
+    for(var k=0;k<steam.length;k++){var s=steam[k];mctx.globalAlpha=s.a;mctx.drawImage(puff,s.x-s.r,s.y-s.r,s.r*2,s.r*2);}
+    mctx.globalAlpha=1;mctx.fillStyle='rgba(255,255,255,.5)';
+    for(var j=0;j<drops.length;j+=2){var d=drops[j];mctx.fillRect(d.x-2,d.y-2,4,4);}
+
+    // Dampf
+    for(var k2=0;k2<steam.length;k2++){var s2=steam[k2];ctx.globalAlpha=s2.a;ctx.drawImage(puff,s2.x-s2.r,s2.y-s2.r,s2.r*2,s2.r*2);}
+    ctx.globalAlpha=1;
+    // Säulenkern
+    if(I>0.02){var gx=W*0.8,gy=H*0.64,top=H*0.5*I;
+      var cg=ctx.createLinearGradient(0,gy,0,gy-top);
+      cg.addColorStop(0,'rgba(245,248,250,'+(0.85*I)+')');cg.addColorStop(.7,'rgba(245,248,250,'+(0.45*I)+')');cg.addColorStop(1,'rgba(245,248,250,0)');
+      ctx.fillStyle=cg;ctx.beginPath();ctx.moveTo(gx-W*0.006,gy);ctx.quadraticCurveTo(gx-W*0.01,gy-top*0.6,gx-W*0.022+W*0.01,gy-top);
+      ctx.lineTo(gx+W*0.03,gy-top);ctx.quadraticCurveTo(gx+W*0.012,gy-top*0.6,gx+W*0.006,gy);ctx.fill();}
+    // Tropfen
+    ctx.fillStyle='rgba(236,244,248,.85)';
+    for(var j2=0;j2<drops.length;j2++){var d2=drops[j2];ctx.fillRect(d2.x-1,d2.y-1.6,2,3.2);}
+
+    // Lichtstrahlen und Regenbogen, nur wo Dampf und Tropfen sind
+    fctx.setTransform(1,0,0,1,0,0);fctx.clearRect(0,0,fx.width,fx.height);
+    fctx.setTransform(sx,0,0,sy,0,0);
+    fctx.globalCompositeOperation='source-over';
+    for(var r=0;r<7;r++){
+      var ox=-W*0.3+r*W*0.12, w=W*0.035;
+      var lg=fctx.createLinearGradient(ox,-H*0.3,ox+W*0.9,H*1.1);
+      lg.addColorStop(0,'rgba(255,226,180,0)');lg.addColorStop(.5,'rgba(255,226,180,.55)');lg.addColorStop(1,'rgba(255,226,180,0)');
+      fctx.fillStyle=lg;fctx.beginPath();fctx.moveTo(ox,-H*0.3);fctx.lineTo(ox+w,-H*0.3);fctx.lineTo(ox+w+W*0.9,H*1.1);fctx.lineTo(ox+W*0.9,H*1.1);fctx.fill();
+    }
+    if(I>0.05){
+      var bx=W*0.62, by=H*1.02, R=H*0.66, cols=['#ff3b30','#ff9500','#ffd60a','#34c759','#0a84ff','#5e5ce6','#9b59d0'];
+      fctx.lineWidth=H*0.013;fctx.globalAlpha=0.9*Math.min(1,I*1.4);
+      for(var c=0;c<cols.length;c++){fctx.strokeStyle=cols[c];fctx.beginPath();fctx.arc(bx,by,R-c*H*0.012,Math.PI*1.08,Math.PI*1.95);fctx.stroke();}
+      fctx.globalAlpha=1;
+    }
+    fctx.setTransform(1,0,0,1,0,0);
+    fctx.globalCompositeOperation='destination-in';fctx.drawImage(mask,0,0);
+    fctx.globalCompositeOperation='source-over';
+    ctx.globalCompositeOperation='lighter';ctx.globalAlpha=0.55;
+    ctx.drawImage(fx,0,0,W,H);
+    ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
+  }
+
+  function frame(ts){
+    if(!last) last=ts; var dt=Math.min(0.05,(ts-last)/1000); last=ts;
+    if(!document.hidden){ step(dt); draw(); }
+    requestAnimationFrame(frame);
+  }
+
+  makePuff(); resize();
+  window.addEventListener('resize',function(){resize();});
+  if(reduce){ for(var i=0;i<400;i++) step(1/60); draw(); }
+  else requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,24 @@
+Geyser · Datenbank (Oracle 21c, Schema DEMO, Präfix GEY_)
+
+db/db.properties   Verbindung der App: url, user, password (steht in .gitignore).
+                   Beispiel:
+                     url=jdbc:oracle:thin:@//localhost:1521/PDBORCL
+                     user=DEMO
+                     password=...
+
+Einrichten         In NetBeans: src/com/dan/geyser/db/DbSetup.java, Rechtsklick, Run File.
+                   Erzeugt db/sql/03_inhalte.sql aus dem Code, führt 01 bis 04 aus und prüft
+                   alles (Durchstich). Bericht: db/einrichtung.txt, letzte Zeile
+                   "ERGEBNIS: alles in Ordnung."
+                   Mit Argument "neu" wird vorher alles mit GEY_ entfernt (99_abbau.sql),
+                   "pruefen" prüft nur, "abbau" entfernt nur.
+
+Von Hand          Die Skripte in db/sql laufen auch in SQL*Plus oder SQL Developer (F5), jede
+                   Anweisung endet mit einer Zeile "/". Für die Umlaute in SQL*Plus vorher
+                   NLS_LANG=GERMAN_GERMANY.AL32UTF8 setzen.
+
+Bestandsaufnahme  src/com/dan/geyser/tools/DbBestand.java, Run File: nur lesend, schreibt
+                   db/bestand.txt.
+
+Ohne Datenbank     läuft die App wie bisher; die Mineral-Lupe nimmt eingebaute Elementdaten,
+                   der Zustand beim Beenden steht in ~/.geyser/zustand.properties.
