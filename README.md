@@ -20,6 +20,7 @@ Das Upper Geyser Basin im Yellowstone-Nationalpark als 3D-Szene in reinem Java, 
 - [Was die Szene kann](#was-die-szene-kann)
 - [Zugaben](#zugaben)
 - [Wald-Paket](#wald-paket)
+- [Fluss-Paket](#fluss-paket)
 - [Datenbank](#datenbank)
 - [Bedienung](#bedienung)
 - [Bauen und starten](#bauen-und-starten)
@@ -150,6 +151,39 @@ Alles richtet sich nach dem eingestellten Tag. Die Szene hat damit 2,15 statt 1,
 | ![Mitteleuropa im Herbst](docs/bilder/wald/mitteleuropa_herbst.png) | ![Mitteleuropa im Winter](docs/bilder/wald/mitteleuropa_winter.png) |
 | Herbst mit fallendem Laub | Winter mit Schnee |
 
+## Fluss-Paket
+
+`src/com/dan/river/` ist ein eigenes Paket für Flüsse. Es ist unabhängig von Geyser und lässt sich herauskopieren. Es rechnet keine aufwendige Simulation, sondern leitet die Strömung aus Regeln der Gerinnehydraulik ab:
+
+- In der Mitte fließt das Wasser schneller als am Ufer.
+- In der Außenkurve ist es schneller und tiefer, innen liegt die Kiesbank.
+- Um Steine teilt sich das Wasser, davor entsteht eine Bugwelle, dahinter strömt es im Kehrwasser zurück.
+- In Schnellen schäumt es.
+
+Wellen und Schaum treiben mit dem Wasser (Flow-Map mit zwei Phasen). Die Farbe hängt von Tiefe und Trübe ab, am Grund liegt Kaustik. Schaumflocken, Blätter und Zweige treiben mit. Einzelheiten stehen in [`src/com/dan/river/README.md`](src/com/dan/river/README.md). Zum Ausprobieren startet man `com.dan.river.demo.RiverDemo`, der Selbsttest ist `com.dan.river.demo.RiverCheck`.
+
+![Schnelle mit Steinen in der Vorschau](docs/bilder/fluss/schnelle.png)
+
+| | |
+|---|---|
+| ![Stein im Kolk](docs/bilder/fluss/kolk.png) | ![Strömung sichtbar gemacht](docs/bilder/fluss/stroemung.png) |
+| Stein im Kolk: Bugwelle, Wirbel, Kaustik | Strömung: blau langsam, gelb schnell, violett Kehrwasser |
+
+![Niedrigwasser und Hochwasser](docs/bilder/fluss/abfluss.png)
+
+*Dieselbe Schnelle bei 30 % und bei 250 % Abfluss.*
+
+**Im Becken.** Der Firehole River nutzt das Paket (`world/Firehole`):
+
+- Die Strömung folgt dem Gefälle, der Breite und den Kurven des Laufs.
+- In Riffelstrecken liegen rund 60 Blöcke aus Rhyolith mit Kehrwasser und Schaum.
+- Wellen und Schaumstreifen ziehen mit dem Wasser, um die Kamera treibt Schaum.
+- Espenlaub, das auf den Fluss fällt, treibt weiter.
+
+Bei bewegter Kamera und einem Blick, in dem der Fluss den halben Bildschirm füllt, braucht ein Bild etwa 25 ms länger.
+
+![Riffel im Firehole River unterhalb von Grotto](docs/bilder/fluss/firehole.png)
+
 ## Datenbank
 
 Die App läuft auch ohne Datenbank. Mit Oracle (getestet mit 21c, Schema DEMO, Präfix `GEY_`) kommt mehr dazu:
@@ -251,17 +285,19 @@ src/com/dan/geyser/
   GeyserApp.java    Einstieg, FFrame
   core/             Renderer, Gelände, Temperaturfeld, Materialien, Schatten, Tiere
   effects/          Himmel, Sonne und Mond, Sterne, Klima, Wetter, Teilchen, Klang
-  world/            Becken, Geysire und Röhrenmodell, Kopplungen, Stellen, Wege, Bäume, Tiere, Besucher, Morning Glory
+  world/            Becken, Geysire und Röhrenmodell, Kopplungen, Stellen, Wege, Bäume, Fluss, Tiere, Besucher, Morning Glory
   camera/           Kamerasteuerung, Pfade, Blickpunkte, Regie
   atom/             Mineral-Lupe, Mineralien, Elemente, Sinter-Zeitraffer
   db/               Datenbankzugriff, Belege, Einrichter
   ui/               Szene, Bedienfeld, Dialoge, Röhrenschnitt, Programmsymbol
   tools/            Werkzeuge (siehe oben)
 src/com/dan/forest/ Wald-Paket: Arten, Baumerzeuger, Wind, Jahreszeit, Laubfall, Demo
+src/com/dan/river/  Fluss-Paket: Lauf, Strömung, Steine, Oberfläche, Optik, Treibgut, Demo
 db/sql/             SQL-Skripte 01 bis 04 und 99_abbau
 docs/bilder/readme/ Bilder dieser Seite
 docs/bilder/app/    Bildschirmfotos der App
 docs/bilder/wald/   Bilder zum Wald-Paket
+docs/bilder/fluss/  Bilder zum Fluss-Paket
 docs/bilder/phase*/ Prüfbilder aus der Entwicklung, nach Phasen
 ```
 

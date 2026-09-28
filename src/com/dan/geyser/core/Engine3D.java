@@ -278,6 +278,8 @@ public final class Engine3D {
         if (an != null && an.n > 0) drawAnimals(an);
         LeafQuads lq = leaves;
         if (lq != null && lq.n > 0) drawLeaves(lq);
+        LeafQuads fq = floats;
+        if (fq != null && fq.n > 0) drawLeaves(fq);
         com.dan.geyser.effects.ParticleSystem pss = particles;
         if (pss != null && pss.n > 0) drawParticles(pss, rowsPer); else drawnParticles = 0;
         final boolean th = thermo;
@@ -1222,6 +1224,10 @@ public final class Engine3D {
      */
     private void shadeWaterStrip(int y0, int y1) {
         float[] sk = new float[3], ref = new float[3], hz = new float[3], gmb = new float[5], pc = new float[3];
+        final com.dan.river.FlowField rfl = riverFlow;
+        final com.dan.river.WaterSurface rsu = riverSurface;
+        final com.dan.river.FlowField.Flow rf = new com.dan.river.FlowField.Flow();
+        final com.dan.river.WaterSurface.Surf rsf = new com.dan.river.WaterSurface.Surf();
         final LightingEngine li = L;
         final Sky s = sky;
         float lx = (float) s.sun[0], ly = (float) s.sun[1], lz = (float) s.sun[2];
@@ -1230,6 +1236,9 @@ public final class Engine3D {
         float t = time;
         for (int py = y0; py < y1; py++) {
             double b = (H / 2.0 - py - 0.5) / pfy;
+            int lastPx = -9;
+            float lastWx = 0, lastWz = 0;
+            boolean lastOk = false;
             for (int px = 0; px < W; px++) {
                 int p = py * W + px;
                 int code = gm[p] - 1;
@@ -1243,19 +1252,36 @@ public final class Engine3D {
                 float wx = (float) (ex + dx * z), wy = (float) (ey + dy * z), wz = (float) (ez + dz * z);
                 float dist = z * dl;
                 if (code == Mat.POOL) { shadePool(p, wx, wy, wz, vx, vy, vz, dist, sk, ref, hz, pc); continue; }
-                // Wellen: im Fluss mit der Strömung, in Quellen fast still
+                // Wellen: im Fluss aus dem Fluss-Paket (Strömung, Steine, Schaum), sonst aus der Rauschtabelle
                 float fx = 0, fz = 0, spd = 0, amp, f;
-                float bank = 99;
-                if (river) {
-                    terrain.ground(wx, wz, gmb);
-                    fx = gmb[1]; fz = gmb[2]; bank = -gmb[0];
-                    spd = 1.1f; amp = 0.7f; f = 0.35f;
-                } else { amp = 0.12f; f = 0.7f; }
-                if (dist > 250) amp *= 250 / dist;
-                float e = 0.3f / f;
-                float gx = (wave(wx + e, wz, t, f, fx, fz, spd) - wave(wx - e, wz, t, f, fx, fz, spd)) / (2 * e);
-                float gzz = (wave(wx, wz + e, t, f, fx, fz, spd) - wave(wx, wz - e, t, f, fx, fz, spd)) / (2 * e);
-                float nx = -gx * amp, ny = 1, nz = -gzz * amp;
+                float bank = 99, foam = 0, depthW = -1;
+                float gx, gzz;
+                // Strömung: vom Nachbarpixel übernehmen, wenn es keine 30 cm entfernt lag (sie ändert sich kaum)
+                boolean flowOk = false;
+                if (river && rfl != null && rsu != null) {
+                    if (px == lastPx + 1 && Math.abs(wx - lastWx) + Math.abs(wz - lastWz) < 0.3f) flowOk = lastOk;
+                    else { flowOk = rfl.sample(wx, wz, rf); lastWx = wx; lastWz = wz; lastOk = flowOk; }
+                    lastPx = px;
+                }
+                if (flowOk) {
+                    float lod = smooth(40, 400, dist);
+                    rsu.sample(wx, wz, t, rf, lod, rsf);
+                    float k = dist > 250 ? 250 / dist : 1;
+                    gx = rsf.dhdx * k; gzz = rsf.dhdz * k;
+                    foam = rsf.foam * (1 - smooth(300, 900, dist));
+                    depthW = rf.depth;
+                } else {
+                    if (river) {
+                        terrain.ground(wx, wz, gmb);
+                        fx = gmb[1]; fz = gmb[2]; bank = -gmb[0];
+                        spd = 1.1f; amp = 0.7f; f = 0.35f;
+                    } else { amp = 0.12f; f = 0.7f; }
+                    if (dist > 250) amp *= 250 / dist;
+                    float e = 0.3f / f;
+                    gx = (wave(wx + e, wz, t, f, fx, fz, spd) - wave(wx - e, wz, t, f, fx, fz, spd)) / (2 * e) * amp;
+                    gzz = (wave(wx, wz + e, t, f, fx, fz, spd) - wave(wx, wz - e, t, f, fx, fz, spd)) / (2 * e) * amp;
+                }
+                float nx = -gx, ny = 1, nz = -gzz;
                 float nl = (float) Math.sqrt(nx * nx + 1 + nz * nz);
                 nx /= nl; ny /= nl; nz /= nl;
                 float cosV = Math.max(0.02f, nx * vx + ny * vy + nz * vz);
@@ -1269,7 +1295,7 @@ public final class Engine3D {
                 float amR = s.upR * skyv, amG = s.upG * skyv, amB = s.upB * skyv;
                 float sl = Math.max(0, ly) * sunV;
                 // Farbe im Wasser: am Ufer flach über Kies (heller), in der Mitte tiefer und grüner
-                float shallow = river ? 1 - smooth(0, 6, bank) : 0;
+                float shallow = !river ? 0 : depthW >= 0 ? 1 - smooth(0.1f, 1.3f, depthW) : 1 - smooth(0, 6, bank);
                 float br = (0.030f + 0.05f * shallow) * (amR + s.sunR * sl * 0.6f);
                 float bg = (0.050f + 0.045f * shallow) * (amG + s.sunG * sl * 0.6f);
                 float bb = (0.042f + 0.025f * shallow) * (amB + s.sunB * sl * 0.6f);
@@ -1279,6 +1305,11 @@ public final class Engine3D {
                     float sp = (float) Math.pow(rs, 900) * 70 + (float) Math.pow(rs, 90) * 1.0f;
                     sp *= sunV * (0.3f + F);
                     r += s.sunR * sp; g += s.sunG * sp; bl += s.sunB * sp;
+                }
+                if (foam > 0) {
+                    // Schaum: weiß, von Sonne und Himmel beleuchtet
+                    float fr = 0.75f * (amR + s.sunR * sl * 0.9f), fg = 0.77f * (amG + s.sunG * sl * 0.9f), fb2 = 0.78f * (amB + s.sunB * sl * 0.9f);
+                    r += (fr - r) * foam; g += (fg - g) * foam; bl += (fb2 - bl) * foam;
                 }
                 float fa = 1 - Noise.expNeg(dist * air);
                 if (fa > 0.002f) {
@@ -1794,6 +1825,11 @@ public final class Engine3D {
     public volatile Animals animals;
     /** Fallendes Laub (null = keins). */
     public volatile LeafQuads leaves;
+    /** Treibgut auf dem Fluss (null = keins). */
+    public volatile LeafQuads floats;
+    /** Strömung und Oberfläche des Flusses (com.dan.river); null = die einfachen Wellen. */
+    public volatile com.dan.river.FlowField riverFlow;
+    public volatile com.dan.river.WaterSurface riverSurface;
 
     /**
      * Fallende und liegende Blätter als kleine Rhomben mit Tiefenprüfung. Licht: Sonne nach der

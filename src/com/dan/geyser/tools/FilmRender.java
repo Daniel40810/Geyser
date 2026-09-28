@@ -136,6 +136,10 @@ public final class FilmRender {
             w.grove.setSeason(day, Thermal.snow);
             w.grove.update(dt, wind, 0.8, 0.6, cam.ex, cam.ez, w.scene.terrain);
             r.leaves = w.grove.quads;
+            r.riverFlow = w.firehole.flow;
+            r.riverSurface = w.firehole.surface;
+            w.firehole.update(dt, wind, 0.8, 0.6, cam.ex, cam.ez);
+            r.floats = w.firehole.quads;
             // Ton: Pegel aus dem Ort der Kamera, 1/fps Sekunden Proben
             SoundScape.levels(sound, w.geysers, w.scene.terrain, cam, clock, wind);
             sound.rain = weather.rain * 0.8f;

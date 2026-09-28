@@ -134,6 +134,10 @@ public final class StillRender {
             w.grove.setSeason(day, Thermal.snow);
             for (int k = 0; k < 1800; k++) w.grove.update(dt, 0.35, 0.8, 0.6, pose[0], pose[2], w.scene.terrain);
             r.leaves = w.grove.quads;
+            r.riverFlow = w.firehole.flow;
+            r.riverSurface = w.firehole.surface;
+            for (int k = 0; k < 900; k++) w.firehole.update(dt, 0.35, 0.8, 0.6, pose[0], pose[2]);
+            r.floats = w.firehole.quads;
             r.setSky(dc, Math.min(1, 0.12 + 0.3 * wx.overcast));
             r.rainWet = wx.rain * 0.8f;
             r.day = day; r.hour = hour; r.sidereal = dc.siderealDeg;
