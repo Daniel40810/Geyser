@@ -49,7 +49,7 @@ Grotto hat normale Ausbrüche von ein bis zwei Stunden und nach einigen davon ei
 - Midway Geyser Basin mit Grand Prismatic Spring, dem Krater von Excelsior und dem Aussichtspunkt am Hang
 - Lower Geyser Basin mit den Schlammtöpfen am Fountain Paint Pot: grau-rosa Ton, in dem Blasen wachsen, platzen und Batzen werfen
 
-Dazu kommen der Firehole River, Stege und Brücken, rund 11 700 Drehkiefern, gut 200 Espen in Hainen am Waldrand und tote Stämme mit weißen „Bobby Socks“. Die Farben der Quellen folgen einem Temperaturfeld nach den Angaben des NPS: tiefblau in der heißen Mitte, dann gelbgrün, orange, rostrot und braun. Im Sommer leuchten die Matten orange, im Winter werden sie olivgrün.
+Dazu kommen der Firehole River, Stege und Brücken, rund 8 700 Drehkiefern, 600 Fichten und Tannen, 1 000 Douglasien, Jungwuchs auf den Brandflächen von 1988, gut 180 Espen in Hainen am Waldrand und tote Stämme mit weißen „Bobby Socks“. Die Farben der Quellen folgen einem Temperaturfeld nach den Angaben des NPS: tiefblau in der heißen Mitte, dann gelbgrün, orange, rostrot und braun. Im Sommer leuchten die Matten orange, im Winter werden sie olivgrün.
 
 ![Das Upper Geyser Basin von Südosten, vorn Old Faithful](docs/bilder/readme/uebersicht.png)
 
@@ -124,26 +124,40 @@ Dazu kommen der Firehole River, Stege und Brücken, rund 11 700 Drehkiefern, gut
 
 ## Wald-Paket
 
-`src/com/dan/forest/` ist ein eigenes Paket für Bäume und Wald. Es ist unabhängig von Geyser und lässt sich herauskopieren. Die Bäume wachsen prozedural und kommen in sieben Arten:
+`src/com/dan/forest/` ist ein eigenes Paket für Bäume und Wald. Es ist unabhängig von Geyser und lässt sich herauskopieren. Die Bäume wachsen prozedural und kommen in vierzehn Arten:
 
-- Yellowstone: Drehkiefer, Espe, Douglasie
-- Mitteleuropa: Eiche, Buche, Birke, Fichte
+- Yellowstone: Drehkiefer, Espe, Douglasie, Engelmann-Fichte, Felsengebirgs-Tanne, Weißstämmige Kiefer
+- Mitteleuropa und Alpen: Eiche, Buche, Birke, Fichte, Weißtanne, Waldkiefer, Europäische Lärche, Zirbe
+
+Die Nadelbäume tragen Zapfen: bei Fichten hängend, bei Tannen und Zirben aufrecht oben in der Krone. Im Frühsommer treiben sie helle Spitzen aus (Maitriebe). Die Waldkiefer hat oben orange Rinde, die Lärche wird im Herbst golden und wirft ihre Nadeln ab.
 
 Stamm, Äste und Blätter bewegen sich getrennt im böigen Wind. Mit der Jahreszeit treiben die Bäume aus, färben sich und werfen ihr Laub ab, die Blätter trudeln zu Boden. Ferne Bäume werden in vier Stufen vereinfacht. Einzelheiten zur Benutzung stehen in [`src/com/dan/forest/README.md`](src/com/dan/forest/README.md). Zum Ausprobieren startet man `com.dan.forest.demo.ForestDemo`.
 
-![Die sieben Arten](docs/bilder/wald/arten.png)
+![Die sieben ersten Arten](docs/bilder/wald/arten.png)
+
+![Die zehn Nadelbäume](docs/bilder/wald/nadelbaeume.png)
+
+*Von rechts: Drehkiefer, Engelmann-Fichte, Felsengebirgs-Tanne, Douglasie, Weißstämmige Kiefer, Fichte, Weißtanne, Waldkiefer, Lärche, Zirbe.*
+
+| | |
+|---|---|
+| ![Nadelwald in Yellowstone](docs/bilder/wald/nadelwald_yellowstone.png) | ![Bergwald im Herbst](docs/bilder/wald/bergwald_herbst.png) |
+| Nadelwald in Yellowstone mit Maitrieben im Juni | Bergwald im Oktober: goldene Lärchen zwischen Fichten, Tannen und Zirben |
 
 **Im Becken.** Die Bäume der Szene kommen aus diesem Paket (`world/Grove`):
 
 - **Drehkiefern:** Tief im Wald stehen sie als leichte Silhouetten. Am Waldrand nahe den Stegen haben sie Äste und Nadelballen.
+- **Weitere Nadelbäume:** In feuchten Senken zum Fluss hin stehen Engelmann-Fichten und Felsengebirgs-Tannen, an steilen Hängen Douglasien. Auf den Brandflächen von 1988 wächst dichter Jungwuchs der Drehkiefer zwischen toten Stämmen.
 - **Espenhaine:** Sie stehen am Waldrand, haben weiße Rinde und Laub, das im Wind zittert. Im Juni treiben sie aus, im September werden sie goldgelb, bis Mitte Oktober sind sie kahl, im Winter liegt Schnee auf den Ästen. Ein Hain ist in der Natur ein einziger Klon und färbt sich gemeinsam.
 - **Laubfall:** Im Herbst lösen sich Blätter um die Kamera, segeln im Wind und bleiben eine Weile liegen.
 
-Alles richtet sich nach dem eingestellten Tag. Die Szene hat damit 2,15 statt 1,29 Mio. Dreiecke. Bei bewegter Kamera braucht ein Bild dadurch etwa 20 bis 35 ms länger.
+Alles richtet sich nach dem eingestellten Tag. Die Szene hat damit 2,31 statt 1,29 Mio. Dreiecke. Bei bewegter Kamera braucht ein Bild dadurch etwa 20 bis 35 ms länger.
 
 ![Espenhain am Waldrand im September](docs/bilder/wald/geyser_espen.png)
 
 ![Ein Espenhain im Jahr: Juni, August, September, Oktober](docs/bilder/wald/geyser_jahr.png)
+
+![Waldrand im Becken mit Drehkiefern, Fichten, Tannen und Espen](docs/bilder/wald/geyser_nadelwald.png)
 
 | | |
 |---|---|

@@ -49,7 +49,7 @@ public final class ForestCheck {
             WindField.Sample storm = new WindField.Sample();
             storm.speed = 14; storm.gust = 1.3f; storm.turb = 0.6f;
             an.pose(3.3, storm, null);
-            float top = maxMove(t, an.pos, m1.height * 0.8f, Float.MAX_VALUE), foot = maxMove(t, an.pos, -1, 0.5f);
+            float top = maxMove(t, an.pos, m1.height * 0.8f, Float.MAX_VALUE), foot = trunkMove(t, an.pos, 0.5f);
             check(s.name + String.format(": Sturm bewegt die Krone (%.2f m), der Fuß bleibt (%.3f m)", top, foot), top > 0.05f && foot < 0.05f && top < m1.height * 0.3f);
             // Jahreszeit
             Season summer = Season.of(s, 200, 0), winter = Season.of(s, 20, 0);
@@ -57,6 +57,51 @@ public final class ForestCheck {
             check(s.name + (s.deciduous ? ": im Winter kahl" : ": im Winter grün"), s.deciduous ? winter.foliage == 0 : winter.foliage == 1);
             if (s.deciduous) check(s.name + ": färbt sich im Herbst", Season.of(s, s.colorFull, 0).autumn > 0.95f);
         }
+        // Nadelbäume: Zapfen, Kronenformen, Rinde, Lärche, Maitriebe
+        TreeModel fir = TreeGenerator.grow(Species.subalpineFir(), 3, 1), spr = TreeGenerator.grow(Species.engelmannSpruce(), 3, 1);
+        boolean firUp = !fir.cones.isEmpty(), sprDown = !spr.cones.isEmpty();
+        float firLow = Float.MAX_VALUE;
+        for (TreeModel.Cone c : fir.cones) { firUp &= c.dy > 0.5f; firLow = Math.min(firLow, c.y); }
+        for (TreeModel.Cone c : spr.cones) sprDown &= c.dy < -0.5f;
+        check("Zapfen: Tanne aufrecht (" + fir.cones.size() + "), Fichte hängend (" + spr.cones.size() + ")", firUp && sprDown);
+        check("Zapfen: bei der Tanne nur oben in der Krone", firLow > fir.height * 0.7f);
+        TreeMesh fm = TreeMesh.build(fir, 1);
+        int coneTris = 0;
+        for (int i = 0; i < fm.nt; i++) if (fm.part[fm.tri[3 * i]] == TreeMesh.CONE) coneTris++;
+        check("Zapfen: im Netz (" + coneTris + " Dreiecke)", coneTris == 12 * fir.cones.size());
+        TreeModel dgl = TreeGenerator.grow(Species.douglasFir(), 3, 1);
+        check(String.format("Turm: Felsengebirgs-Tanne schlanker als Douglasie (%.2f / %.2f)", fir.crownRadius / fir.height, dgl.crownRadius / dgl.height),
+                fir.crownRadius / fir.height < 0.8f * dgl.crownRadius / dgl.height);
+        TreeModel sco = TreeGenerator.grow(Species.scotsPine(), 5, 1);
+        float upper = 0, lower = 0;
+        for (TreeModel.LeafSpot l : sco.leaves) {
+            float r = (float) Math.hypot(l.x, l.z);
+            if (l.y > sco.height * 0.85f) upper = Math.max(upper, r);
+            else if (l.y < sco.height * 0.72f) lower = Math.max(lower, r);
+        }
+        check(String.format("Schirm: Waldkiefer oben breiter als unten (%.1f / %.1f m)", upper, lower), upper > lower);
+        TreeMesh sm = TreeMesh.build(sco, 1);
+        float topR = 0, footR = 1;
+        for (int i = 0; i < sm.nv; i++) {
+            if (sm.bone[i] != 0) continue;
+            float y = sm.pos[3 * i + 1], rr = sm.col[3 * i] / Math.max(1e-4f, sm.col[3 * i + 2]);
+            if (y > sco.height * 0.75f) topR = Math.max(topR, rr);
+            if (y < sco.height * 0.2f) footR = Math.min(footR, rr);
+        }
+        check(String.format("Rinde: Waldkiefer oben orange (Rot/Blau %.1f unten %.1f)", topR, footR), topR > 3 && topR > footR * 1.8f);
+        Species lar = Species.larch();
+        Season lSummer = Season.of(lar, 200, 0), lOct = Season.of(lar, 298, 0), lWinter = Season.of(lar, 20, 0);
+        float[] cs = new float[3], co = new float[3];
+        lSummer.leafColor(lar, 0.5f, cs);
+        lOct.leafColor(lar, 0.5f, co);
+        check("Lärche: im Sommer grün, im Oktober golden, im Winter kahl", cs[1] > cs[0] && co[0] > co[1] && lWinter.foliage == 0 && lSummer.foliage == 1);
+        Species sp2 = Species.engelmannSpruce();
+        float[] tipJune = new float[3], tipAug = new float[3], inJune = new float[3];
+        Season.of(sp2, sp2.leafOut + 15, 0).leafColor(sp2, 0.9f, tipJune);
+        Season.of(sp2, 230, 0).leafColor(sp2, 0.9f, tipAug);
+        Season.of(sp2, sp2.leafOut + 15, 0).leafColor(sp2, 0.2f, inJune);
+        check("Maitriebe: im Juni helle Spitzen, innen dunkel, im August vorbei", tipJune[1] > tipAug[1] * 2 && inJune[1] < tipJune[1] * 0.6f);
+
         // Wald und Laubfall
         Forest forest = new Forest(Ground.FLAT);
         int as = forest.addSpecies(Species.aspen());
@@ -104,6 +149,17 @@ public final class ForestCheck {
         check("Laubfall: Blätter auf dem Wasser gehen ans Wasser (" + taken[0] + " übernommen, " + wf.n + " an Land)", taken[0] > 60 && wf.n > 60 && !wrongSide[0] && onGroundWet == 0);
         System.out.println(fails == 0 ? "Alles in Ordnung." : fails + " Prüfungen fehlgeschlagen.");
         if (fails > 0) System.exit(1);
+    }
+
+    /** Wie weit sich der Stamm (nicht die Äste) unterhalb von yMax bewegt. */
+    private static float trunkMove(TreeMesh t, float[] pos, float yMax) {
+        float m = 0;
+        for (int i = 0; i < t.nv; i++) {
+            if (t.bone[i] != 0 || t.pos[3 * i + 1] > yMax) continue;
+            float dx = pos[3 * i] - t.pos[3 * i], dy = pos[3 * i + 1] - t.pos[3 * i + 1], dz = pos[3 * i + 2] - t.pos[3 * i + 2];
+            m = Math.max(m, (float) Math.sqrt(dx * dx + dy * dy + dz * dz));
+        }
+        return m;
     }
 
     private static float maxMove(TreeMesh t, float[] pos, float yMin, float yMax) {

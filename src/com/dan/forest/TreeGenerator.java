@@ -39,6 +39,7 @@ public final class TreeGenerator {
         trunk.phase = rnd.nextFloat() * 6.2832f;
         children(m, sp, trunk, 1, rnd, H, a);
         leaves(m, sp, rnd);
+        cones(m, sp, rnd);
         // Kronenradius aus den Blättern (für Umgebungslicht und Detailstufen)
         float cr = 0;
         for (TreeModel.LeafSpot l : m.leaves) cr = Math.max(cr, (float) Math.hypot(l.x, l.z));
@@ -126,6 +127,11 @@ public final class TreeGenerator {
             case NARROW: return 0.25f + 0.75f * (float) Math.pow(1 - h, 0.8) * (0.6f + 0.4f * (float) Math.sin(Math.PI * Math.min(1, h * 2.5)));
             case ROUND: return (float) Math.sin(Math.PI * (0.12 + 0.82 * h)) * 0.95f + 0.05f;
             case SPREADING: return (float) Math.pow(Math.sin(Math.PI * (0.08 + 0.8 * h)), 0.6) * (1.15f - 0.35f * h);
+            case SPIRE: return 0.22f + 0.78f * (float) Math.pow(Math.max(0, 1 - h), 0.55) * (1 - 0.25f * h);
+            case UMBRELLA: {
+                float up = h < 0.75f ? 0.35f + 0.65f * h / 0.75f : 1;
+                return up * (h > 0.85f ? 1 - (h - 0.85f) / 0.15f * 0.55f : 1);
+            }
             default: return (float) Math.pow(Math.sin(Math.PI * (0.1 + 0.85 * h)), 0.8) * (1 - 0.2f * h) + 0.08f;
         }
     }
@@ -163,6 +169,34 @@ public final class TreeGenerator {
                 l.size = sp.leafSize * (0.75f + 0.5f * rnd.nextFloat()) * (sp.conifer ? 1 : (0.8f + 0.4f * s));
                 l.tone = rnd.nextFloat(); l.drop = rnd.nextFloat(); l.phase = rnd.nextFloat() * 6.2832f;
                 m.leaves.add(l);
+            }
+        }
+    }
+
+    /** Zapfen nahe den Spitzen der Äste erster Ordnung im oberen Teil der Krone; aufrecht oder hängend. */
+    private static void cones(TreeModel m, Species sp, Random rnd) {
+        if (sp.cones <= 0) return;
+        float[] q = new float[7];
+        float yMin = m.height * (1 - sp.coneZone);
+        for (TreeModel.Branch b : m.branches) {
+            if (b.level != 1) continue;
+            b.at(0.8f, q);
+            if (q[1] < yMin) continue;
+            float expect = sp.cones * b.rel;
+            int n = (int) expect + (rnd.nextFloat() < expect - (int) expect ? 1 : 0);
+            for (int i = 0; i < n; i++) {
+                float s = 0.55f + 0.4f * rnd.nextFloat();
+                b.at(s, q);
+                TreeModel.Cone c = new TreeModel.Cone();
+                c.branch = b.id; c.s = s;
+                float side = (rnd.nextFloat() - 0.5f) * 0.15f;
+                c.x = q[0] + side * q[6]; c.y = q[1] + (sp.coneUpright ? q[3] : -q[3]); c.z = q[2] - side * q[4];
+                float tilt = (rnd.nextFloat() - 0.5f) * 0.4f;
+                c.dx = q[4] * 0.2f + tilt; c.dy = sp.coneUpright ? 1 : -1; c.dz = q[6] * 0.2f - tilt;
+                float l = (float) Math.sqrt(c.dx * c.dx + c.dy * c.dy + c.dz * c.dz);
+                c.dx /= l; c.dy /= l; c.dz /= l;
+                c.size = sp.coneSize * (0.8f + 0.4f * rnd.nextFloat());
+                m.cones.add(c);
             }
         }
     }

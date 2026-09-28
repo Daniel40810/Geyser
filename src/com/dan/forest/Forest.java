@@ -92,8 +92,8 @@ public final class Forest {
                 float[] c = colors[s][v][l];
                 if (c == null || c.length < 3 * m.nv) c = colors[s][v][l] = new float[3 * m.nv];
                 seasons[s].colorize(m, c);
-                // ferne Stufen: Laub ohne Blätter (kahl) wird zur Farbe der Äste
-                if (l >= 2 && seasons[s].foliage < 0.3f && !seasons[s].evergreen) {
+                // ferne Stufen (und die Nadelballen der Lärche): Laub ohne Blätter (kahl) wird zur Farbe der Äste
+                if ((l >= 2 || species.get(s).conifer) && seasons[s].foliage < 0.3f && !seasons[s].evergreen) {
                     for (int i = 0; i < m.nv; i++) if (m.part[i] == TreeMesh.CLUMP) {
                         float k = 0.35f + 0.65f * seasons[s].foliage;
                         c[3 * i] = c[3 * i] * k + species.get(s).bark[0] * 0.6f * (1 - k);
