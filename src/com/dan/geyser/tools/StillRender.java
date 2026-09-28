@@ -120,6 +120,11 @@ public final class StillRender {
             for (int k = 0; k < 300; k++) fa.update(0.1, day, Thermal.snow);
             Animals an = new Animals();
             fa.fill(an);
+            // Besucher: kurz vor dem vorhergesagten Ausbruch versammelt (beim Ausbruch von Old Faithful)
+            com.dan.geyser.world.Visitors vis = new com.dan.geyser.world.Visitors(w.scene.terrain);
+            boolean ofOn = "Old Faithful".equals(gey);
+            for (int k = 0; k < 4000; k++) vis.update(0.25, day, hour, Math.max(wx.rain, wx.snow * 0.5), ofOn ? 2 : 40, false, false);
+            vis.fill(an);
             r.animals = an;
             r.setSky(dc, Math.min(1, 0.12 + 0.3 * wx.overcast));
             r.rainWet = wx.rain * 0.8f;

@@ -1745,6 +1745,19 @@ public final class Engine3D {
             byte k = an.kind[i];
             boolean bison = k == Animals.BISON || k == Animals.BISON_CALF;
             float dep = (float) vz;
+            if (k == Animals.PERSON) {
+                if (vz > 900) continue;
+                shadowBlob(ax, ay, az, hx, hz, sc * 0.3f, sc * 0.2f, 0.3f + 0.3f * lit, dep);
+                float st = an.step[i], gt = an.gait[i];
+                for (int L0 = 0; L0 < 2; L0++) {
+                    float sw = (float) Math.sin(st + L0 * Math.PI) * 0.28f * gt;
+                    float[] q = {-0.07f, 0.9f, 0.07f, 0.9f, sw + 0.06f, 0, sw - 0.06f, 0};
+                    fillShape(q, ax, ay, az, hx, hz, sc, an.pr[i], an.pg[i], an.pb[i], kSun, s, hzc, fa, dep - 0.01f * L0, 0, 0, 0);
+                }
+                fillShape(Animals.PERSON_BODY, ax, ay, az, hx, hz, sc, an.cr[i], an.cg[i], an.cb[i], kSun, s, hzc, fa, dep - 0.03f, 0, 0, 0);
+                fillShape(Animals.PERSON_HEAD, ax, ay, az, hx, hz, sc, 0.30f, 0.20f, 0.14f, kSun, s, hzc, fa, dep - 0.04f, 0, 0, 0);
+                continue;
+            }
             // Schattenfleck am Boden
             shadowBlob(ax, ay, az, hx, hz, sc * (bison ? 1.5f : 1.1f), sc * 0.55f, 0.35f + 0.35f * lit, dep);
             float[][] legs = bison ? Animals.BISON_LEGS : Animals.ELK_LEGS;

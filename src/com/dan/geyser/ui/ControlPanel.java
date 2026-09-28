@@ -147,15 +147,17 @@ public final class ControlPanel extends JPanel {
         gap();
         head("ZUGABEN");
         FCheckBox xTube = new FCheckBox("Schnitt durch die Röhre"), xThermo = new FCheckBox("Wärmebild"),
-                xSound = new FCheckBox("Klang"), xFauna = new FCheckBox("Bisons und Wapitis");
+                xSound = new FCheckBox("Klang"), xFauna = new FCheckBox("Bisons und Wapitis"), xPeople = new FCheckBox("Besucher auf den Stegen");
         xFauna.setSelected(true);
+        xPeople.setSelected(true);
+        xPeople.addActionListener(e -> { scene.setVisitors(xPeople.isSelected()); scene.requestFocusInWindow(); });
         xTube.addActionListener(e -> { scene.setTube(xTube.isSelected()); scene.requestFocusInWindow(); });
         xThermo.addActionListener(e -> { scene.setThermo(xThermo.isSelected()); scene.requestFocusInWindow(); });
         xSound.addActionListener(e -> { scene.setSound(xSound.isSelected()); scene.requestFocusInWindow(); });
         xFauna.addActionListener(e -> { scene.setFauna(xFauna.isSelected()); scene.requestFocusInWindow(); });
-        for (FCheckBox cb : new FCheckBox[]{xTube, xThermo, xSound, xFauna}) add(row(cb));
-        scene.setExtrasListener(v -> { xTube.setSelected(v[0]); xThermo.setSelected(v[1]); xSound.setSelected(v[2]); xFauna.setSelected(v[3]); });
-        note("Der Schnitt zeigt Röhre, Wassersäule und Siedepunkt über der Tiefe für den Geysir am Drehpunkt (C). Das Wärmebild färbt nach der Temperatur des Modells (I). Der Klang wird gerechnet: Säulen, Quellen, Fluss, Wind, zur Brunft Wapitis und Bisons (O). Die Tiere grasen auf den Wiesen, im Winter stehen die Bisons auf warmem Boden (N).");
+        for (FCheckBox cb : new FCheckBox[]{xTube, xThermo, xSound, xFauna, xPeople}) add(row(cb));
+        scene.setExtrasListener(v -> { xTube.setSelected(v[0]); xThermo.setSelected(v[1]); xSound.setSelected(v[2]); xFauna.setSelected(v[3]); xPeople.setSelected(v[4]); });
+        note("Der Schnitt zeigt Röhre, Wassersäule und Siedepunkt über der Tiefe für den Geysir am Drehpunkt (C). Das Wärmebild färbt nach der Temperatur des Modells (I). Der Klang wird gerechnet: Säulen, Quellen, Fluss, Wind, zur Brunft Wapitis und Bisons (O). Die Tiere grasen auf den Wiesen, im Winter stehen die Bisons auf warmem Boden (N). Die Besucher sammeln sich vor der Vorhersage am Halbrund um Old Faithful und gehen nach dem Ausbruch; im Juli am meisten, im Winter wenige, bei Regen weniger (F3, Modell).");
 
         gap();
         head("SONNE UND MOND");

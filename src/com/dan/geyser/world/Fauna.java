@@ -177,9 +177,8 @@ public final class Fauna {
         }
     }
 
-    /** Füllt die Tiere für das nächste Bild. */
+    /** Hängt die Tiere für das nächste Bild an (der Aufrufer leert vorher). */
     public void fill(Animals out) {
-        out.clear();
         for (List<Beast> herd : List.of(bison, elk)) {
             for (Beast b : herd) {
                 int i = out.add(b.kind, b.x, t.sample(b.x, b.z), b.z, b.hx, b.hz, b.scale);

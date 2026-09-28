@@ -163,6 +163,7 @@ public final class ScenePanel extends JPanel {
             case KeyEvent.VK_I: setThermo(!thermoOn); return;
             case KeyEvent.VK_O: setSound(!soundOn); return;
             case KeyEvent.VK_N: setFauna(!faunaOn); return;
+            case KeyEvent.VK_F3: setVisitors(!visitorsOn); return;
             case KeyEvent.VK_Z: playSinterLapse(); return;
             case KeyEvent.VK_J: playMorningGlory(); return;
             case KeyEvent.VK_Y: setWeather((weather.mode + 1) % com.dan.geyser.effects.Weather.MODES.length); return;
@@ -364,6 +365,7 @@ public final class ScenePanel extends JPanel {
         p.setProperty("tube", String.valueOf(tubeOn));
         p.setProperty("thermo", String.valueOf(thermoOn));
         p.setProperty("fauna", String.valueOf(faunaOn));
+        p.setProperty("visitors", String.valueOf(visitorsOn));
         p.setProperty("haze", String.valueOf(haze));
         p.setProperty("wind", String.valueOf(wind));
         p.setProperty("water", String.valueOf(water));
@@ -402,6 +404,7 @@ public final class ScenePanel extends JPanel {
             tubeOn = Boolean.parseBoolean(p.getProperty("tube", "false"));
             thermoOn = Boolean.parseBoolean(p.getProperty("thermo", "false"));
             faunaOn = Boolean.parseBoolean(p.getProperty("fauna", "true"));
+            visitorsOn = Boolean.parseBoolean(p.getProperty("visitors", "true"));
             extrasChanged();
             int wm = Integer.parseInt(p.getProperty("weather", "0"));
             weather.mode = Math.max(0, Math.min(com.dan.geyser.effects.Weather.MODES.length - 1, wm));
@@ -420,6 +423,16 @@ public final class ScenePanel extends JPanel {
 
     private volatile boolean tubeOn, thermoOn, soundOn, faunaOn = true;
     private volatile com.dan.geyser.world.Fauna fauna;
+    private volatile com.dan.geyser.world.Visitors visitors;
+    private volatile boolean visitorsOn = true;
+    private boolean ofWasErupting;
+
+    /** Besucher auf den Stegen an oder aus. */
+    public void setVisitors(boolean on) {
+        visitorsOn = on;
+        if (on) showToast("Besucher: im Juli bis über 1000 am Halbrund um Old Faithful; gezeigt höchstens " + com.dan.geyser.world.Visitors.MAX, 3500);
+        extrasChanged();
+    }
     private final com.dan.geyser.core.Animals animals = new com.dan.geyser.core.Animals();
     private final com.dan.geyser.effects.GeyserSound sound = new com.dan.geyser.effects.GeyserSound();
     private volatile GeyserModel tubeGeyser;
@@ -433,7 +446,7 @@ public final class ScenePanel extends JPanel {
 
     public void setExtrasListener(Consumer<boolean[]> l) { extrasListener = l; }
     private void extrasChanged() {
-        boolean[] v = {tubeOn, thermoOn, soundOn, faunaOn};
+        boolean[] v = {tubeOn, thermoOn, soundOn, faunaOn, visitorsOn};
         SwingUtilities.invokeLater(() -> extrasListener.accept(v));
     }
 
@@ -904,6 +917,7 @@ public final class ScenePanel extends JPanel {
             c = new CameraController(sc.terrain);
             director = new Director(sc.terrain);
             fauna = new com.dan.geyser.world.Fauna(sc.terrain, sc.thermal);
+            visitors = new com.dan.geyser.world.Visitors(sc.terrain);
             geysers.onEruption = this::logEruption;
             restoreState(c);
             db.start(hostName(), System.getProperty("user.name"), System.getProperty("java.version"), resolution(),
@@ -992,11 +1006,24 @@ public final class ScenePanel extends JPanel {
             r.plumes = gs.plumes;
             r.wind = wind;
             com.dan.geyser.world.Fauna fa = fauna;
+            animals.clear();
             if (faunaOn && fa != null) {
                 fa.update(dt, day, Thermal.snow);
                 fa.fill(animals);
-                r.animals = animals;
-            } else r.animals = null;
+            }
+            com.dan.geyser.world.Visitors vi = visitors;
+            if (vi != null) {
+                GeyserModel of = gs.byName("Old Faithful");
+                boolean er = of != null && of.phase == GeyserModel.Phase.ERUPTION;
+                boolean ended = ofWasErupting && !er;
+                ofWasErupting = er;
+                double mins = of == null || Double.isNaN(of.predicted) || er || of.silenced() ? Double.NaN : (of.predicted - gClock) / 60;
+                if (visitorsOn) {
+                    vi.update(dt * (ff ? 4 : 1), day, hour, Math.max(weather.rain, weather.snow * 0.5), mins, er || (of != null && of.phase == GeyserModel.Phase.PREPLAY), ended);
+                    vi.fill(animals);
+                }
+            }
+            r.animals = animals.n > 0 ? animals : null;
             r.thermo = thermoOn;
             GeyserModel now2 = gs.erupting();
             if (now2 != null && now2 != was && ff) {
