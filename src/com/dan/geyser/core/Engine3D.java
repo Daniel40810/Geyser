@@ -263,6 +263,8 @@ public final class Engine3D {
         IntStream.range(0, strips).parallel().forEach(s -> shadeStrip(s * rowsPer, Math.min(H, (s + 1) * rowsPer)));
         cacheHit = hitAcc.get() / (double) Math.max(1, eligAcc.get());
         IntStream.range(0, strips).parallel().forEach(s -> shadeWaterStrip(s * rowsPer, Math.min(H, (s + 1) * rowsPer)));
+        com.dan.ground.Batch fb = foliage;
+        if (fb != null && fb.nt > 0 && !thermo) drawFoliage(fb, rowsPer);
         long t3 = System.nanoTime();
         if (sky.night > 0.05f && sky.overcast < 0.7f) drawStars();
         int qPer = (QH + strips - 1) / strips;
@@ -1825,6 +1827,132 @@ public final class Engine3D {
     public volatile Animals animals;
     /** Fallendes Laub (null = keins). */
     public volatile LeafQuads leaves;
+    /** Gras, Blumen, Steine und Erde um die Kamera (com.dan.ground); null = keine. */
+    public volatile com.dan.ground.Batch foliage;
+    /** Zeit fürs Zeichnen der Bodendecke im letzten Bild (ms). */
+    public volatile double msFoliage;
+    private float[] fpx = new float[0], fpy, fpz, fcr, fcg, fcb, ffd;
+    private int[] fBinCount = new int[0];
+    private short[] fLo = new short[0], fHi = new short[0];
+
+    /**
+     * Bodendecke als Dreiecke mit Farbe je Ecke, nach dem Licht der Szene: Sonne mit Schattenkarte (dünne
+     * Halme und Blüten von beiden Seiten, Steine nur von vorn), Himmel, Dunst. Schreibt Tiefe und
+     * Material, damit Lichtstrahlen, Dampf und Tiere sie berücksichtigen.
+     */
+    private void drawFoliage(com.dan.ground.Batch b, int rowsPer) {
+        long f0 = System.nanoTime();
+        final int n = b.nv;
+        if (fpx.length < n) { int c = n + n / 4; fpx = new float[c]; fpy = new float[c]; fpz = new float[c]; fcr = new float[c]; fcg = new float[c]; fcb = new float[c]; ffd = new float[c]; }
+        final Sky s = sky;
+        final LightingEngine li = L;
+        final boolean sunUp = s.sunR + s.sunG + s.sunB > 1e-4f;
+        final float lx = (float) s.sun[0], ly = (float) s.sun[1], lz = (float) s.sun[2];
+        final float air = AIR0 + AIR1 * s.haze;
+        final float[] hzc = new float[3];
+        s.haze((float) cfx, (float) cfy, (float) cfz, hzc);
+        final float[] P = b.xyz, N = b.nrm, C = b.rgb;
+        final byte[] solid = b.solid;
+        System.arraycopy(b.fade, 0, ffd, 0, n);
+        IntStream.range(0, 64).parallel().forEach(k -> {
+            int a = n * k / 64, e = n * (k + 1) / 64;
+            for (int i = a; i < e; i++) {
+                double x = P[3 * i], y = P[3 * i + 1], z = P[3 * i + 2];
+                double dx = x - ex, dy = y - ey, dz = z - ez;
+                double vz = dx * cfx + dy * cfy + dz * cfz;
+                fpz[i] = (float) vz;
+                if (vz < 0.15) continue;
+                fpx[i] = (float) (W / 2.0 + (dx * crx + dy * cry + dz * crz) / vz * pfx);
+                fpy[i] = (float) (H / 2.0 - (dx * cux + dy * cuy + dz * cuz) / vz * pfy);
+                float nx = N[3 * i], ny = N[3 * i + 1], nz = N[3 * i + 2];
+                float d = nx * lx + ny * ly + nz * lz;
+                boolean thin = solid[i] == 0;
+                float lam = thin ? 0.35f + 0.65f * Math.abs(d) : Math.max(0, d);
+                float lit = sunUp ? li.lit(x, y + 0.03, z, 0.3, false) : 0;
+                float kSun = lit * lam * (float) Math.max(0, ly + 0.1);
+                float amb = 0.5f + 0.4f * Math.abs(ny);
+                float r = C[3 * i], g = C[3 * i + 1], bl = C[3 * i + 2];
+                float cr = r * (s.sunR * kSun + (s.upR + s.sideR) * amb), cg = g * (s.sunG * kSun + (s.upG + s.sideG) * amb), cb = bl * (s.sunB * kSun + (s.upB + s.sideB) * amb);
+                float dl = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+                float fa = 1 - Noise.expNeg(dl * air);
+                fcr[i] = cr + (hzc[0] - cr) * fa; fcg[i] = cg + (hzc[1] - cg) * fa; fcb[i] = cb + (hzc[2] - cb) * fa;
+            }
+        });
+        final int nt = b.nt;
+        final int[] T = b.tri;
+        final int ns = strips;
+        if (fBinCount.length != ns) fBinCount = new int[ns];
+        java.util.Arrays.fill(fBinCount, 0);
+        if (fLo.length < nt) { fLo = new short[nt + nt / 4]; fHi = new short[nt + nt / 4]; }
+        for (int t = 0; t < nt; t++) {
+            int a = T[3 * t], c1 = T[3 * t + 1], c2 = T[3 * t + 2];
+            fLo[t] = -1;
+            if (fpz[a] < 0.15f || fpz[c1] < 0.15f || fpz[c2] < 0.15f) continue;
+            float mnY = Math.min(fpy[a], Math.min(fpy[c1], fpy[c2])), mxY = Math.max(fpy[a], Math.max(fpy[c1], fpy[c2]));
+            float mnX = Math.min(fpx[a], Math.min(fpx[c1], fpx[c2])), mxX = Math.max(fpx[a], Math.max(fpx[c1], fpx[c2]));
+            if (mxY < 0 || mnY >= H || mxX < 0 || mnX >= W) continue;
+            int s0 = Math.max(0, (int) Math.floor(Math.max(0, mnY)) / rowsPer), s1 = Math.min(ns - 1, (int) Math.floor(Math.min(H - 1, mxY)) / rowsPer);
+            fLo[t] = (short) s0; fHi[t] = (short) s1;
+            for (int q = s0; q <= s1; q++) fBinCount[q]++;
+        }
+        final int[][] bins = new int[ns][];
+        for (int q = 0; q < ns; q++) bins[q] = new int[fBinCount[q]];
+        int[] fill = new int[ns];
+        for (int t = 0; t < nt; t++) { if (fLo[t] < 0) continue; for (int q = fLo[t]; q <= fHi[t]; q++) bins[q][fill[q]++] = t; }
+        final byte terrainCode = (byte) (Mat.TERRAIN + 1);
+        IntStream.range(0, ns).parallel().forEach(q -> {
+            int y0 = q * rowsPer, y1 = Math.min(H, (q + 1) * rowsPer);
+            for (int t : bins[q]) foliageTri(T[3 * t], T[3 * t + 1], T[3 * t + 2], y0, y1, terrainCode);
+        });
+        msFoliage = (System.nanoTime() - f0) / 1e6;
+    }
+
+    private void foliageTri(int a, int b, int c, int y0, int y1, byte code) {
+        float xa = fpx[a], ya = fpy[a], xb = fpx[b], yb = fpy[b], xc = fpx[c], yc = fpy[c];
+        float area = (xb - xa) * (yc - ya) - (xc - xa) * (yb - ya);
+        if (Math.abs(area) < 1e-7f) return;
+        float minX = Math.min(xa, Math.min(xb, xc)), maxX = Math.max(xa, Math.max(xb, xc));
+        float minY = Math.min(ya, Math.min(yb, yc)), maxY = Math.max(ya, Math.max(yb, yc));
+        int ix0 = Math.max(0, (int) Math.floor(minX)), ix1 = Math.min(W - 1, (int) Math.ceil(maxX));
+        int iy0 = Math.max(y0, (int) Math.floor(minY)), iy1 = Math.min(y1 - 1, (int) Math.ceil(maxY));
+        if (ix0 > ix1 || iy0 > iy1) return;
+        float za = fpz[a], zb = fpz[b], zc = fpz[c];
+        if (ix1 - ix0 <= 1 && iy1 - iy0 <= 1) {
+            // kleiner als ein Bildpunkt: anteilig in die Farbe mischen
+            int x = (int) ((xa + xb + xc) / 3), y = (int) ((ya + yb + yc) / 3);
+            if (x < 0 || y < y0 || x >= W || y >= y1) return;
+            float z = (za + zb + zc) / 3;
+            int p = y * W + x;
+            if (z >= gz[p]) return;
+            float cov = Math.min(1, Math.abs(area) * 0.5f + 0.2f) * (1 - (ffd[a] + ffd[b] + ffd[c]) / 3);
+            hr[p] += ((fcr[a] + fcr[b] + fcr[c]) / 3 - hr[p]) * cov;
+            hg[p] += ((fcg[a] + fcg[b] + fcg[c]) / 3 - hg[p]) * cov;
+            hb[p] += ((fcb[a] + fcb[b] + fcb[c]) / 3 - hb[p]) * cov;
+            return;
+        }
+        float inv = 1 / area, ia = 1 / za, ib = 1 / zb, ic = 1 / zc;
+        for (int y = iy0; y <= iy1; y++) {
+            float sy = y + 0.5f;
+            for (int x = ix0; x <= ix1; x++) {
+                float sx = x + 0.5f;
+                float w0 = ((xb - sx) * (yc - sy) - (xc - sx) * (yb - sy)) * inv;
+                float w1 = ((xc - sx) * (ya - sy) - (xa - sx) * (yc - sy)) * inv;
+                float w2 = 1 - w0 - w1;
+                if (w0 < 0 || w1 < 0 || w2 < 0) continue;
+                float iz = w0 * ia + w1 * ib + w2 * ic, z = 1 / iz;
+                int p = y * W + x;
+                if (z >= gz[p]) continue;
+                float k0 = w0 * ia * z, k1 = w1 * ib * z, k2 = w2 * ic * z;
+                // Übergang in den Boden dahinter (Rand der Reichweite, Saum offener Erde)
+                float f = ffd[a] * k0 + ffd[b] * k1 + ffd[c] * k2, o = 1 - f;
+                if (f < 0.6f) { gz[p] = z; gm[p] = code; }
+                hr[p] = (fcr[a] * k0 + fcr[b] * k1 + fcr[c] * k2) * o + hr[p] * f;
+                hg[p] = (fcg[a] * k0 + fcg[b] * k1 + fcg[c] * k2) * o + hg[p] * f;
+                hb[p] = (fcb[a] * k0 + fcb[b] * k1 + fcb[c] * k2) * o + hb[p] * f;
+            }
+        }
+    }
+
     /** Treibgut auf dem Fluss (null = keins). */
     public volatile LeafQuads floats;
     /** Strömung und Oberfläche des Flusses (com.dan.river); null = die einfachen Wellen. */

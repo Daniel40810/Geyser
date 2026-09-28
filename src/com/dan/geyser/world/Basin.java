@@ -143,6 +143,7 @@ public final class Basin {
         Grove grove = new Grove();
         int[] counts = forest(mb, t, th, rnd, grove);
         Walks.build(mb, t, of, bh, ca, gr, rs, mg, gps, exc, fpp);
+        Sward sward = new Sward(t, th);
 
         Scene sc = new Scene("Upper Geyser Basin", mb.build(64), t, th);
         grove.attach(sc.mesh);
@@ -199,7 +200,7 @@ public final class Basin {
         g.minor = true;
         gs.couplings.init();
         grove.fall.water = fh;
-        return new World(sc, gs, grove, fh);
+        return new World(sc, gs, grove, fh, sward);
     }
 
     private static double[] xz(int i) { return new double[]{Sites.ALL[i].x(), Sites.ALL[i].z()}; }

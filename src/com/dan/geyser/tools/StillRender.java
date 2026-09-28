@@ -138,6 +138,8 @@ public final class StillRender {
             r.riverSurface = w.firehole.surface;
             for (int k = 0; k < 900; k++) w.firehole.update(dt, 0.35, 0.8, 0.6, pose[0], pose[2]);
             r.floats = w.firehole.quads;
+            for (int k = 0; k < 3; k++) w.sward.update(30 + k / 30f, day, Thermal.snow, 0.35, 0.8, 0.6, an, pose[0], pose[1], pose[2]);
+            r.foliage = w.sward.meadow.batch;
             r.setSky(dc, Math.min(1, 0.12 + 0.3 * wx.overcast));
             r.rainWet = wx.rain * 0.8f;
             r.day = day; r.hour = hour; r.sidereal = dc.siderealDeg;

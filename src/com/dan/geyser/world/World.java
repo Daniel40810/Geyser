@@ -10,6 +10,8 @@ public final class World {
     public final Grove grove;
     /** Der Fluss: Strömung, Wellen, Schaum, Treibgut. */
     public final Firehole firehole;
+    /** Gras, Blumen, Steine und Erde um die Kamera. */
+    public final Sward sward;
     /** Drehpunkte für die Ortswahl: Upper Geyser Basin, Midway und Lower Geyser Basin (x, z). */
     public static final double[] UPPER = {-520, -700}, MIDWAY = {-760, -7180}, LOWER = {1742, -10013};
     /** Namen der Orte. */
@@ -26,10 +28,11 @@ public final class World {
     public static final java.util.List<double[][]> ROUTES = new java.util.ArrayList<>();
     public static double[] OVERLOOK = {-900, 0, -6880};
 
-    World(Scene scene, Geysers geysers, Grove grove, Firehole firehole) {
+    World(Scene scene, Geysers geysers, Grove grove, Firehole firehole, Sward sward) {
         this.scene = scene;
         this.geysers = geysers;
         this.grove = grove;
         this.firehole = firehole;
+        this.sward = sward;
     }
 }
