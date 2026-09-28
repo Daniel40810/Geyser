@@ -505,6 +505,7 @@ public final class ScenePanel extends JPanel {
     private volatile com.dan.geyser.world.Visitors visitors;
     private volatile com.dan.geyser.world.Grove grove;
     private volatile com.dan.geyser.world.Firehole firehole;
+    private volatile com.dan.geyser.world.Sward sward;
     private volatile boolean visitorsOn = true;
     private boolean ofWasErupting;
 
@@ -945,6 +946,7 @@ public final class ScenePanel extends JPanel {
             geysers = world.geysers;
             grove = world.grove;
             firehole = world.firehole;
+            sward = world.sward;
             // Old Faithful beginnt gleich mit dem Vorspiel, die anderen irgendwo in ihrem Abstand
             java.util.Random rr = new java.util.Random();
             for (GeyserModel g : geysers.list) {
@@ -1082,6 +1084,11 @@ public final class ScenePanel extends JPanel {
                 gv.setSeason(day, Thermal.snow);
                 gv.update(dt, wind, r.windX, r.windZ, cam.ex, cam.ez, scene.terrain);
                 r.leaves = gv.quads;
+            }
+            com.dan.geyser.world.Sward sw = sward;
+            if (sw != null) {
+                sw.update((float) t, day, Thermal.snow, wind, r.windX, r.windZ, animals, cam.ex, cam.ey, cam.ez);
+                r.foliage = sw.meadow.batch;
             }
             com.dan.geyser.world.Firehole fh = firehole;
             if (fh != null) {

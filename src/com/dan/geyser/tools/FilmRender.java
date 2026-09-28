@@ -140,6 +140,8 @@ public final class FilmRender {
             r.riverSurface = w.firehole.surface;
             w.firehole.update(dt, wind, 0.8, 0.6, cam.ex, cam.ez);
             r.floats = w.firehole.quads;
+            w.sward.update((float) clock, day, Thermal.snow, wind, 0.8, 0.6, animals, cam.ex, cam.ey, cam.ez);
+            r.foliage = w.sward.meadow.batch;
             // Ton: Pegel aus dem Ort der Kamera, 1/fps Sekunden Proben
             SoundScape.levels(sound, w.geysers, w.scene.terrain, cam, clock, wind);
             sound.rain = weather.rain * 0.8f;

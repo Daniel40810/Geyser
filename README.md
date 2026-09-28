@@ -21,6 +21,7 @@ Das Upper Geyser Basin im Yellowstone-Nationalpark als 3D-Szene in reinem Java, 
 - [Zugaben](#zugaben)
 - [Wald-Paket](#wald-paket)
 - [Fluss-Paket](#fluss-paket)
+- [Boden-Paket](#boden-paket)
 - [Datenbank](#datenbank)
 - [Bedienung](#bedienung)
 - [Bauen und starten](#bauen-und-starten)
@@ -184,6 +185,39 @@ Bei bewegter Kamera und einem Blick, in dem der Fluss den halben Bildschirm fül
 
 ![Riffel im Firehole River unterhalb von Grotto](docs/bilder/fluss/firehole.png)
 
+## Boden-Paket
+
+`src/com/dan/ground/` ist ein eigenes Paket für die Bodendecke. Es ist unabhängig von Geyser und lässt sich herauskopieren:
+
+- Gräser in Horsten, Blumen, Kiesel, Steine und offene Erde, als Biome für Yellowstone, Mitteleuropa und Kiesbänke
+- Böen, die als Wellen über die Wiese laufen, Halme, die sich nach Höhe und Steifheit biegen, und nickende Blüten
+- Gras, das Gehende zur Seite drücken und das sich hinter ihnen wieder aufrichtet
+- Gräser, die im Frühling grün, im Hochsommer golden und im Winter fahl sind; jede Blume blüht in ihrer eigenen Zeit
+- Kacheln, die um den Betrachter entstehen und in der Ferne ausdünnen, bis sie in den Boden übergehen
+
+Einzelheiten stehen in [`src/com/dan/ground/README.md`](src/com/dan/ground/README.md). Zum Ausprobieren startet man `com.dan.ground.demo.MeadowDemo`, der Selbsttest ist `com.dan.ground.demo.GroundCheck`.
+
+![Bergwiese in der Vorschau](docs/bilder/boden/wiese_yellowstone.png)
+
+![Dieselbe Wiese im Mai, Juli, August und Januar](docs/bilder/boden/jahr.png)
+
+*Dieselbe Wiese im Mai, Juli, August und Januar.*
+
+**Im Becken.** Um die Kamera wächst die Bodendecke aus dem Paket (`world/Sward`). Die Regeln kommen aus der Bodenkarte:
+
+- Auf Sinter und heißem Boden wächst nichts. Am Rand der heißen Flächen stirbt das Gras ab, und die Erde liegt offen.
+- Am Ufer stehen Seggen, dazu liegen Kies und Steine.
+- Im Wald wächst wenig Gras, an steilen Hängen liegt Geröll.
+- Auf den Wiesen gibt es Suhlen der Bisons.
+- Unter den Stegen wächst nichts.
+
+Besucher und Tiere treten das Gras nieder. Wind, Jahreszeit und Schnee kommen aus der Szene. Auf einer Wiese braucht ein Bild dadurch 6 bis 27 ms länger. Aus der Luft (mehr als 45 m über dem Boden) entfällt die Bodendecke.
+
+| | |
+|---|---|
+| ![Lupinen und Indian Paintbrush im Juli](docs/bilder/boden/lupinen.png) | ![Seggen, trockenes Gras und Kies am Firehole im August](docs/bilder/boden/firehole_ufer.png) |
+| Lupinen und Indian Paintbrush im Juli | Seggen und trockenes Gras am Firehole im August |
+
 ## Datenbank
 
 Die App läuft auch ohne Datenbank. Mit Oracle (getestet mit 21c, Schema DEMO, Präfix `GEY_`) kommt mehr dazu:
@@ -285,7 +319,7 @@ src/com/dan/geyser/
   GeyserApp.java    Einstieg, FFrame
   core/             Renderer, Gelände, Temperaturfeld, Materialien, Schatten, Tiere
   effects/          Himmel, Sonne und Mond, Sterne, Klima, Wetter, Teilchen, Klang
-  world/            Becken, Geysire und Röhrenmodell, Kopplungen, Stellen, Wege, Bäume, Fluss, Tiere, Besucher, Morning Glory
+  world/            Becken, Geysire und Röhrenmodell, Kopplungen, Stellen, Wege, Bäume, Fluss, Bodendecke, Tiere, Besucher, Morning Glory
   camera/           Kamerasteuerung, Pfade, Blickpunkte, Regie
   atom/             Mineral-Lupe, Mineralien, Elemente, Sinter-Zeitraffer
   db/               Datenbankzugriff, Belege, Einrichter
@@ -293,11 +327,13 @@ src/com/dan/geyser/
   tools/            Werkzeuge (siehe oben)
 src/com/dan/forest/ Wald-Paket: Arten, Baumerzeuger, Wind, Jahreszeit, Laubfall, Demo
 src/com/dan/river/  Fluss-Paket: Lauf, Strömung, Steine, Oberfläche, Optik, Treibgut, Demo
+src/com/dan/ground/ Boden-Paket: Gras, Blumen, Steine, Erde, Wind, Jahreszeit, Niedertreten, Demo
 db/sql/             SQL-Skripte 01 bis 04 und 99_abbau
 docs/bilder/readme/ Bilder dieser Seite
 docs/bilder/app/    Bildschirmfotos der App
 docs/bilder/wald/   Bilder zum Wald-Paket
 docs/bilder/fluss/  Bilder zum Fluss-Paket
+docs/bilder/boden/  Bilder zum Boden-Paket
 docs/bilder/phase*/ Prüfbilder aus der Entwicklung, nach Phasen
 ```
 
