@@ -481,24 +481,42 @@ public final class Basin {
         return new int[]{trees, snags};
     }
 
-    /** Drehkiefer: schlanker Stamm, schmale Krone im oberen Drittel aus zwei Kegeln. */
+    /**
+     * Drehkiefern aus dem Wald-Paket ({@link com.dan.forest}): echte Modelle der Art wachsen einmal in
+     * einigen Varianten; im Becken steht von jedem Baum die Silhouette (Stamm und Krone mit den Stufen
+     * der Quirle, gut 50 Dreiecke), gedreht und auf die gewünschte Höhe gebracht. Im Wind schwingt die
+     * Krone über den Ausschlag je Ecke wie bisher.
+     */
+    private static com.dan.forest.TreeMesh[] PINES;
+
+    private static synchronized com.dan.forest.TreeMesh[] pines() {
+        if (PINES == null) {
+            PINES = new com.dan.forest.TreeMesh[8];
+            com.dan.forest.Species sp = com.dan.forest.Species.lodgepolePine();
+            for (int i = 0; i < PINES.length; i++) PINES[i] = com.dan.forest.TreeMesh.silhouette(com.dan.forest.TreeGenerator.grow(sp, 1872 + i * 31L, 1), 5, 5);
+        }
+        return PINES;
+    }
+
+    /** Drehkiefer: eine der Varianten, auf 13 bis 24 m gebracht und zufällig gedreht. */
     static void tree(MeshBuilder mb, double x, double y, double z, java.util.Random rnd) {
+        com.dan.forest.TreeMesh m = pines()[rnd.nextInt(PINES.length)];
         double H = 13 + 11 * rnd.nextDouble();
-        double r = 0.13 + 0.008 * H;
-        double cb = H * (0.38 + 0.2 * rnd.nextDouble());
-        double cr = 1.3 + 1.0 * rnd.nextDouble();
-        double lean = (rnd.nextDouble() - 0.5) * 0.04, leanDir = rnd.nextDouble() * 6.28;
-        double lx = Math.cos(leanDir) * lean * H, lz = Math.sin(leanDir) * lean * H;
-        mb.swayFn = null;
-        mb.swayValue = 0;
-        prism(mb, x, y - 0.3, z, x + lx * 0.7, y + H * 0.7, z + lz * 0.7, r, r * 0.45, 4, Mat.BARK, rnd.nextDouble());
+        double k = H / m.model.height, yaw = rnd.nextDouble() * 2 * Math.PI, cs = Math.cos(yaw), sn = Math.sin(yaw);
         final double yb = y;
         mb.swayFn = (px, py, pz) -> 0.35 * Math.pow(Math.max(0, (py - yb) / H), 1.6);
         int keep = mb.group;
-        mb.group = 1;
-        double rot = rnd.nextDouble() * 6.28;
-        cone(mb, x + lx * cb / H, y + cb, z + lz * cb / H, x + lx * 0.8, y + H * 0.8, z + lz * 0.8, cr, 6, rot, rnd);
-        cone(mb, x + lx * 0.62, y + H * 0.62, z + lz * 0.62, x + lx, y + H, z + lz, cr * 0.75, 6, rot + 0.5, rnd);
+        mb.group = 1;                                    // von beiden Seiten sichtbar
+        int[] id = new int[m.nv];
+        for (int i = 0; i < m.nv; i++) {
+            double px = m.pos[3 * i], py = m.pos[3 * i + 1], pz = m.pos[3 * i + 2];
+            double nx = m.nrm[3 * i], ny = m.nrm[3 * i + 1], nz = m.nrm[3 * i + 2];
+            id[i] = mb.v(x + (px * cs - pz * sn) * k, y - 0.3 + py * k, z + (px * sn + pz * cs) * k, nx * cs - nz * sn, ny, nx * sn + nz * cs);
+        }
+        for (int t = 0; t < m.nt; t++) {
+            int a = m.tri[3 * t], b = m.tri[3 * t + 1], c = m.tri[3 * t + 2];
+            mb.tri(id[a], id[b], id[c], m.part[a] == com.dan.forest.TreeMesh.BARK ? Mat.BARK : Mat.NEEDLES);
+        }
         mb.group = keep;
         mb.swayFn = null;
     }
@@ -542,19 +560,5 @@ public final class Basin {
             mb.tri(lo[i], lo[j], hi[j], m);
             mb.tri(lo[i], hi[j], hi[i], m);
         }
-    }
-
-    /** Kegel der Krone von (bx,by,bz) mit Radius r zur Spitze (tx,ty,tz), n Seiten, unregelmäßiger Rand. */
-    static void cone(MeshBuilder mb, double bx, double by, double bz, double tx, double ty, double tz, double r, int n, double rot, java.util.Random rnd) {
-        int apex = mb.v(tx, ty, tz, 0, 1, 0);
-        int[] ring = new int[n];
-        double h = ty - by;
-        for (int i = 0; i < n; i++) {
-            double a = rot + 2 * Math.PI * i / n, rr = r * (0.75 + 0.45 * rnd.nextDouble());
-            double c = Math.cos(a), s = Math.sin(a);
-            double dy = (rnd.nextDouble() - 0.5) * 0.12 * h;
-            ring[i] = mb.v(bx + c * rr, by + dy, bz + s * rr, c * h, rr * 0.9, s * h);
-        }
-        for (int i = 0; i < n; i++) mb.tri(ring[i], ring[(i + 1) % n], apex, Mat.NEEDLES);
     }
 }

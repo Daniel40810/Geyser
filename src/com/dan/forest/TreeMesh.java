@@ -35,7 +35,7 @@ public final class TreeMesh {
     /** Baut die Geometrie der Stufe lod (0 bis 3). */
     public static TreeMesh build(TreeModel m, int lod) {
         TreeMesh t = new TreeMesh(m, lod);
-        if (lod >= 3) { t.silhouette(6, 7); t.ambient(); return t; }
+        if (lod >= 3) return silhouette(m, 6, 7);
         Species sp = m.species;
         int[][] sides = {{10, 6, 4, 3}, {6, 4, 3, 3}, {5, 3, 3, 3}};
         int skipLevel = lod == 0 ? 99 : lod == 1 ? 3 : 2;
@@ -240,10 +240,17 @@ public final class TreeMesh {
 
     /**
      * Stufe 3: Stamm als Prisma bis in die Krone, die Krone als Drehkörper mit sides Seiten und rings
-     * Ringen; der Radius je Höhe ist der Umriss der Blätter (90 % liegen innerhalb). Nadelbäume
-     * bekommen dazu Stufen, wie die Quirle sie zeigen.
+     * Ringen; der Radius je Höhe ist der Umriss der Blätter (90 % liegen innerhalb). Mit wenigen Seiten
+     * und Ringen (etwa 5 und 4, gut 50 Dreiecke) für sehr viele Bäume.
      */
-    private void silhouette(int sides, int rings) {
+    public static TreeMesh silhouette(TreeModel model, int sides, int rings) {
+        TreeMesh t = new TreeMesh(model, 3);
+        t.silhouetteGeom(sides, rings);
+        t.ambient();
+        return t;
+    }
+
+    private void silhouetteGeom(int sides, int rings) {
         TreeModel m = model;
         Species sp = m.species;
         float lo = Float.MAX_VALUE, hi = -Float.MAX_VALUE;

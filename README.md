@@ -19,6 +19,7 @@ Das Upper Geyser Basin im Yellowstone-Nationalpark als 3D-Szene in reinem Java, 
 
 - [Was die Szene kann](#was-die-szene-kann)
 - [Zugaben](#zugaben)
+- [Wald-Paket](#wald-paket)
 - [Datenbank](#datenbank)
 - [Bedienung](#bedienung)
 - [Bauen und starten](#bauen-und-starten)
@@ -118,6 +119,24 @@ Dazu kommen der Firehole River, Stege und Brücken, rund 10 500 Drehkiefern und 
 **Farbstile.** Unter BILD gibt es sechs Farbstile: Natürlich, Neutral, Kodachrome, Abendgold, Winterblau und Schwarzweiß mit Gelbfilter nach Ansel Adams' Aufnahme von Old Faithful aus dem Mural Project 1941–42.
 
 ![Die sechs Farbstile an Old Faithful am Abend](docs/bilder/readme/farbstile.png)
+
+## Wald-Paket
+
+`src/com/dan/forest/` ist ein eigenes Paket für Bäume und Wald. Es ist unabhängig von Geyser und lässt sich herauskopieren. Die Bäume wachsen prozedural und kommen in sieben Arten:
+
+- Yellowstone: Drehkiefer, Espe, Douglasie
+- Mitteleuropa: Eiche, Buche, Birke, Fichte
+
+Stamm, Äste und Blätter bewegen sich getrennt im böigen Wind. Mit der Jahreszeit treiben die Bäume aus, färben sich und werfen ihr Laub ab, die Blätter trudeln zu Boden. Ferne Bäume werden in vier Stufen vereinfacht. Die Kiefern im Becken stammen jetzt aus diesem Paket. Einzelheiten zur Benutzung stehen in [`src/com/dan/forest/README.md`](src/com/dan/forest/README.md). Zum Ausprobieren startet man `com.dan.forest.demo.ForestDemo`.
+
+![Die sieben Arten](docs/bilder/wald/arten.png)
+
+| | |
+|---|---|
+| ![Yellowstone im Herbst](docs/bilder/wald/yellowstone_herbst.png) | ![Mitteleuropa im Sommer](docs/bilder/wald/mitteleuropa_sommer.png) |
+| Yellowstone im Herbst: Espen zwischen Drehkiefern | Mischwald in Mitteleuropa im Sommer |
+| ![Mitteleuropa im Herbst](docs/bilder/wald/mitteleuropa_herbst.png) | ![Mitteleuropa im Winter](docs/bilder/wald/mitteleuropa_winter.png) |
+| Herbst mit fallendem Laub | Winter mit Schnee |
 
 ## Datenbank
 
@@ -226,9 +245,11 @@ src/com/dan/geyser/
   db/               Datenbankzugriff, Belege, Einrichter
   ui/               Szene, Bedienfeld, Dialoge, Röhrenschnitt, Programmsymbol
   tools/            Werkzeuge (siehe oben)
+src/com/dan/forest/ Wald-Paket: Arten, Baumerzeuger, Wind, Jahreszeit, Laubfall, Demo
 db/sql/             SQL-Skripte 01 bis 04 und 99_abbau
 docs/bilder/readme/ Bilder dieser Seite
 docs/bilder/app/    Bildschirmfotos der App
+docs/bilder/wald/   Bilder zum Wald-Paket
 docs/bilder/phase*/ Prüfbilder aus der Entwicklung, nach Phasen
 ```
 
