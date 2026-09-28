@@ -559,45 +559,7 @@ public final class ScenePanel extends JPanel {
     /** Pegel des Klangs aus dem Ort der Kamera: Säulen, Quellen, Fluss, Wind, Tiere zur Brunftzeit. */
     private void listen(Geysers gs, double dt) {
         double rx = cam.rx, rz = cam.rz;
-        float roar = 0, rpan = 0, hiss = 0, splash = 0;
-        double best = 0;
-        for (GeyserModel g : gs.list) {
-            double dx = g.x - cam.ex, dy = g.y - cam.ey, dz = g.z - cam.ez, d = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            double att = 1 / (1 + Math.pow(d / 70, 2));
-            double pan = (dx * rx + dz * rz) / Math.max(1, Math.hypot(dx, dz));
-            if (g.phase == GeyserModel.Phase.ERUPTION) {
-                double v = Math.min(1, g.height(gClock) / Math.max(1, g.hMax) + 0.25) * att;
-                roar += v;
-                if (v > best) { best = v; rpan = (float) pan; }
-            } else if (g.phase == GeyserModel.Phase.STEAM) {
-                hiss += (float) (g.steamShare() * att);
-                if (att > best) { best = att * 0.5; rpan = (float) pan; }
-            } else if (g.phase == GeyserModel.Phase.PREPLAY) {
-                splash += (float) (att * (g.surgeDrop() > 0 ? 1 : 0.3));
-            }
-        }
-        // Tremor: in der Nähe spürbar, hier hörbar gemacht
-        float trem = 0, tpan = 0;
-        for (GeyserModel g : gs.list) {
-            double dx = g.x - cam.ex, dy = g.y - cam.ey, dz = g.z - cam.ez, d = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            float v = (float) (g.tremor() * g.tubeDepth / 22 / (1 + Math.pow(d / 45, 2)));
-            if (v > trem) { trem = v; tpan = (float) ((dx * rx + dz * rz) / Math.max(1, Math.hypot(dx, dz))); }
-        }
-        sound.tremor = Math.min(1, trem); sound.tremorPan = tpan;
-        float boil = 0, bpan = 0;
-        double bd = 1e9;
-        for (Thermal.Spring s : scene.terrain.thermal.springs) {
-            if (s.t0 < 85) continue;
-            double d = Math.max(0, Math.hypot(s.x - cam.ex, s.z - cam.ez) - Math.max(s.ax, s.az));
-            if (d < bd) { bd = d; bpan = (float) (((s.x - cam.ex) * rx + (s.z - cam.ez) * rz) / Math.max(1, Math.hypot(s.x - cam.ex, s.z - cam.ez))); }
-        }
-        double alt = Math.max(0, cam.ey - scene.terrain.sample(cam.ex, cam.ez));
-        boil = (float) (1 / (1 + Math.pow((bd + alt) / 18, 2)));
-        float rd = scene.terrain.riverDist((float) cam.ex, (float) cam.ez);
-        sound.roar = Math.min(1.2f, roar); sound.roarPan = rpan; sound.hiss = Math.min(1, hiss); sound.splash = Math.min(1, splash);
-        sound.boil = boil; sound.boilPan = bpan;
-        sound.river = (float) (0.5 / (1 + Math.pow((Math.max(0, rd) + alt) / 35, 2)));
-        sound.wind = (float) (wind * (0.25 + 0.75 * Math.min(1, alt / 60)));
+        com.dan.geyser.world.SoundScape.levels(sound, gs, scene.terrain, cam, gClock, wind);
         // Tiere zur Brunft: Wapitis Anfang September bis Mitte Oktober, Bisons Juli und August (NPS)
         com.dan.geyser.world.Fauna f = fauna;
         if (f != null && faunaOn) {
@@ -1791,49 +1753,8 @@ public final class ScenePanel extends JPanel {
         Director dr = director;
         Object[] c = dr == null ? null : dr.caption();
         if (c == null) return;
-        String head = (String) c[0], text = (String) c[1], src = (String) c[2];
-        float a = (float) Math.max(0, Math.min(1, (Double) c[3]));
-        if (a <= 0.01) return;
         int W = getWidth(), H = getHeight();
-        int bw = Math.min(480, W - 40);
-        Font fh = new Font("SansSerif", Font.BOLD, 22), ft = new Font("SansSerif", Font.PLAIN, 14), fs = new Font("SansSerif", Font.ITALIC, 12);
-        java.util.List<String> lines = new java.util.ArrayList<>();
-        if (text != null) {
-            java.awt.FontMetrics fm = g.getFontMetrics(ft);
-            StringBuilder line = new StringBuilder();
-            for (String w : text.split(" ")) {
-                if (line.length() > 0 && fm.stringWidth(line + " " + w) > bw - 40) { lines.add(line.toString()); line.setLength(0); }
-                if (line.length() > 0) line.append(' ');
-                line.append(w);
-            }
-            if (line.length() > 0) lines.add(line.toString());
-        }
-        int bh = 24 + (head != null ? 30 : 0) + lines.size() * 20 + (src != null ? 24 : 0) + 8;
-        int x = 24, y = H - bh - (cinema ? Math.max(20, (int) ((H - W / 2.39) / 2) + 16) : 72);
-        java.awt.Composite old = g.getComposite();
-        g.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, a));
-        g.setColor(new Color(10, 16, 20, 180));
-        g.fillRoundRect(x, y, bw, bh, 12, 12);
-        g.setColor(SULFUR);
-        g.fillRect(x, y + 14, 3, bh - 28);
-        int cy = y + 20;
-        if (head != null) {
-            g.setFont(fh);
-            g.setColor(INK);
-            cy += 18;
-            g.drawString(head, x + 20, cy);
-            cy += 12;
-        }
-        g.setFont(ft);
-        g.setColor(new Color(222, 226, 220));
-        for (String l : lines) { cy += 20; g.drawString(l, x + 20, cy); }
-        if (src != null) {
-            g.setFont(fs);
-            g.setColor(SULFUR);
-            cy += 24;
-            g.drawString("Quelle: " + src, x + 20, cy);
-        }
-        g.setComposite(old);
+        Captions.draw(g, c, W, H, cinema ? Math.max(20, (int) ((H - W / 2.39) / 2) + 16) : 72);
     }
 
     private void helpHud(Graphics2D g) {
@@ -1846,14 +1767,15 @@ public final class ScenePanel extends JPanel {
                 {"G", "nächster Blickpunkt"}, {"F", "nächste Kamerafahrt"}, {"T", "Rundgang"}, {"B", "Drehbuch"},
                 {"Esc, Maus", "Kamera übernehmen"},
                 {"MINERALIEN", null},
-                {"U, Strg+Klick", "Mineral-Lupe"}, {"Z", "Sinter-Zeitraffer an Castle"},
+                {"U, Strg+Klick", "Mineral-Lupe"}, {"Z", "Sinter-Zeitraffer an Castle"}, {"J", "Morning Glory 1883 bis heute"},
                 {"ZUGABEN", null},
-                {"C", "Schnitt durch die Röhre"}, {"I", "Wärmebild"}, {"O", "Klang"}, {"N", "Bisons und Wapitis"},
+                {"C", "Schnitt und Seismometer"}, {"I", "Wärmebild"}, {"O", "Klang"}, {"N", "Bisons und Wapitis"}, {"F3", "Besucher"},
+                {"Y", "Wetter wechseln"},
                 {"STELLEN", null},
                 {"1 bis 6", "Old Faithful bis Morning Glory"}, {"7", "Grand Prismatic (Midway)"}, {"M", "Upper Basin oder Midway"},
                 {"L", "Beschriftung"},
                 {"GEYSIRE", null},
-                {"X", "nächsten Geysir auslösen"}, {"V", "Warten abkürzen (60-fach)"},
+                {"X", "nächsten Geysir auslösen"}, {"V", "Warten abkürzen (60-fach)"}, {"F2", "Rätsel: Wann bricht er aus?"},
                 {"SONNE", null},
                 {"+ und −", "½ Stunde vor, zurück"},
                 {"BILD", null},

@@ -145,7 +145,10 @@ public final class ControlPanel extends JPanel {
         FButton grow = new FButton("Sinter-Zeitraffer · Castle");
         grow.addActionListener(e -> { scene.playSinterLapse(); scene.requestFocusInWindow(); });
         add(row(grow));
-        note("Die Lupe zeigt, woraus die Ablagerungen bestehen, bis auf die Atome aus dem ATOMMODEL: Kieselsinter hier im Becken, zum Vergleich Travertin, Schwefel, Eisenoxid, Skorodit und Alunit. Strg+Klick in die Szene öffnet sie für die Quelle dort, Taste U für den Drehpunkt. Der Zeitraffer baut Terrasse und Kegel von Castle in 43 s auf und hält dann an (Taste Z).");
+        FButton glory = new FButton("Morning Glory · 1883 bis heute");
+        glory.addActionListener(e -> { scene.playMorningGlory(); scene.requestFocusInWindow(); });
+        add(row(glory));
+        note("Die Lupe zeigt, woraus die Ablagerungen bestehen, bis auf die Atome aus dem ATOMMODEL: Kieselsinter hier im Becken, zum Vergleich Travertin, Schwefel, Eisenoxid, Skorodit und Alunit. Strg+Klick in die Szene öffnet sie für die Quelle dort, Taste U für den Drehpunkt. Der Zeitraffer baut Terrasse und Kegel von Castle in 43 s auf und hält dann an (Taste Z). Morning Glory zeigt, wie Münzen und Abfall die Quelle abkühlten und die Matten zur Mitte wuchsen (Taste J).");
 
         gap();
         head("ZUGABEN");
@@ -281,7 +284,7 @@ public final class ControlPanel extends JPanel {
 
         gap();
         head("TASTEN");
-        note("F1 oder H zeigt alle Tasten. Die wichtigsten: 0 Übersicht · Leertaste Rundflug · 1 bis 7 Stellen · G Blickpunkte · F Fahrten · T Rundgang · B Drehbuch · + − Uhrzeit · P Standbild · K Kinomodus");
+        note("F1 oder H zeigt alle Tasten. Die wichtigsten: 0 Übersicht · Leertaste Rundflug · 1 bis 7 Stellen · G Blickpunkte · F Fahrten · T Rundgang · B Drehbuch · + − Uhrzeit · Y Wetter · J Morning Glory · F2 Rätsel · F3 Besucher · P Standbild · K Kinomodus");
         add(Box.createVerticalGlue());
         sunChanged();
     }
