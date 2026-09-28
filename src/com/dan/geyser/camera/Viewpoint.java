@@ -5,7 +5,7 @@ import com.dan.geyser.world.World;
 
 /**
  * Feste Blickpunkte mit Namen: Augpunkt und Blickziel, dazu der Ort (0 Upper Geyser Basin, 1
- * Midway). Die Augpunkte auf den Stegen stehen 1,7 m über den Brettern; die Lage der Geysire folgt
+ * Midway, 2 Lower Geyser Basin). Die Augpunkte auf den Stegen stehen 1,7 m über den Brettern; die Lage der Geysire folgt
  * den Koordinaten in {@link com.dan.geyser.world.Sites}.
  */
 public final class Viewpoint {
@@ -19,7 +19,8 @@ public final class Viewpoint {
 
     /** Namen in der Reihenfolge von {@link #all}, schon vor dem Bau bekannt (für das Bedienfeld). */
     public static final String[] NAMES = {"Übersicht", "Old Faithful · Bänke", "Geyser Hill · Beehive", "Castle Geyser", "Grand Geyser",
-            "Riverside Geyser", "Morning Glory Pool", "Luftbild", "Grand Prismatic · Aussicht", "Excelsior · Steg", "Grand Prismatic · Luftbild"};
+            "Riverside Geyser", "Morning Glory Pool", "Luftbild", "Grand Prismatic · Aussicht", "Excelsior · Steg", "Grand Prismatic · Luftbild",
+            "Fountain Paint Pot"};
 
     private static Viewpoint[] all;
 
@@ -48,7 +49,10 @@ public final class Viewpoint {
                 new Viewpoint("Excelsior · Steg", "Am Rand des Kraters, 1985 zuletzt ausgebrochen", 1,
                         new double[]{-662, deck(t, -662, -7262), -7262, -694, -26, -7317}),
                 new Viewpoint("Grand Prismatic · Luftbild", "Die Farbringe von oben", 1,
-                        new double[]{-640, 190, -7020, -789, -24, -7171})};
+                        new double[]{-640, 190, -7020, -789, -24, -7171}),
+                new Viewpoint("Fountain Paint Pot", "Vom Steg in die Schlammtöpfe des Lower Geyser Basin", 2,
+                        new double[]{World.LOWER[0] - 26, deck(t, World.LOWER[0] - 26, World.LOWER[1] + 20) + 1.0, World.LOWER[1] + 20,
+                                World.LOWER[0], t.sample(World.LOWER[0], World.LOWER[1]), World.LOWER[1]})};
         return all;
     }
 

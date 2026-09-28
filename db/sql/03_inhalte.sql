@@ -65,6 +65,8 @@ INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('
 /
 INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('WIKI_DOUBLET', 'Doublet Pool', 'Wikipedia', 'https://en.wikipedia.org/wiki/Doublet_Pool', 'LEXIKON', DATE '2026-09-28')
 /
+INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('WIKI_FPP', 'Fountain Paint Pot', 'Wikipedia', 'https://en.wikipedia.org/wiki/Fountain_Paint_Pot', 'LEXIKON', DATE '2026-09-28')
+/
 INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('USGS_MG', 'What''s the story, Morning Glory?', 'USGS', 'https://www.usgs.gov/observatories/yvo/news/whats-story-morning-glory', 'BEHOERDE', DATE '2026-09-28')
 /
 INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('GEOLOGY_2008', 'Climate-induced variations of geyser periodicity in Yellowstone National Park, USA (Hurwitz u. a.)', 'Geology', 'https://www.sciencedaily.com/releases/2008/06/080614080441.htm', 'FACHARTIKEL', DATE '2026-09-28')
@@ -142,7 +144,9 @@ INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id)
 /
 INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('QUELLE', 'MORNING_GLORY', 'Von den 1880ern bis in die 1940er tiefblau und heißer; Münzen und Abfall verstopften den Schlot, die Quelle kühlte ab, gelbe und orange Matten wuchsen zur Mitte', NULL, NULL, 32, (SELECT source_id FROM gey_source WHERE code = 'USGS_MG'))
 /
-INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('QUELLE', 'MORNING_GLORY', '1950 herausgeholt: 76 Taschentücher, 86,27 Dollar in Pennys und 8,10 Dollar in anderen Münzen', 76, 'Taschentücher', 33, (SELECT source_id FROM gey_source WHERE code = 'WIKI_MG'))
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('QUELLE', 'FOUNTAIN_PAINT_POT', 'Schlammtopf im Lower Geyser Basin auf 7306 ft (2227 m); im Frühsommer ist der Schlamm dünn vom hohen Grundwasser, im Spätsommer dick', 2227, 'm', 33, (SELECT source_id FROM gey_source WHERE code = 'WIKI_FPP'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('QUELLE', 'MORNING_GLORY', '1950 herausgeholt: 76 Taschentücher, 86,27 Dollar in Pennys und 8,10 Dollar in anderen Münzen', 76, 'Taschentücher', 34, (SELECT source_id FROM gey_source WHERE code = 'WIKI_MG'))
 /
 INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('MINERAL', 'SINTER', 'Frischer Sinter: Opal-A, rund 10 % des Gewichts Wasser', NULL, NULL, 1, (SELECT source_id FROM gey_source WHERE code = 'USGS_SINTER'))
 /
@@ -209,6 +213,8 @@ INSERT INTO gey_site (code, name, art, becken, breite, laenge, hoehe_m, lage, sa
 /
 INSERT INTO gey_site (code, name, art, becken, breite, laenge, hoehe_m, lage, saeule_max_m, tafel, taste) VALUES ('GIANTESS', 'Giantess Geyser', 'GEYSIR', 'UPPER', 44.4635358, -110.828924, NULL, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.828924, 44.4635358, NULL), NULL, NULL), 61, 'Geysir auf Geyser Hill · bis 61 m · 2- bis 6-mal im Jahr, 4–48 Std.', NULL)
 /
+INSERT INTO gey_site (code, name, art, becken, breite, laenge, hoehe_m, lage, saeule_max_m, tafel, taste) VALUES ('FOUNTAIN_PAINT_POT', 'Fountain Paint Pot', 'QUELLE', 'LOWER', 44.550578, -110.8062419, 2227, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8062419, 44.550578, NULL), NULL, NULL), 0, 'Schlammtöpfe im Lower Geyser Basin · Ton aus zersetztem Gestein · im Spätsommer dick', NULL)
+/
 -- ------------------------------------------------------------- Geysire
 INSERT INTO gey_geyser (site_id, typ, schlot_r_m, roehre_m, saeule_max_m, kurz_min_s, kurz_max_s, lang_min_s, lang_max_s, anteil_kurz, abstand_kurz_s, abstand_lang_s, streuung_s, dampfphase_s, neigung_grad, stoesse_min, stoesse_max) VALUES ((SELECT site_id FROM gey_site WHERE code = 'OLD_FAITHFUL'), 'KEGEL', 0.6, 22, 55, 90, 150, 150, 300, 0.3, 3900, 5460, 600, 100, 0, 0, 0)
 /
@@ -262,6 +268,14 @@ INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_
 INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('TURBAN', 'Turban Geyser', 'SCHLOT', NULL, 92, 0, 0, 0, 0, 10, 2, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.83838, 44.4666626, NULL), NULL, NULL), 'J')
 /
 INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('BEEHIVE_INDICATOR', 'Beehive''s Indicator', 'SCHLOT', NULL, 92, 0, 0, 0, 0, 6, 1.5, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8298958, 44.4629842, NULL), NULL, NULL), 'J')
+/
+INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('FOUNTAIN_PAINT_POT', 'Fountain Paint Pot', 'SCHLAMM', (SELECT site_id FROM gey_site WHERE code = 'FOUNTAIN_PAINT_POT'), 88, 5, 7, 5.5, 1.2, 3, 2.5, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8062419, 44.550578, NULL), NULL, NULL), 'N')
+/
+INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('SCHLAMMTOPF_NORD', 'Schlammtopf Nord', 'SCHLAMM', NULL, 86, 4, 2.4, 2, 0.8, 1.5, 1.2, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8060283, 44.550677, NULL), NULL, NULL), 'J')
+/
+INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('SCHLAMMTOPF_WEST', 'Schlammtopf West', 'SCHLAMM', NULL, 87, 4, 1.7, 1.4, 0.6, 1.5, 1.2, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8064304, 44.55047, NULL), NULL, NULL), 'J')
+/
+INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('SCHLAMMTOPF_SUED', 'Schlammtopf Süd', 'SCHLAMM', NULL, 85, 4, 3, 2.3, 0.8, 1.5, 1.2, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8061288, 44.550434, NULL), NULL, NULL), 'J')
 /
 INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('GIANTESS', 'Giantess Geyser', 'BECKEN', (SELECT site_id FROM gey_site WHERE code = 'GIANTESS'), 92, 4, 4.6, 3.8, 8, 30, 5, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.828924, 44.4635358, NULL), NULL, NULL), 'N')
 /

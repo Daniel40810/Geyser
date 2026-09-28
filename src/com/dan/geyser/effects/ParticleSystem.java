@@ -10,7 +10,7 @@ import com.dan.geyser.core.Wetness;
  * nässen sie den Boden und werfen Spritzer. Bis zu {@link #CAP} Teilchen, in flachen Feldern.
  */
 public final class ParticleSystem {
-    public static final byte DROP = 0, SPRAY = 1, STEAM = 2, SPLASH = 3, RAIN = 4, SNOW = 5;
+    public static final byte DROP = 0, SPRAY = 1, STEAM = 2, SPLASH = 3, RAIN = 4, SNOW = 5, MUD = 6;
     public static final int CAP = 90000;
     public static final float G = 9.81f;
     /** Luftwiderstand k (1/m) von Tropfen und Gischt: a = −k·|v−w|·(v−w). */
@@ -106,7 +106,7 @@ public final class ParticleSystem {
             if (y[i] <= gy && vy[i] < 0) {
                 int wi = wet[i];
                 if (wi >= 0 && wi < wets.list.size() && k != SPLASH) wets.list.get(wi).add(x[i], z[i], k == DROP ? 0.012f : 0.03f);
-                if (k != SPLASH && rand() < (k == DROP ? 0.22f : 0.5f)) {
+                if (k != SPLASH && k != MUD && rand() < (k == DROP ? 0.22f : 0.5f)) {
                     float s = (float) Math.sqrt(vx[i] * vx[i] + vy[i] * vy[i] + vz[i] * vz[i]);
                     int m = k == DROP ? 1 : 3;
                     for (int q = 0; q < m; q++) {

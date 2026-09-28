@@ -76,6 +76,7 @@ public final class Belege {
         s("WIKI_GIANTESS", "Giantess Geyser", "Wikipedia", "https://en.wikipedia.org/wiki/Giantess_Geyser", "LEXIKON", "2026-09-28");
         s("WIKI_TURBAN", "Turban Geyser", "Wikipedia", "https://en.wikipedia.org/wiki/Turban_Geyser", "LEXIKON", "2026-09-28");
         s("WIKI_DOUBLET", "Doublet Pool", "Wikipedia", "https://en.wikipedia.org/wiki/Doublet_Pool", "LEXIKON", "2026-09-28");
+        s("WIKI_FPP", "Fountain Paint Pot", "Wikipedia", "https://en.wikipedia.org/wiki/Fountain_Paint_Pot", "LEXIKON", "2026-09-28");
         s("USGS_MG", "What's the story, Morning Glory?", "USGS", "https://www.usgs.gov/observatories/yvo/news/whats-story-morning-glory", "BEHOERDE", "2026-09-28");
         s("GEOLOGY_2008", "Climate-induced variations of geyser periodicity in Yellowstone National Park, USA (Hurwitz u. a.)", "Geology",
                 "https://www.sciencedaily.com/releases/2008/06/080614080441.htm", "FACHARTIKEL", "2026-09-28");
@@ -132,5 +133,6 @@ public final class Belege {
             new Fact("GEYSIR", "OLD_FAITHFUL", "In einer schweren Dürre des 13. Jahrhunderts brach Old Faithful jahrzehntelang nicht aus", null, null, "GRL_2020"),
             new Fact("GEYSIR", "OLD_FAITHFUL", "Tremor aus zusammenfallenden Dampfblasen; der tieffrequente Tremor wächst vor jedem Ausbruch und bricht mit dem Beginn ab", null, null, "GRL_2019"),
             new Fact("QUELLE", "MORNING_GLORY", "Von den 1880ern bis in die 1940er tiefblau und heißer; Münzen und Abfall verstopften den Schlot, die Quelle kühlte ab, gelbe und orange Matten wuchsen zur Mitte", null, null, "USGS_MG"),
+            new Fact("QUELLE", "FOUNTAIN_PAINT_POT", "Schlammtopf im Lower Geyser Basin auf 7306 ft (2227 m); im Frühsommer ist der Schlamm dünn vom hohen Grundwasser, im Spätsommer dick", 2227.0, "m", "WIKI_FPP"),
             new Fact("QUELLE", "MORNING_GLORY", "1950 herausgeholt: 76 Taschentücher, 86,27 Dollar in Pennys und 8,10 Dollar in anderen Münzen", 76.0, "Taschentücher", "WIKI_MG")};
 }

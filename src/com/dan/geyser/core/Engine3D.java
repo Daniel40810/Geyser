@@ -1295,6 +1295,7 @@ public final class Engine3D {
         final LightingEngine li = L;
         Thermal th = thermal;
         Thermal.Spring sp = th == null ? null : th.poolAt(wx, wz);
+        if (sp != null && sp.kind == Thermal.Kind.MUD) { shadeMud(p, sp, wx, wy, wz, vx, vy, vz, dist, sk, hz); return; }
         float t = time;
         float lx = (float) s.sun[0], ly = (float) s.sun[1], lz = (float) s.sun[2];
         boolean sunUp = s.sunR + s.sunG + s.sunB > 0.001f;
@@ -1367,6 +1368,84 @@ public final class Engine3D {
             r += (hz[0] - r) * fa; g += (hz[1] - g) * fa; bl += (hz[2] - bl) * fa;
         }
         hr[p] = r; hg[p] = g; hb[p] = bl;
+    }
+
+    /**
+     * Schlammtopf: undurchsichtiger, nasser Ton (Kaolinit, von Eisenoxiden rosa bis orange getönt).
+     * Blasen wachsen in Zellen von knapp einem Meter, platzen und werfen einen Ring, der verläuft.
+     * Licht wie am Boden, dazu Glanz und Himmelsspiegelung der nassen Oberfläche.
+     */
+    private void shadeMud(int p, Thermal.Spring sp, float wx, float wy, float wz, float vx, float vy, float vz, float dist, float[] sk, float[] hz) {
+        final Sky s = sky;
+        final LightingEngine li = L;
+        float t = time;
+        float lx = (float) s.sun[0], ly = (float) s.sun[1], lz = (float) s.sun[2];
+        boolean sunUp = s.sunR + s.sunG + s.sunB > 0.001f;
+        // Höhe der Oberfläche aus den Blasen der Nachbarzellen, Normale aus der Ableitung
+        float e = 0.05f;
+        float h0 = mudHeight(wx, wz, t), hx = mudHeight(wx + e, wz, t), hzz = mudHeight(wx, wz + e, t);
+        float nx = -(hx - h0) / e, nz = -(hzz - h0) / e, ny = 1;
+        float nl = (float) Math.sqrt(nx * nx + 1 + nz * nz);
+        nx /= nl; ny /= nl; nz /= nl;
+        // Farbe: grau-rosa Ton, zum Rand hin wärmer und trockener
+        float u = (float) Math.min(1, sp.u(wx, wz));
+        float n1 = Noise.tex(wx * 0.9f + 3.3f, wz * 0.9f), n2 = Noise.tex(wx * 3.1f, wz * 3.1f + 7);
+        float ar = 0.46f + 0.10f * u + 0.06f * n1, ag = 0.40f + 0.04f * u + 0.04f * n1, ab = 0.39f - 0.03f * u + 0.03f * n2;
+        float dark = 0.85f + 0.15f * n2;
+        ar *= dark; ag *= dark; ab *= dark;
+        float sunV = sunUp ? li.lit(wx, wy + 0.05, wz, 0.5, dist < 300) : 0;
+        float ndl = Math.max(0, nx * lx + ny * ly + nz * lz);
+        float skyv = Math.max(0.3f, Math.min(1, gsk[p]));
+        float r = ar * (s.sunR * ndl * sunV + s.upR * skyv), g = ag * (s.sunG * ndl * sunV + s.upG * skyv), bl = ab * (s.sunB * ndl * sunV + s.upB * skyv);
+        // nasser Glanz
+        float cosV = Math.max(0.02f, nx * vx + ny * vy + nz * vz);
+        float F = 0.03f + 0.5f * (float) Math.pow(1 - cosV, 5);
+        float rx = 2 * cosV * nx - vx, ry = 2 * cosV * ny - vy, rz = 2 * cosV * nz - vz;
+        s.radiance(rx, Math.max(ry, 0.01f), rz, sk);
+        r += (sk[0] - r) * F; g += (sk[1] - g) * F; bl += (sk[2] - bl) * F;
+        if (sunV > 0) {
+            float rs = Math.max(0, rx * lx + ry * ly + rz * lz);
+            float spk = (float) Math.pow(rs, 80) * 1.2f * sunV;
+            r += s.sunR * spk; g += s.sunG * spk; bl += s.sunB * spk;
+        }
+        float air = AIR0 + AIR1 * s.haze;
+        float fa = 1 - Noise.expNeg(dist * air);
+        if (fa > 0.002f) {
+            s.haze(-vx, -vy, -vz, hz);
+            r += (hz[0] - r) * fa; g += (hz[1] - g) * fa; bl += (hz[2] - bl) * fa;
+        }
+        hr[p] = r; hg[p] = g; hb[p] = bl;
+    }
+
+    /** Oberfläche des Schlamms (m über dem Spiegel): Blasen je Zelle von 0,9 m, die wachsen, platzen und Ringe werfen. */
+    static float mudHeight(float x, float z, float t) {
+        final float C = 0.9f;
+        int ci = (int) Math.floor(x / C), cj = (int) Math.floor(z / C);
+        float h = 0;
+        for (int dj = -1; dj <= 1; dj++) {
+            for (int di = -1; di <= 1; di++) {
+                int i = ci + di, j = cj + dj;
+                int hs = Noise.hash(i, j, 77);
+                float ox = ((hs & 255) / 255f) * C, oz = (((hs >> 8) & 255) / 255f) * C;
+                float period = 1.6f + 3.4f * (((hs >> 16) & 255) / 255f), ph = ((hs >> 24) & 255) / 255f;
+                float tau = (t / period + ph) % 1;
+                float dx = x - (i * C + ox), dz = z - (j * C + oz), d = (float) Math.sqrt(dx * dx + dz * dz);
+                float rMax = 0.18f + 0.22f * (((hs >> 4) & 255) / 255f);
+                if (tau < 0.7f) {
+                    // Blase wächst als flache Kuppel
+                    float rr = rMax * (float) Math.sqrt(tau / 0.7f);
+                    if (d < rr) { float q = 1 - d * d / (rr * rr); h += 0.08f * rr / rMax * q * q; }
+                } else {
+                    // geplatzt: ein Ring läuft nach außen und verebbt
+                    float k = (tau - 0.7f) / 0.3f;
+                    float ring = rMax * (0.6f + 2.4f * k), w = 0.06f + 0.05f * k;
+                    float q = (d - ring) / w;
+                    h += 0.03f * (1 - k) * (float) Math.exp(-q * q);
+                    if (d < rMax * 0.6f) h -= 0.03f * (1 - k) * (1 - d / (rMax * 0.6f));
+                }
+            }
+        }
+        return h;
     }
 
     // ------------------------------------------------------------ Teilchen
@@ -1468,10 +1547,12 @@ public final class Engine3D {
                     lit *= 0.3f + 0.7f * Noise.expNeg(od * 0.45f);
                     occ = 1 / (1 + 0.25f * steamGrid.at(x, y, z));
                 }
-                float alb = steam ? 0.95f : 0.9f;
+                boolean mud = k == com.dan.geyser.effects.ParticleSystem.MUD;
+                float alb = steam ? 0.95f : mud ? 0.45f : 0.9f;
                 float amb = (steam ? 0.55f : 0.5f) * (0.55f + 0.45f * occ);
                 float br = 1, bg = 1, bb = 1;
-                if (bowOn && !steam && lit > 0) {
+                if (mud) { br = 1.1f; bg = 0.95f; bb = 0.9f; }
+                else if (bowOn && !steam && lit > 0) {
                     float th = (float) Math.toDegrees(Math.acos(Math.max(-1, Math.min(1, -mu))));
                     if (th < 58) { bow(th, bw); br = bw[0]; bg = bw[1]; bb = bw[2]; }
                 }

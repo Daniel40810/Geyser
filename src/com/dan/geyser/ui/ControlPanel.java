@@ -46,7 +46,7 @@ public final class ControlPanel extends JPanel {
         orbit.addActionListener(e -> { if (scene.controller() != null) scene.controller().autoOrbit = orbit.isSelected(); scene.requestFocusInWindow(); });
         add(row(orbit));
         scene.setOrbitListener(orbit::setSelected);
-        FComboBox where = new FComboBox(new Object[]{"Ort · Upper Geyser Basin", "Ort · Midway (Grand Prismatic)"});
+        FComboBox where = new FComboBox(new Object[]{"Ort · Upper Geyser Basin", "Ort · Midway (Grand Prismatic)", "Ort · Lower (Fountain Paint Pot)"});
         where.addActionListener(e -> {
             if (fromSite) return;
             scene.setSite(where.getSelectedIndex(), true);
@@ -54,7 +54,7 @@ public final class ControlPanel extends JPanel {
         });
         scene.setSiteListener(v -> { fromSite = true; where.setSelectedIndex(v); fromSite = false; });
         add(row(where));
-        note("Das Upper Geyser Basin am Firehole River, von Old Faithful im Südosten bis Morning Glory im Nordwesten; 6,5 km flussabwärts Midway mit Grand Prismatic und Excelsior. Doppelklick auf eine Stelle macht sie zum Drehpunkt; M wechselt den Ort.");
+        note("Das Upper Geyser Basin am Firehole River, von Old Faithful im Südosten bis Morning Glory im Nordwesten; 6,5 km flussabwärts Midway mit Grand Prismatic und Excelsior, 10 km nördlich im Lower Geyser Basin die Schlammtöpfe am Fountain Paint Pot. Doppelklick auf eine Stelle macht sie zum Drehpunkt; M wechselt den Ort.");
 
         gap();
         head("GEYSIRE");

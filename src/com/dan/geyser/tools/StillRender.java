@@ -24,7 +24,7 @@ import java.io.File;
  * </pre>
  * Wetter ist die Nummer aus {@link com.dan.geyser.effects.Weather#MODES} (fehlt es: klar).
  * Blickpunkt ist die Nummer oder der Name aus {@link Viewpoint#NAMES}, oder frei
- * {@code ex,ey,ez,tx,ty,tz} (y über Gelände) mit dem Ort als Nachsatz {@code @1} für Midway. Beispiel:
+ * {@code ex,ey,ez,tx,ty,tz} (y über Gelände) mit dem Ort als Nachsatz {@code @1} für Midway, {@code @2} für das Lower Geyser Basin. Beispiel:
  * {@code docs/bilder/readme/old_faithful.png|1|200|8.3|Old Faithful|40|0|1600|900}. Oder eine Einstellung
  * des Drehbuchs: {@code drehbuch:3:12} (Einstellung 3, Sekunde 12) mit Uhrzeit {@code -} und Geysir
  * {@code auto} nimmt Uhrzeit, Ort und Ausbruch aus dem Drehbuch.
@@ -76,7 +76,7 @@ public final class StillRender {
                 pose = vp.pose;
                 site = vp.site;
             }
-            double[] cc = site == 0 ? World.UPPER : World.MIDWAY;
+            double[] cc = World.center(site);
             LightingEngine.centerX = site == 0 ? LightingEngine.FCX : cc[0];
             LightingEngine.centerZ = site == 0 ? LightingEngine.FCZ : cc[1];
             // Klima wie in der App

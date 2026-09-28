@@ -27,6 +27,9 @@ public final class Basin {
      * ein paar Meter von Fan. Die genauen Richtungen sind genähert.
      */
     static final double[] TURBAN_OFF = {-9, -7}, INDICATOR_OFF = {3, 0.5}, MORTAR_OFF = {-6, 9};
+    /** Talboden im Lower Geyser Basin (y); rund 10 m unter der Höhe des Fountain Paint Pot, damit er zum Fluss passt. */
+    static final double LOWER_FLOOR = -23;
+
     /** Splendid Geyser: 44,4702049° N, 110,8446526° W (Wikipedia). */
     static final double SPLENDID_LAT = 44.4702049, SPLENDID_LON = -110.8446526;
 
@@ -39,6 +42,7 @@ public final class Basin {
         double[] spl = {Sites.x(SPLENDID_LON), Sites.z(SPLENDID_LAT)};
         double[] tu = {gr[0] + TURBAN_OFF[0], gr[1] + TURBAN_OFF[1]}, ind = {bh[0] + INDICATOR_OFF[0], bh[1] + INDICATOR_OFF[1]};
         double[] mo = {fan[0] + MORTAR_OFF[0], fan[1] + MORTAR_OFF[1]};
+        double[] fpp = xz(11);
         // Geebnete Stellen mit bekannter Höhe (m über 2240 m)
         t.pad(of[0], of[1], 45, 0, 40);
         t.pad(bh[0], bh[1], 22, 4, 32);
@@ -64,6 +68,9 @@ public final class Basin {
         t.pad(gt[0], gt[1], 10, gtL, 10);
         t.pad(fan[0], fan[1], 12, fanL, 8);
         t.pad(gi[0], gi[1], 10, giL, 10);
+        // Lower Geyser Basin: ein weiter, flacher Talboden östlich des Firehole. Das Gelände hier hätte
+        // an seiner Stelle ein Plateau; die Höhe ist dem Talboden angeglichen (Fountain Paint Pot 2227 m)
+        t.pad(1300, -10000, 700, LOWER_FLOOR, 520);
         t.build();
 
         // ------------------------------------------------------------ Quellen fürs Temperaturfeld
@@ -87,6 +94,13 @@ public final class Basin {
         th.add(new Thermal.Spring("Turban Geyser", Thermal.Kind.VENT, tu[0], tu[1], 0, 0, 0, 92, 0, toRiver(t, tu), 10, 2, 6, 0)).y = -6 + TURBAN_TOP;
         th.add(new Thermal.Spring("Beehive's Indicator", Thermal.Kind.VENT, ind[0], ind[1], 0, 0, 0, 92, 0, toRiver(t, ind), 6, 1.5, 6, 0)).y = 4 + INDICATOR_TOP;
         for (Thermal.Spring sp : th.springs) if (sp.kind == Thermal.Kind.VENT) sp.mats = 0.5;
+        // Fountain Paint Pot: ein großer Schlammtopf und kleinere daneben (Lage der kleinen genähert)
+        th.add(new Thermal.Spring("Fountain Paint Pot", Thermal.Kind.MUD, fpp[0], fpp[1], 7, 5.5, 1.2, 88, 5, Math.PI, 3, 2.5, 8, 0.7)).y = LOWER_FLOOR + 0.05;
+        th.add(new Thermal.Spring("Schlammtopf Nord", Thermal.Kind.MUD, fpp[0] + 17, fpp[1] - 11, 2.4, 2.0, 0.8, 86, 4, Math.PI, 1.5, 1.2, 6, 0.7)).y = LOWER_FLOOR + 0.05;
+        th.add(new Thermal.Spring("Schlammtopf West", Thermal.Kind.MUD, fpp[0] - 15, fpp[1] + 12, 1.7, 1.4, 0.6, 87, 4, Math.PI, 1.5, 1.2, 6, 0.7)).y = LOWER_FLOOR + 0.05;
+        th.add(new Thermal.Spring("Schlammtopf Süd", Thermal.Kind.MUD, fpp[0] + 9, fpp[1] + 16, 3.0, 2.3, 0.8, 85, 4, Math.PI, 1.5, 1.2, 6, 0.7)).y = LOWER_FLOOR + 0.05;
+        // Schlammtöpfe haben kaum Abfluss: wenig Matten am Rand
+        for (Thermal.Spring sp : th.springs) if (sp.kind == Thermal.Kind.MUD) sp.mats = 0.25;
         // Giantess bricht aus einem weiten Becken aus, wie Grand
         th.add(new Thermal.Spring("Giantess Geyser", Thermal.Kind.POOL, gi[0], gi[1], 4.6, 3.8, 8, 92, 4, toRiver(t, gi), 30, 5, 12, 0.8)).y = giL + 0.08;
         th.add(new Thermal.Spring("Excelsior Geyser Crater", Thermal.Kind.CRATER, exc[0], exc[1], 44, 41, 20, 93, 3, toRiver(t, exc), 55, 8, 22, 0.9)).y = -31;
@@ -96,6 +110,7 @@ public final class Basin {
         mb.nearX0 = -1800; mb.nearX1 = 700; mb.nearZ0 = -8100; mb.nearZ1 = 700;
         grid(mb, t, t.fine, true);
         grid(mb, t, t.fine2, true);
+        grid(mb, t, t.fine3, true);
         grid(mb, t, t.mid, true);
         grid(mb, t, t.far, false);
         river(mb, t);
@@ -118,18 +133,19 @@ public final class Basin {
         for (Thermal.Spring s : th.springs) {
             if (s.kind == Thermal.Kind.VENT) continue;
             if (s.kind == Thermal.Kind.POOL) rim(mb, s, s.ax > 30 ? 0.08 : 0.28, s.ax > 30 ? 4 : Math.max(0.6, s.ax * 0.35));
+            if (s.kind == Thermal.Kind.MUD) rim(mb, s, 0.18, Math.max(0.8, s.ax * 0.3));
             water(mb, s);
         }
         // Wald, tote Stämme, Stege
         java.util.Random rnd = new java.util.Random(1872);
         int[] counts = forest(mb, t, th, rnd);
-        Walks.build(mb, t, of, bh, ca, gr, rs, mg, gps, exc);
+        Walks.build(mb, t, of, bh, ca, gr, rs, mg, gps, exc, fpp);
 
         Scene sc = new Scene("Upper Geyser Basin", mb.build(64), t, th);
         sc.trees = counts[0];
         sc.snags = counts[1];
         double[] tops = {OF_TOP + 1.5, 4 + BEEHIVE_TOP + 1.5, -5 + CASTLE_TOP + 1.5, -6 + 2.5, rsLevel + RIVERSIDE_TOP + 1.5, -15 + 2.5, -24 + 3,
-                dyL + DAISY_TOP + 1.5, gtL + GROTTO_TOP + 1.5, fanL + FAN_TOP + 1.5, giL + 2.5};
+                dyL + DAISY_TOP + 1.5, gtL + GROTTO_TOP + 1.5, fanL + FAN_TOP + 1.5, giL + 2.5, LOWER_FLOOR + 2.5};
         for (int i = 0; i < Sites.ALL.length; i++) {
             Sites.Site s = Sites.ALL[i];
             sc.markers.add(new Scene.Marker(s.name, s.line, s.x(), tops[i], s.z(), s.basin));
@@ -436,7 +452,8 @@ public final class Basin {
         mb.maxEdge = 1e9;
         float[] gm = new float[5];
         int trees = 0, snags = 0;
-        double[][] boxes = {{t.fine.x0 + 20, t.fine.x1() - 20, t.fine.z0 + 20, t.fine.z1() - 20}, {t.fine2.x0 + 20, t.fine2.x1() - 20, t.fine2.z0 + 20, t.fine2.z1() - 20}};
+        double[][] boxes = {{t.fine.x0 + 20, t.fine.x1() - 20, t.fine.z0 + 20, t.fine.z1() - 20}, {t.fine2.x0 + 20, t.fine2.x1() - 20, t.fine2.z0 + 20, t.fine2.z1() - 20},
+                {t.fine3.x0 + 20, t.fine3.x1() - 20, t.fine3.z0 + 20, t.fine3.z1() - 20}};
         double step = 10.5;
         for (double[] bx : boxes) {
             for (double z = bx[2]; z < bx[3]; z += step) {

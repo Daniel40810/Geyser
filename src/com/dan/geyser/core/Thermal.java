@@ -10,7 +10,8 @@ package com.dan.geyser.core;
  * im sonnigen Sommer kräftiger orange, im Winter olivgrün. Die Grenzen werden weich überblendet.
  */
 public final class Thermal {
-    public enum Kind { POOL, VENT, CRATER }
+    /** Becken, Schlot, Krater, Schlammtopf. */
+    public enum Kind { POOL, VENT, CRATER, MUD }
 
     public static final class Spring {
         public final String name;

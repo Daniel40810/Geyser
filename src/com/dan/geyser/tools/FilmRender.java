@@ -91,7 +91,7 @@ public final class FilmRender {
             Director.Shot st = dr.takeStarted();
             if (st != null && st.site >= 0 && st.site != site) {
                 site = st.site;
-                double[] c = site == 0 ? World.UPPER : World.MIDWAY;
+                double[] c = World.center(site);
                 LightingEngine.centerX = site == 0 ? LightingEngine.FCX : c[0];
                 LightingEngine.centerZ = site == 0 ? LightingEngine.FCZ : c[1];
                 litHour = -99;

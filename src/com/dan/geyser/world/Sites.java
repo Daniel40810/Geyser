@@ -11,7 +11,7 @@ public final class Sites {
     /** Meter je Grad Länge und Breite auf 44,46° N (Ellipsoid WGS 84). */
     public static final double M_LON = 79570.8, M_LAT = 111122.4;
 
-    public enum Kind { GEYSER, SPRING }
+    public enum Kind { GEYSER, SPRING, MUD }
 
     public static final class Site {
         public final String name, line;
@@ -19,7 +19,7 @@ public final class Sites {
         public final Kind kind;
         /** Größte Höhe der Säule in Metern (0 bei Quellen); Höhe über dem Meer (NaN: unbekannt). */
         public final double height, elevation;
-        /** Becken: 0 Upper Geyser Basin, 1 Midway. */
+        /** Becken: 0 Upper Geyser Basin, 1 Midway, 2 Lower Geyser Basin. */
         public int basin;
 
         Site(String name, double lat, double lon, Kind kind, double height, double elevation, String line) {
@@ -45,13 +45,14 @@ public final class Sites {
             new Site("Daisy Geyser", 44.4699327, -110.8449336, Kind.GEYSER, 23, Double.NaN, "Geysir · 18–23 m schräg · alle 2 bis gut 3 Std. · Splendid daneben schläft seit 1998"),
             new Site("Grotto Geyser", 44.47181, -110.84178, Kind.GEYSER, 3, Double.NaN, "Geysir im Sintergewölbe · 3 m · 1–2 Std., Marathons 10–26 Std."),
             new Site("Fan Geyser", 44.47444, -110.8425, Kind.GEYSER, 38, Double.NaN, "Fan und Mortar am Fluss · 38 und 24 m · alle 3 Tage bis Wochen"),
-            new Site("Giantess Geyser", 44.4635358, -110.828924, Kind.GEYSER, 61, Double.NaN, "Geysir auf Geyser Hill · bis 61 m · 2- bis 6-mal im Jahr, 4–48 Std.")};
+            new Site("Giantess Geyser", 44.4635358, -110.828924, Kind.GEYSER, 61, Double.NaN, "Geysir auf Geyser Hill · bis 61 m · 2- bis 6-mal im Jahr, 4–48 Std."),
+            new Site("Fountain Paint Pot", 44.550578, -110.8062419, Kind.MUD, 0, 2227, "Schlammtöpfe im Lower Geyser Basin · Ton aus zersetztem Gestein · im Spätsommer dick")};
 
-    static { ALL[6].basin = 1; }
+    static { ALL[6].basin = 1; ALL[11].basin = 2; }
 
     /** Codes der Stellen in der Datenbank (GEY_SITE.code), in der Reihenfolge von {@link #ALL}. */
     public static final String[] CODES = {"OLD_FAITHFUL", "BEEHIVE", "CASTLE", "GRAND", "RIVERSIDE", "MORNING_GLORY", "GRAND_PRISMATIC",
-            "DAISY", "GROTTO", "FAN", "GIANTESS"};
+            "DAISY", "GROTTO", "FAN", "GIANTESS", "FOUNTAIN_PAINT_POT"};
 
     public static int index(String name) {
         for (int i = 0; i < ALL.length; i++) if (ALL[i].name.equals(name)) return i;

@@ -52,7 +52,7 @@ public final class ScenePanel extends JPanel {
     private volatile Scene scene;
     private volatile Geysers geysers;
     private final ParticleSystem ps = new ParticleSystem();
-    /** Uhr der Geysire in Sekunden; schneller Vorlauf bis zum nächsten Ausbruch; Ort 0 = Upper, 1 = Midway. */
+    /** Uhr der Geysire in Sekunden; schneller Vorlauf bis zum nächsten Ausbruch; Ort 0 = Upper, 1 = Midway, 2 = Lower. */
     private volatile double gClock;
     private volatile boolean fast;
     private volatile int site;
@@ -180,7 +180,7 @@ public final class ScenePanel extends JPanel {
             case KeyEvent.VK_L: labels = !labels; SwingUtilities.invokeLater(() -> labelListener.accept(labels)); return;
             case KeyEvent.VK_X: triggerNearest = true; return;
             case KeyEvent.VK_V: setFast(!fast); return;
-            case KeyEvent.VK_M: setSite(site == 0 ? 1 : 0, true); return;
+            case KeyEvent.VK_M: setSite((site + 1) % World.BASINS.length, true); return;
             case KeyEvent.VK_P: requestStill(); return;
             case KeyEvent.VK_K: case KeyEvent.VK_F11: setCinema(!cinema); return;
             case KeyEvent.VK_F1: case KeyEvent.VK_H: help = !help; return;
@@ -203,7 +203,7 @@ public final class ScenePanel extends JPanel {
         takeOver();
         cmds.add(() -> {
             if (m.site != site) setSite(m.site, false);
-            double d = i == 6 ? 420 : (i == 5 ? 60 : 150);
+            double d = i == 6 ? 420 : (com.dan.geyser.world.Sites.ALL[i].kind != com.dan.geyser.world.Sites.Kind.GEYSER ? 60 : 150);
             c.flyTo(m.x, m.y, m.z, Double.NaN, i == 6 ? 30 : 17, d);
         });
         showToast(m.name + "  ·  " + m.line, 3500);
@@ -734,7 +734,7 @@ public final class ScenePanel extends JPanel {
             double d = Math.hypot(s.x - p[0], s.z - p[2]) - Math.max(s.ax, s.az);
             if (d < bd) { bd = d; best = s; }
         }
-        if (best == null) return site == 1 ? "Midway Geyser Basin" : "Upper Geyser Basin";
+        if (best == null) return World.BASINS[site];
         return String.format(java.util.Locale.GERMANY, "am Rand von %s · %.0f °C", best.name, best.t0);
     }
 
@@ -755,28 +755,31 @@ public final class ScenePanel extends JPanel {
     public void setFastListener(Consumer<Boolean> l) { fastListener = l; }
 
     /**
-     * Ort wählen: Upper Geyser Basin (0) oder Midway mit Grand Prismatic (1). Die feine Schattenkarte
-     * wandert mit; mit fly gleitet die Kamera zur Übersicht des Ortes.
+     * Ort wählen: Upper Geyser Basin (0), Midway mit Grand Prismatic (1) oder Lower Geyser Basin mit
+     * dem Fountain Paint Pot (2). Die feine Schattenkarte wandert mit; mit fly gleitet die Kamera zur
+     * Übersicht des Ortes.
      */
     public void setSite(int s, boolean fly) {
         if (fly) takeOver();
         applySite(s);
-        double[] c = s == 0 ? World.UPPER : World.MIDWAY;
+        double[] c = World.center(s);
         CameraController ctl0 = ctl;
         if (fly && ctl0 != null) {
             cmds.add(() -> {
                 if (s == 0) ctl0.goOverview();
-                else { Scene sc = scene; ctl0.flyTo(c[0], sc == null ? -24 : sc.terrain.sample(c[0], c[1]), c[1], 215, 22, 900); }
+                else if (s == 1) { Scene sc = scene; ctl0.flyTo(c[0], sc == null ? -24 : sc.terrain.sample(c[0], c[1]), c[1], 215, 22, 900); }
+                else { Scene sc = scene; ctl0.flyTo(c[0], sc == null ? -23 : sc.terrain.sample(c[0], c[1]), c[1], 235, 24, 140); }
             });
         }
-        showToast(s == 0 ? "Upper Geyser Basin" : "Midway Geyser Basin · Grand Prismatic Spring und Excelsior", 3000);
+        showToast(s == 0 ? "Upper Geyser Basin" : s == 1 ? "Midway Geyser Basin · Grand Prismatic Spring und Excelsior"
+                : "Lower Geyser Basin · Fountain Paint Pot, Schlammtöpfe", 3000);
     }
 
     /** Ort umstellen ohne Kamerafahrt und Hinweis: feine Schattenkarte, Bedienfeld. */
     private void applySite(int s) {
         if (s == site) return;
         site = s;
-        double[] c = s == 0 ? World.UPPER : World.MIDWAY;
+        double[] c = World.center(s);
         LightingEngine.centerX = s == 0 ? LightingEngine.FCX : c[0];
         LightingEngine.centerZ = s == 0 ? LightingEngine.FCZ : c[1];
         sunDirty = true;
@@ -1381,7 +1384,7 @@ public final class ScenePanel extends JPanel {
         int bar = (int) Math.max(0, (H - W / 2.39) / 2);
         java.awt.Composite old = g.getComposite();
         g.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, a));
-        String t1 = "GEYSER", t2 = "Upper Geyser Basin · Yellowstone · " + DayNightCycle.dateLabel(day) + " " + DayNightCycle.YEAR;
+        String t1 = "GEYSER", t2 = World.BASINS[site] + " · Yellowstone · " + DayNightCycle.dateLabel(day) + " " + DayNightCycle.YEAR;
         g.setFont(new Font("SansSerif", Font.BOLD, 36));
         int y = H - bar - 70;
         g.setColor(new Color(0, 0, 0, 90));
@@ -1586,8 +1589,11 @@ public final class ScenePanel extends JPanel {
         }
     }
 
+    /** Lage und Höhe je Ort (Old Faithful, Grand Prismatic, Fountain Paint Pot). */
+    static final String[] PLACES = {"44,46° N  110,83° W  ·  2240 m", "44,53° N  110,84° W  ·  2216 m", "44,55° N  110,81° W  ·  2227 m"};
+
     private void hud(Graphics2D g) {
-        String place = "UPPER GEYSER BASIN  ·  YELLOWSTONE";
+        String place = World.BASINS[site].toUpperCase(java.util.Locale.ROOT) + "  ·  YELLOWSTONE";
         g.setFont(new Font("SansSerif", Font.BOLD, 20));
         int w = g.getFontMetrics().stringWidth(place);
         g.setColor(new Color(0, 0, 0, 90));
@@ -1597,7 +1603,7 @@ public final class ScenePanel extends JPanel {
         g.setFont(new Font("SansSerif", Font.PLAIN, 12));
         String sub = DayNightCycle.dateLabel(day) + " " + DayNightCycle.YEAR + "  ·  " + DayNightCycle.timeLabel(hour) + " "
                 + DayNightCycle.zone(day, hour) + "  ·  " + weather.label + String.format(java.util.Locale.GERMANY, ", %.0f °C", airTemp)
-                + "  ·  44,46° N  110,83° W  ·  2240 m";
+                + "  ·  " + PLACES[site];
         int sw = g.getFontMetrics().stringWidth(sub);
         g.setColor(new Color(0, 0, 0, 80));
         g.fillRoundRect(14, 58, sw + 24, 24, 8, 8);
@@ -1636,7 +1642,7 @@ public final class ScenePanel extends JPanel {
             double d = Math.hypot(g0.x - cam.ex, g0.z - cam.ez);
             if (d < bd) { bd = d; er = g0; }
         }
-        if (site == 1 && er == null) return;
+        if (site != 0 && er == null) return;
         String head, big, small;
         if (er != null) {
             head = er.name.toUpperCase(java.util.Locale.ROOT);
@@ -1772,7 +1778,7 @@ public final class ScenePanel extends JPanel {
                 {"C", "Schnitt und Seismometer"}, {"I", "Wärmebild"}, {"O", "Klang"}, {"N", "Bisons und Wapitis"}, {"F3", "Besucher"},
                 {"Y", "Wetter wechseln"},
                 {"STELLEN", null},
-                {"1 bis 6", "Old Faithful bis Morning Glory"}, {"7", "Grand Prismatic (Midway)"}, {"M", "Upper Basin oder Midway"},
+                {"1 bis 6", "Old Faithful bis Morning Glory"}, {"7", "Grand Prismatic (Midway)"}, {"M", "Upper, Midway oder Lower Basin"},
                 {"L", "Beschriftung"},
                 {"GEYSIRE", null},
                 {"X", "nächsten Geysir auslösen"}, {"V", "Warten abkürzen (60-fach)"}, {"F2", "Rätsel: Wann bricht er aus?"},
@@ -1782,7 +1788,7 @@ public final class ScenePanel extends JPanel {
                 {"P", "Standbild speichern"}, {"K oder F11", "Kinomodus"}, {"F1 oder H", "diese Übersicht"}, {"Esc", "schließen"}};
         int W = getWidth(), H = getHeight();
         int perCol = (rows.length + 1) / 2;
-        int bw = 600, bh = 56 + perCol * 20 + 30;
+        int bw = 700, bh = 56 + perCol * 20 + 30;
         int x = (W - bw) / 2, y = Math.max(20, (H - bh) / 2);
         g.setColor(new Color(8, 14, 18, 215));
         g.fillRoundRect(x, y, bw, bh, 14, 14);
@@ -1801,7 +1807,7 @@ public final class ScenePanel extends JPanel {
                 g.drawString(rows[i][0], cx, cy);
                 g.setFont(new Font("SansSerif", Font.PLAIN, 12));
                 g.setColor(MUTED);
-                g.drawString(rows[i][1], cx + 118, cy);
+                g.drawString(rows[i][1], cx + 112, cy);
             }
         }
         g.setFont(new Font("SansSerif", Font.ITALIC, 11));

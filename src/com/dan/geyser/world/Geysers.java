@@ -119,6 +119,7 @@ public final class Geysers {
         plumes = pl.toArray(new float[0][]);
         // Heiße Quellen dampfen nach Fläche und Temperatur
         for (Thermal.Spring s : thermal.springs) {
+            if (s.kind == Thermal.Kind.MUD) { plop(ps, s, realDt); continue; }
             if (s.kind == Thermal.Kind.VENT || s.t0 < 45) continue;
             double rate = Math.min(28, s.area() / 30.0 * (s.t0 - 42) / 48.0) * steamVis * amount;
             float big = (float) Math.min(1, Math.sqrt(s.area()) / 60);
@@ -202,6 +203,24 @@ public final class Geysers {
         if (core) { size = (float) (0.22 + 0.3 * ps.rand() + target * 0.006); al = 0.5f + 0.2f * ps.rand(); }
         int i = ps.spawn(kind, px, py, pz, (float) (dx * v), (float) (dy * v), (float) (dz * v), size, (float) Math.min(25, tof), al, fl, gi);
         if (i >= 0 && kind == ParticleSystem.SPRAY) ps.grow[i] = core ? 0.25f + 0.2f * ps.rand() : 0.15f + 0.25f * ps.rand();
+    }
+
+    /** Schlammtopf: hin und wieder platzt eine große Blase und wirft Batzen bis gut einen Meter hoch; dazu etwas Dampf. */
+    private void plop(ParticleSystem ps, Thermal.Spring s, float dt) {
+        float bursts = (float) (s.area() / 40.0 * dt * amount);
+        int c = stochastic(ps, bursts);
+        for (int b = 0; b < c; b++) {
+            double r = Math.sqrt(ps.rand()) * 0.8, an = ps.rand() * 6.2832;
+            float cx = (float) (s.x + Math.cos(an) * r * s.ax), cz = (float) (s.z + Math.sin(an) * r * s.az);
+            int n = 5 + (int) (ps.rand() * 8);
+            float v0 = 2.5f + 2.5f * ps.rand();
+            for (int k = 0; k < n; k++) {
+                float a2 = ps.rand() * 6.2832f, sp = 0.3f + 0.9f * ps.rand();
+                ps.spawn(ParticleSystem.MUD, cx, (float) s.y + 0.05f, cz, (float) Math.cos(a2) * sp, v0 * (0.6f + 0.4f * ps.rand()), (float) Math.sin(a2) * sp,
+                        0.04f + 0.05f * ps.rand(), 3, 0.9f, (float) s.y - 0.1f, -1);
+            }
+        }
+        spawnSteam(ps, s.x, s.y + 0.1, s.z, Math.max(s.ax, s.az) * 0.8, (float) (s.area() / 30 * dt * steamVis * amount), 0.8f, 1.2f, 0.05f * steamVis);
     }
 
     /** Dampf über einer Fläche mit Radius rad; count als mittlere Anzahl. */

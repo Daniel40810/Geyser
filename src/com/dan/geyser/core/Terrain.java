@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
  * Plateau, in der Ferne Hügel. Koordinaten in Metern, x nach Osten, z nach Süden, Ursprung am
  * Schlot von Old Faithful; y = 0 ist der Boden dort (2240 m über dem Meer).
  * <p>
- * Das Netz besteht aus vier Gittern: fein (8 m) über dem Upper Geyser Basin und über Midway, mittel
+ * Das Netz besteht aus vier Gittern: fein (8 m) über dem Upper Geyser Basin, Midway und dem Fountain Paint Pot, mittel
  * (48 m) über dem Tal, grob (672 m) bis 60 km. {@link #sample} liefert die Höhe genau so, wie die
  * Dreiecke sie zeigen; Kamera, Teilchen und Absteckung stehen damit auf dem sichtbaren Boden.
  * An den Stellen mit bekannter Höhe (Old Faithful 2240 m, Beehive 2244 m, Castle 2235 m, Grand 2234 m,
@@ -60,10 +60,13 @@ public final class Terrain {
     }
 
     static final double[] UPPER = {-1584, 480, -1920, 480}, MIDWAY = {-1584, 96, -7968, -6336};
+    /** Lower Geyser Basin um den Fountain Paint Pot (auf das mittlere Gitter ausgerichtet). */
+    static final double[] LOWER = {1392, 2064, -10368, -9696};
     static final double[] MIDGRID = {-5376, 3360, -11424, 3360};
     public final Grid fine = new Grid(UPPER[0], UPPER[1], UPPER[2], UPPER[3], 8);
     public final Grid fine2 = new Grid(MIDWAY[0], MIDWAY[1], MIDWAY[2], MIDWAY[3], 8);
-    public final Grid mid = new Grid(MIDGRID[0], MIDGRID[1], MIDGRID[2], MIDGRID[3], 48, UPPER, MIDWAY);
+    public final Grid fine3 = new Grid(LOWER[0], LOWER[1], LOWER[2], LOWER[3], 8);
+    public final Grid mid = new Grid(MIDGRID[0], MIDGRID[1], MIDGRID[2], MIDGRID[3], 48, UPPER, MIDWAY, LOWER);
     public final Grid far = new Grid(-60480, 60480, -60480, 60480, 672, MIDGRID);
 
     // ------------------------------------------------------------ Firehole River
@@ -106,7 +109,7 @@ public final class Terrain {
     // ------------------------------------------------------------ Bodenkarte
 
     /** Raster fein (4 m über den feinen Gittern) und mittel (24 m über dem mittleren). */
-    private Raster rFine, rFine2, rMid;
+    private Raster rFine, rFine2, rFine3, rMid;
 
     static final class Raster {
         final double x0, z0, cell;
@@ -132,7 +135,7 @@ public final class Terrain {
     static final double[][] SINTER = {
             {0, 0, 120}, {-150, -300, 150}, {-677, -329, 95}, {-804, -678, 110}, {-560, -520, 120},
             {-981, -1446, 60}, {-1221, -1610, 55}, {-1080, -1250, 90}, {-1787, -2680, 160},
-            {-1310, -1070, 55}, {-1140, -1548, 40}, {-60, -340, 45},
+            {-1310, -1070, 55}, {-1140, -1548, 40}, {-60, -340, 45}, {1742, -10013, 230}, {1640, -9920, 170},
             {-791, -7171, 230}, {-640, -7250, 170}, {-850, -7400, 150}, {-700, -7000, 130}};
 
     /** Heiße Quellen und Geysire für die Farben am Boden; wird beim Bau gesetzt. */
@@ -181,15 +184,18 @@ public final class Terrain {
      * eingetragen, deren Höhe bekannt ist, und die Hügel (etwa der Aussichtspunkt über Midway).
      */
     public void build() {
-        fill(fine); fill(fine2); fill(mid); fill(far);
+        fill(fine); fill(fine2); fill(fine3); fill(mid); fill(far);
         rFine = new Raster(fine.x0, fine.x1(), fine.z0, fine.z1(), 4);
         rFine2 = new Raster(fine2.x0, fine2.x1(), fine2.z0, fine2.z1(), 4);
+        rFine3 = new Raster(fine3.x0, fine3.x1(), fine3.z0, fine3.z1(), 4);
         rMid = new Raster(mid.x0, mid.x1(), mid.z0, mid.z1(), 24);
         fillRaster(rFine);
         fillRaster(rFine2);
+        fillRaster(rFine3);
         fillRaster(rMid);
         edges(rFine);
         edges(rFine2);
+        edges(rFine3);
     }
 
     private static double catmull(double p0, double p1, double p2, double p3, double t) {
@@ -368,6 +374,7 @@ public final class Terrain {
     public float sample(double x, double z) {
         if (fine.contains(x, z)) return fine.at(x, z);
         if (fine2.contains(x, z)) return fine2.at(x, z);
+        if (fine3.contains(x, z)) return fine3.at(x, z);
         if (mid.contains(x, z)) return mid.at(x, z);
         if (far.contains(x, z)) return far.at(x, z);
         return far.h[0];
@@ -403,6 +410,7 @@ public final class Terrain {
     private Raster rasterAt(double x, double z) {
         if (rFine.contains(x, z)) return rFine;
         if (rFine2.contains(x, z)) return rFine2;
+        if (rFine3.contains(x, z)) return rFine3;
         if (rMid.contains(x, z)) return rMid;
         return null;
     }
@@ -427,7 +435,7 @@ public final class Terrain {
 
     /** Wald 0..1 und Abstand zum Waldrand in Metern (nur in den feinen Rastern, sonst −1). */
     public float forestEdge(double x, double z) {
-        Raster r = rFine.contains(x, z) ? rFine : (rFine2.contains(x, z) ? rFine2 : null);
+        Raster r = rFine.contains(x, z) ? rFine : rFine2.contains(x, z) ? rFine2 : rFine3.contains(x, z) ? rFine3 : null;
         if (r == null) return -1;
         int i = (int) Math.round((x - r.x0) / r.cell), j = (int) Math.round((z - r.z0) / r.cell);
         i = Math.max(0, Math.min(r.nx - 1, i)); j = Math.max(0, Math.min(r.nz - 1, j));
