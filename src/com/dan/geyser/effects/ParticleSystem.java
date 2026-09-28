@@ -10,7 +10,7 @@ import com.dan.geyser.core.Wetness;
  * nässen sie den Boden und werfen Spritzer. Bis zu {@link #CAP} Teilchen, in flachen Feldern.
  */
 public final class ParticleSystem {
-    public static final byte DROP = 0, SPRAY = 1, STEAM = 2, SPLASH = 3;
+    public static final byte DROP = 0, SPRAY = 1, STEAM = 2, SPLASH = 3, RAIN = 4, SNOW = 5;
     public static final int CAP = 90000;
     public static final float G = 9.81f;
     /** Luftwiderstand k (1/m) von Tropfen und Gischt: a = −k·|v−w|·(v−w). */
@@ -70,6 +70,19 @@ public final class ParticleSystem {
             float hAbove = y[i] - gy;
             float wk = 0.5f + 0.5f * Math.min(1, Math.max(0, hAbove) / 10f);
             float ax = wx * wk, az = wz * wk;
+            if (k == RAIN || k == SNOW) {
+                // Regen fällt mit Endgeschwindigkeit, Schnee langsam und pendelnd (grow: Phase); am Boden weg
+                if (k == SNOW) {
+                    float sw = (float) Math.sin(a * 1.7f + grow[i]) * 0.5f;
+                    x[i] += (vx[i] + sw) * dt; z[i] += (vz[i] + sw * 0.6f) * dt;
+                } else { x[i] += vx[i] * dt; z[i] += vz[i] * dt; }
+                y[i] += vy[i] * dt;
+                if (y[i] <= gy) {
+                    if (k == RAIN && rand() < 0.04f) spawn(SPLASH, x[i], gy + 0.03f, z[i], 0, 0.8f, 0, 0.05f, 0.25f, 0.4f, -1e9f, -1);
+                    kill(i); i--;
+                }
+                continue;
+            }
             if (k == STEAM) {
                 // Auftrieb klingt ab, der Wind übernimmt; die Schwade wächst
                 float rise = 2.6f * (1 - a / life[i]) + 0.3f;

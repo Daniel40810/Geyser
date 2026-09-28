@@ -20,8 +20,9 @@ import java.io.File;
 /**
  * Standbilder ohne Fenster, zum Beispiel für die Bilder im README. Jeder Auftrag ist ein Argument:
  * <pre>
- *   datei|Blickpunkt|Tag im Jahr|Uhrzeit|Geysir oder -|Sekunden nach dem Auslösen|Farbstil|Breite|Höhe
+ *   datei|Blickpunkt|Tag im Jahr|Uhrzeit|Geysir oder -|Sekunden nach dem Auslösen|Farbstil|Breite|Höhe|Wetter
  * </pre>
+ * Wetter ist die Nummer aus {@link com.dan.geyser.effects.Weather#MODES} (fehlt es: klar).
  * Blickpunkt ist die Nummer oder der Name aus {@link Viewpoint#NAMES}, oder frei
  * {@code ex,ey,ez,tx,ty,tz} (y über Gelände) mit dem Ort als Nachsatz {@code @1} für Midway. Beispiel:
  * {@code docs/bilder/readme/old_faithful.png|1|200|8.3|Old Faithful|40|0|1600|900}. Oder eine Einstellung
@@ -44,6 +45,8 @@ public final class StillRender {
             double secs = a.length > 5 ? Double.parseDouble(a[5]) : 0;
             int style = a.length > 6 ? Integer.parseInt(a[6]) : 0;
             int W = a.length > 7 ? Integer.parseInt(a[7]) : 1600, H = a.length > 8 ? Integer.parseInt(a[8]) : 900;
+            com.dan.geyser.effects.Weather wx = new com.dan.geyser.effects.Weather();
+            wx.mode = a.length > 9 ? Integer.parseInt(a[9]) : com.dan.geyser.effects.Weather.CLEAR;
             // Blickpunkt
             double[] pose;
             int site = 0;
@@ -83,6 +86,9 @@ public final class StillRender {
             Thermal.snow = (float) Climate.snow(day);
             Thermal.rime = (float) Math.max(0, Math.min(1, (-2 - tair) / 10));
             w.geysers.steamVis = (float) Climate.steam(tair);
+            float[] wt = wx.target(day, hour, tair);
+            wx.overcast = wt[0]; wx.rain = wt[1]; wx.snow = wt[2];
+            com.dan.geyser.effects.Sky.overcastNext = wx.overcast;
             Engine3D.setStyle(style);
             DayNightCycle dc = new DayNightCycle();
             dc.set(day, hour);
@@ -98,6 +104,13 @@ public final class StillRender {
                 g.triggerNow(clock);
                 for (int k = 0; k < secs * 30; k++) { clock += dt; w.geysers.update(clock, dt, (float) dt, ps, 2.5f, 1.9f, sunK); }
             }
+            // Regen und Schnee um die Kamera einschwingen lassen
+            if (wx.rain > 0 || wx.snow > 0) {
+                for (int k = 0; k < 150; k++) {
+                    wx.emit(ps, w.scene.terrain, pose[0], pose[1], pose[2], (float) dt, 2.5f, 1.9f);
+                    ps.step((float) dt, 2.5f, 1.9f, w.scene.terrain, w.geysers.wet);
+                }
+            }
             Engine3D r = new Engine3D(w.scene, 4096);
             r.particles = ps;
             r.wetness = w.geysers.wet;
@@ -108,7 +121,8 @@ public final class StillRender {
             Animals an = new Animals();
             fa.fill(an);
             r.animals = an;
-            r.setSky(dc, 0.12);
+            r.setSky(dc, Math.min(1, 0.12 + 0.3 * wx.overcast));
+            r.rainWet = wx.rain * 0.8f;
             r.day = day; r.hour = hour; r.sidereal = dc.siderealDeg;
             r.setSize(W, H);
             Camera cam = new Camera();

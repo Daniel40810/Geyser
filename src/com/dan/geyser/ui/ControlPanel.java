@@ -30,7 +30,7 @@ public final class ControlPanel extends JPanel {
     private final ScenePanel scene;
     private final JLabel timeLbl = new JLabel(), dayLbl = new JLabel(), hazeLbl = new JLabel();
     private final FSlider time = new FSlider(0, 239, 90), day = new FSlider(1, 365, DayNightCycle.today()), haze = new FSlider(0, 100, 12);
-    private boolean fromScene, fromSite, fromWater;
+    private boolean fromScene, fromSite, fromWater, fromWeather;
 
     public ControlPanel(ScenePanel scene) {
         this.scene = scene;
@@ -224,6 +224,13 @@ public final class ControlPanel extends JPanel {
         });
         add(row(wind));
         scene.setAirListener(v -> { haze.setValue((int) Math.round(v[0] * 100)); wind.setValue((int) Math.round(v[1] * 100)); });
+        Object[] wm = new Object[com.dan.geyser.effects.Weather.MODES.length];
+        for (int i = 0; i < wm.length; i++) wm[i] = "Wetter · " + com.dan.geyser.effects.Weather.MODES[i];
+        FComboBox weather = new FComboBox(wm);
+        weather.addActionListener(e -> { if (!fromWeather) scene.setWeather(weather.getSelectedIndex()); scene.requestFocusInWindow(); });
+        scene.setWeatherListener(v -> { fromWeather = true; weather.setSelectedIndex(v); fromWeather = false; });
+        add(row(weather));
+        note("Nach Jahreszeit: im Juli und August an etwa jedem dritten Tag nachmittags ein Gewitter, Juli sonst meist trocken, im Winter Schneefall, im Frühjahr und Herbst Regen. Welcher Tag welches Wetter hat, ist ein Modell. Donner kommt mit rund 3 s je km Verspätung. Taste Y wechselt.");
         note("Die Lufttemperatur folgt den Klimanormalwerten 1991–2020 am Old Faithful: je kälter, desto dichter der Dampf; von November bis in den Mai liegt Schnee, an Bäumen nahe den Quellen Raureif. Der Regenbogen steht 42° vom Gegenpunkt der Sonne, bei Vollmond nachts als blasser Mondregenbogen. Dunst ist im Spätsommer oft Rauch von Waldbränden.");
 
         gap();

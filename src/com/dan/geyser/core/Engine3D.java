@@ -40,7 +40,7 @@ public final class Engine3D {
     /** km: Material am Bildpunkt (−1 keins); kk: was in khr..khb liegt (0 nichts, 1 Dunstfarbe, 2 Himmel). */
     private byte[] km, kk;
     private boolean cacheOk, keep;
-    private final double[] cacheKey = new double[20];
+    private final double[] cacheKey = new double[21];
     private LightingEngine cacheL;
     private int cacheLightGen = -1, lightGen;
     /** Zwischenspeicher ein- oder ausschalten (zum Messen). */
@@ -264,7 +264,7 @@ public final class Engine3D {
         cacheHit = hitAcc.get() / (double) Math.max(1, eligAcc.get());
         IntStream.range(0, strips).parallel().forEach(s -> shadeWaterStrip(s * rowsPer, Math.min(H, (s + 1) * rowsPer)));
         long t3 = System.nanoTime();
-        if (sky.night > 0.05f) drawStars();
+        if (sky.night > 0.05f && sky.overcast < 0.7f) drawStars();
         int qPer = (QH + strips - 1) / strips;
         long f0 = System.nanoTime();
         if (rays && !thermo) {
@@ -284,6 +284,19 @@ public final class Engine3D {
             IntStream.range(0, strips).parallel().forEach(st -> thermoStrip(st * rowsPer, Math.min(H, (st + 1) * rowsPer), hasP));
         }
         if (sprites.n > 0) drawSprites();
+        float[] bl = bolt;
+        if (bl != null && !th) drawBolt(bl);
+        float fl = flash;
+        if (fl > 0.01f && !th) {
+            // Blitz: der Himmel leuchtet auf, der Boden weniger; bezogen auf die jetzige Belichtung
+            final float k = (float) (fl * 0.9 / Math.max(1e-3, exposure));
+            IntStream.range(0, strips).parallel().forEach(st -> {
+                for (int p = st * rowsPer * W; p < Math.min(H, (st + 1) * rowsPer) * W; p++) {
+                    float a = gm[p] == 0 ? k : k * 0.3f;
+                    hr[p] += a * 0.85f; hg[p] += a * 0.9f; hb[p] += a;
+                }
+            });
+        }
         long f2 = System.nanoTime();
         long f3 = System.nanoTime();
         if (bloom && !th) doBloom(rowsPer, qPer);
@@ -591,7 +604,7 @@ public final class Engine3D {
     /** Prüft, ob der Zwischenspeicher fürs Licht noch gilt, und merkt sich den Stand. */
     private void checkCache() {
         double[] k = {W, H, ex, ey, ez, cfx, cfy, cfz, crx, cry, crz, cux, cuy, cuz, pfx, pfy,
-                Thermal.snow * 50, Thermal.season * 50, Thermal.rime * 50, Thermal.ambient * 2};
+                Thermal.snow * 50, Thermal.season * 50, Thermal.rime * 50, Thermal.ambient * 2, Thermal.generation};
         // Zwischenspeicher nur bis gut 4 Millionen Bildpunkte (Standbilder in 4K rechnen ohne ihn)
         int n = W * H;
         keep = shadeCache && n <= 4_500_000;
@@ -603,13 +616,13 @@ public final class Engine3D {
             cacheL = null;
         }
         boolean same = keep && L == cacheL && lightGen == cacheLightGen;
-        if (k[0] != cacheKey[0] || k[1] != cacheKey[1] || k[14] != cacheKey[14] || k[15] != cacheKey[15]) same = false;
+        if (k[0] != cacheKey[0] || k[1] != cacheKey[1] || k[14] != cacheKey[14] || k[15] != cacheKey[15] || k[20] != cacheKey[20]) same = false;
         // Kamera: winzige Reste der Dämpfung zählen nicht als Bewegung
         for (int i = 2; same && i < 14; i++) if (Math.abs(k[i] - cacheKey[i]) > 1e-5) same = false;
         // Klima: kleine Schritte (die Luft wird mit der Uhr langsam wärmer) lösen nichts aus
         for (int i = 16; same && i < 20; i++) if (Math.abs(k[i] - cacheKey[i]) > 0.5) same = false;
         if (!same) {
-            System.arraycopy(k, 0, cacheKey, 0, 20);
+            System.arraycopy(k, 0, cacheKey, 0, 21);
             cacheL = L;
             cacheLightGen = lightGen;
         }
@@ -673,6 +686,7 @@ public final class Engine3D {
                 if (Mat.wettable(m)) {
                     Wetness.Set ws = wetness;
                     if (ws != null) wet = ws.at(wx, wz);
+                    wet = Math.max(wet, rainWet);
                     Thermal th = thermal;
                     if (th != null && m != Mat.BOARD) {
                         float fl;
@@ -1089,11 +1103,28 @@ public final class Engine3D {
         }
     }
 
+    /** Blitz: Punkte des Kanals (x, y, z …), gerade im Bild; null = keiner. Helligkeit 0..1 für das Aufleuchten. */
+    public volatile float[] bolt;
+    public volatile float flash;
+    /** Nässe vom Regen 0..1 überall am Boden. */
+    public volatile float rainWet;
+
+    /** Der Blitzkanal als helle, doppelte Linie mit Tiefenprüfung. */
+    private void drawBolt(float[] b) {
+        float k = (float) (6 / Math.max(1e-3, exposure));
+        for (int i = 0; i + 5 < b.length; i += 3) {
+            double[] p0 = project(b[i], b[i + 1], b[i + 2]), p1 = project(b[i + 3], b[i + 4], b[i + 5]);
+            if (p0 == null || p1 == null) continue;
+            float z = (float) Math.min(p0[2], p1[2]);
+            for (int o = 0; o < 2; o++) line(p0[0] + o, p0[1], p1[0] + o, p1[1], z, k * 0.8f, k * 0.85f, k, 1);
+        }
+    }
+
     /** Dünne Linie mit Tiefenprüfung (für Vögel), deckend mit al. */
     private void line(double x0, double y0, double x1, double y1, float z, float cr, float cg, float cb, float al) {
         double dx = x1 - x0, dy = y1 - y0;
         int n = (int) Math.ceil(Math.max(Math.abs(dx), Math.abs(dy))) + 1;
-        if (n > 200) return;
+        if (n > 2000) return;
         for (int k = 0; k <= n; k++) {
             double t = k / (double) n;
             int px = (int) Math.floor(x0 + dx * t), py = (int) Math.floor(y0 + dy * t);
@@ -1457,8 +1488,10 @@ public final class Engine3D {
                     qtm[i] = steam ? tAmb + (90 - tAmb) * Noise.expNeg(ag * 0.35f) : Math.max(tAmb, 88 - ag * 4);
                 }
                 qline[i] = 0;
-                if (k == com.dan.geyser.effects.ParticleSystem.DROP && rad < 2.5 && vz < 220) {
-                    double bx = x - ps.vx[i] * 0.025 - ex, by = y - ps.vy[i] * 0.025 - ey, bz = z - ps.vz[i] * 0.025 - ez;
+                boolean rainK = k == com.dan.geyser.effects.ParticleSystem.RAIN;
+                if ((k == com.dan.geyser.effects.ParticleSystem.DROP || rainK) && rad < 2.5 && vz < 220) {
+                    double st = rainK ? 0.05 : 0.025;
+                    double bx = x - ps.vx[i] * st - ex, by = y - ps.vy[i] * st - ey, bz = z - ps.vz[i] * st - ez;
                     double bvz = bx * cfx + by * cfy + bz * cfz;
                     if (bvz > 0.3) {
                         qx2[i] = (float) (W / 2.0 + (bx * crx + by * cry + bz * crz) / bvz * pfx);

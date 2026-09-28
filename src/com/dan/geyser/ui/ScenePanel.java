@@ -164,6 +164,8 @@ public final class ScenePanel extends JPanel {
             case KeyEvent.VK_O: setSound(!soundOn); return;
             case KeyEvent.VK_N: setFauna(!faunaOn); return;
             case KeyEvent.VK_Z: playSinterLapse(); return;
+            case KeyEvent.VK_J: playMorningGlory(); return;
+            case KeyEvent.VK_Y: setWeather((weather.mode + 1) % com.dan.geyser.effects.Weather.MODES.length); return;
             case KeyEvent.VK_SPACE: {
                 takeOver();
                 boolean on = !c.autoOrbit;
@@ -365,6 +367,7 @@ public final class ScenePanel extends JPanel {
         p.setProperty("haze", String.valueOf(haze));
         p.setProperty("wind", String.valueOf(wind));
         p.setProperty("water", String.valueOf(water));
+        p.setProperty("weather", String.valueOf(weather.mode));
         try {
             java.io.File f = stateFile();
             f.getParentFile().mkdirs();
@@ -400,6 +403,9 @@ public final class ScenePanel extends JPanel {
             thermoOn = Boolean.parseBoolean(p.getProperty("thermo", "false"));
             faunaOn = Boolean.parseBoolean(p.getProperty("fauna", "true"));
             extrasChanged();
+            int wm = Integer.parseInt(p.getProperty("weather", "0"));
+            weather.mode = Math.max(0, Math.min(com.dan.geyser.effects.Weather.MODES.length - 1, wm));
+            SwingUtilities.invokeLater(() -> weatherListener.accept(weather.mode));
             double wt = Double.parseDouble(p.getProperty("water", "1"));
             water = wt;
             geysers.setWater(wt);
@@ -568,6 +574,86 @@ public final class ScenePanel extends JPanel {
         });
     }
 
+    // ------------------------------------------------------------ Morning Glory über die Jahrzehnte
+
+    private volatile boolean gloryOn;
+    private volatile double gloryYear = -1;
+    private double gloryAppliedT = Double.NaN;
+
+    /** Zeitraffer an Morning Glory Pool von 1883 bis heute (Taste J). */
+    public void playMorningGlory() {
+        cmds.add(() -> {
+            Scene sc = scene;
+            if (site != 0) applySite(0);
+            timelapse = 0;
+            if (fast) setFast(false);
+            com.dan.geyser.world.Sites.Site mg = com.dan.geyser.world.Sites.ALL[5];
+            double cx = mg.x(), cz = mg.z(), cy = -15;
+            com.dan.geyser.camera.CameraPath p = new com.dan.geyser.camera.CameraPath();
+            for (int k = 0; k <= 10; k++) {
+                double a = Math.toRadians(150 + k * 14), r = 17 - k * 0.5;
+                double ex = cx + r * Math.sin(a), ez = cz + r * Math.cos(a);
+                p.add(k * 4.2, ex, sc.terrain.sample(ex, ez) + 5.5 - k * 0.15, ez, cx, cy - 1.5, cz);
+            }
+            double[] last = p.key(p.size() - 1);
+            p.add(47, last[1], last[2], last[3], last[4], last[5], last[6]);   // 5 s stehen bleiben
+            Director.Program pr = new Director.Program("Morning Glory im Zeitraffer");
+            pr.add(new Director.Shot(p, 12.0, 12.2, "Morning Glory Pool, 1883 bis heute",
+                    "Bis in die 1940er heiß und tiefblau. Münzen und Abfall verstopften den Schlot, die Quelle kühlte ab, und gelbe und orange Matten wuchsen zur Mitte. Temperaturen zwischen den Eckpunkten genähert.",
+                    "USGS: What's the story, Morning Glory?; Wikipedia: Morning Glory Pool").site(0).fades(true, false));
+            director.play(pr);
+            gloryOn = true;
+        });
+    }
+
+    /** Temperatur von Morning Glory zum Fortschritt u (u ≥ 1: heute) setzen; die Kacheln des Temperaturfelds neu backen. */
+    private void applyGlory(double u, boolean show) {
+        Thermal th = scene.terrain.thermal;
+        Thermal.Spring mg = th.byName("Morning Glory Pool");
+        if (mg == null) return;
+        double y = com.dan.geyser.world.MorningGlory.year(u);
+        double t = u >= 1 ? com.dan.geyser.world.MorningGlory.NOW_T : com.dan.geyser.world.MorningGlory.tempAt(y);
+        gloryYear = show ? y : -1;
+        if (Double.isNaN(gloryAppliedT) || Math.abs(t - gloryAppliedT) > 0.12 || (u >= 1 && t != gloryAppliedT)) {
+            mg.t0 = t;
+            th.changed(mg);
+            gloryAppliedT = t;
+        }
+    }
+
+    /** Jahr, Temperatur und Ereignis während des Zeitraffers an Morning Glory, oben in der Mitte. */
+    private void gloryHud(Graphics2D g) {
+        double y = gloryYear;
+        if (y < 0) return;
+        int W = getWidth();
+        String yr = String.valueOf((int) Math.floor(y));
+        String sub = String.format(java.util.Locale.GERMANY, "Quellmund %.1f °C  ·  %s", com.dan.geyser.world.MorningGlory.tempAt(y),
+                com.dan.geyser.world.MorningGlory.tempAt(y) > 78 ? "tiefblau" : com.dan.geyser.world.MorningGlory.tempAt(y) > 73 ? "Matten wachsen vom Rand" : "gelb und orange bis zur Mitte");
+        String ev = com.dan.geyser.world.MorningGlory.event(y);
+        g.setFont(new Font("SansSerif", Font.BOLD, 30));
+        int w1 = g.getFontMetrics().stringWidth(yr);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        int w2 = Math.max(g.getFontMetrics().stringWidth(sub), ev == null ? 0 : g.getFontMetrics().stringWidth(ev));
+        int bw = Math.max(w1, w2) + 40, x = (W - bw) / 2, top = cinema ? Math.max(20, (int) ((getHeight() - W / 2.39) / 2) + 14) : 96;
+        g.setColor(new Color(10, 16, 20, 180));
+        g.fillRoundRect(x, top, bw, ev == null ? 78 : 96, 12, 12);
+        g.setColor(INK);
+        g.setFont(new Font("SansSerif", Font.BOLD, 30));
+        g.drawString(yr, x + (bw - w1) / 2, top + 38);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        g.setColor(SULFUR);
+        g.drawString(sub, x + (bw - g.getFontMetrics().stringWidth(sub)) / 2, top + 58);
+        if (ev != null) {
+            g.setColor(MUTED);
+            g.drawString(ev, x + (bw - g.getFontMetrics().stringWidth(ev)) / 2, top + 78);
+        }
+        g.setColor(new Color(255, 255, 255, 40));
+        int by = top + (ev == null ? 66 : 86);
+        g.fillRect(x + 20, by, bw - 40, 3);
+        g.setColor(POOL);
+        g.fillRect(x + 20, by, (int) ((bw - 40) * (y - com.dan.geyser.world.MorningGlory.FIRST) / (com.dan.geyser.world.MorningGlory.LAST - com.dan.geyser.world.MorningGlory.FIRST)), 3);
+    }
+
     /** Stand des Zeitraffers aus dem Fortschritt u 0..1; u ≥ 1 stellt den heutigen Kegel wieder her. */
     private void applySinter(double u, boolean show, Geysers gs) {
         com.dan.geyser.atom.SinterGrowth sg = sinter;
@@ -657,6 +743,20 @@ public final class ScenePanel extends JPanel {
 
     private volatile double wind = 0.35;
     private volatile double water = 1;
+    private final com.dan.geyser.effects.Weather weather = new com.dan.geyser.effects.Weather();
+    private double rainWet, litOvercast;
+    private Consumer<Integer> weatherListener = v -> { };
+    public void setWeatherListener(Consumer<Integer> l) { weatherListener = l; }
+
+    /** Wetter: 0 nach Jahreszeit, dann klar, bewölkt, Regen, Gewitter, Schneefall (siehe {@link com.dan.geyser.effects.Weather}). */
+    public void setWeather(int mode) {
+        weather.mode = mode;
+        int m = mode;
+        SwingUtilities.invokeLater(() -> weatherListener.accept(m));
+        showToast("Wetter: " + com.dan.geyser.effects.Weather.MODES[mode] + (mode == 0 ? " (Modell: Sommergewitter, Winterschnee)" : ""), 2500);
+    }
+
+    public int weatherMode() { return weather.mode; }
     private Consumer<Double> waterListener = v -> { };
     public void setWaterListener(Consumer<Double> l) { waterListener = l; }
 
@@ -873,6 +973,21 @@ public final class ScenePanel extends JPanel {
             GeyserModel was = gs.erupting();
             climate();
             float wind = (float) this.wind;
+            // Wetter: Bewölkung ins Licht, Regen und Schnee um die Kamera, Blitz und Donner
+            if (weather.step(dt, day, hour, airTemp, cam.ex, cam.ez)) {
+                weather.makeBolt(scene.terrain);
+                double bd = Math.hypot(weather.boltX - cam.ex, weather.boltZ - cam.ez);
+                float bp = (float) (((weather.boltX - cam.ex) * cam.rx + (weather.boltZ - cam.ez) * cam.rz) / Math.max(1, bd));
+                if (soundOn) sound.thunder((float) Math.min(1, 1.6 / (1 + bd / 900)), (float) (bd / 343), bp);
+            }
+            com.dan.geyser.effects.Sky.overcastNext = weather.overcast;
+            if (Math.abs(weather.overcast - litOvercast) > 0.03) { litOvercast = weather.overcast; sunDirty = true; }
+            weather.emit(ps, scene.terrain, cam.ex, cam.ey, cam.ez, (float) dt, (float) (0.8 * wind * 9), (float) (0.6 * wind * 9));
+            rainWet = Math.max(0, Math.min(1, rainWet + (weather.rain > 0.15 ? dt / 90 * weather.rain : -dt / 900)));
+            r.rainWet = (float) (0.8 * rainWet);
+            r.flash = weather.flash;
+            r.bolt = weather.bolt;
+            if (soundOn) sound.rain = (float) (weather.rain * 0.8 / (1 + Math.max(0, cam.ey - scene.terrain.sample(cam.ex, cam.ez)) / 80));
             gs.update(gClock, simDt, (float) dt, ps, (float) (0.8 * wind * 9), (float) (0.6 * wind * 9), (float) Math.max(0, cycle.elevationDeg / 40.0));
             r.plumes = gs.plumes;
             r.wind = wind;
@@ -936,6 +1051,11 @@ public final class ScenePanel extends JPanel {
                 applySinter(run ? dr.elapsedSeconds() / Math.max(1, dr.totalSeconds() - 5) : 1, run, gs);
                 if (!run) sinterOn = false;
                 if (!run || t - sinterShadowAt > 0.5) { sinterShadowAt = t; sunDirty = true; }
+            }
+            if (gloryOn) {
+                boolean run = dr.active() && "Morning Glory im Zeitraffer".equals(dr.title());
+                applyGlory(run ? dr.elapsedSeconds() / Math.max(1, dr.totalSeconds() - 5) : 1, run);
+                if (!run) gloryOn = false;
             }
             if (soundOn) listen(gs, dt);
             if (tubeOn) {
@@ -1120,7 +1240,7 @@ public final class ScenePanel extends JPanel {
             sunDirty = false;
             dc.set(day, hour);
             long t0 = System.nanoTime();
-            spare.compute(r.mesh(), dc.dir, dc.moonDir, dc.moonLit, haze);
+            spare.compute(r.mesh(), dc.dir, dc.moonDir, dc.moonLit, Math.min(1, haze + 0.3 * weather.overcast));
             shadowMs = (System.nanoTime() - t0) / 1e6;
             cycle.set(dc.day(), dc.hour());
             r.offer(spare);
@@ -1323,6 +1443,7 @@ public final class ScenePanel extends JPanel {
             }
             caption(g);
             sinterHud(g);
+            gloryHud(g);
             if (help) helpHud(g);
             if (toast != null && System.currentTimeMillis() < toastUntil) {
                 g.setFont(new Font("SansSerif", Font.PLAIN, 13));
@@ -1399,7 +1520,8 @@ public final class ScenePanel extends JPanel {
         g.drawString(place, 28, 40);
         g.setFont(new Font("SansSerif", Font.PLAIN, 12));
         String sub = DayNightCycle.dateLabel(day) + " " + DayNightCycle.YEAR + "  ·  " + DayNightCycle.timeLabel(hour) + " "
-                + DayNightCycle.zone(day, hour) + "  ·  44,46° N  110,83° W  ·  2240 m";
+                + DayNightCycle.zone(day, hour) + "  ·  " + weather.label + String.format(java.util.Locale.GERMANY, ", %.0f °C", airTemp)
+                + "  ·  44,46° N  110,83° W  ·  2240 m";
         int sw = g.getFontMetrics().stringWidth(sub);
         g.setColor(new Color(0, 0, 0, 80));
         g.fillRoundRect(14, 58, sw + 24, 24, 8, 8);

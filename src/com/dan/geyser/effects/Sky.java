@@ -22,6 +22,10 @@ public final class Sky {
     /** Wahre Richtung zur Sonne und zum Mond, beleuchteter Anteil des Mondes, Nacht 0..1. */
     public final double[] trueSun = {0, 1, 0}, moon = {0, -1, 0};
     public float moonLit, night;
+    /** Bewölkung 0..1 aus dem Wetter; gilt ab dem nächsten {@link #update}. */
+    public static volatile float overcastNext;
+    /** Bewölkung dieses Himmels. */
+    public float overcast;
     /** Galaktischer Nordpol und Zentrum am Himmel (setzt der Sternhimmel zur Sternzeit). */
     public static volatile double[] galPole = {0.28, 0.55, 0.79}, galCenter = {0, -1, 0};
 
@@ -101,6 +105,22 @@ public final class Sky {
             upR += im * 0.15f; upG += im * 0.2f; upB += im * 0.32f;
             sideR += im * 0.1f; sideG += im * 0.13f; sideB += im * 0.2f;
         }
+        // Bewölkung: die Sonne verschwindet hinter der Wolkendecke, der Himmel wird gleichmäßig grau
+        float oc = overcast = overcastNext;
+        if (oc > 0.001f) {
+            float odim = 1 - 0.93f * oc;
+            float lumSky = (upR + upG + upB) / 3f * 0.9f + (sunR + sunG + sunB) / 3f * 0.08f * oc * (moonLight ? 0 : 1);
+            float gz = lumSky * 0.55f, gh = lumSky * 0.72f;
+            zenR += (gz - zenR) * oc; zenG += (gz * 1.01f - zenG) * oc; zenB += (gz * 1.05f - zenB) * oc;
+            horR += (gh - horR) * oc; horG += (gh * 1.01f - horG) * oc; horB += (gh * 1.04f - horB) * oc;
+            float ua = (upR + upG + upB) / 3f;
+            float amb = ua * (1 - 0.35f * oc) + (sunR + sunG + sunB) / 3f * 0.06f * oc * (moonLight ? 0 : 1);
+            upR += (amb - upR) * oc; upG += (amb * 1.01f - upG) * oc; upB += (amb * 1.04f - upB) * oc;
+            float sa = (sideR + sideG + sideB) / 3f * (1 - 0.3f * oc) + amb * 0.2f * oc;
+            sideR += (sa - sideR) * oc; sideG += (sa * 1.01f - sideG) * oc; sideB += (sa * 1.04f - sideB) * oc;
+            sunR *= odim; sunG *= odim; sunB *= odim;
+            sunset *= odim;
+        }
         float gs = (float) Math.max(0, sun[1]) * 0.30f;
         downR = sunR * gs * 0.60f + upR * 0.18f;
         downG = sunG * gs * 0.52f + upG * 0.18f;
@@ -120,7 +140,15 @@ public final class Sky {
             float gr = 0.12f * day + 0.004f, gg = 0.10f * day + 0.004f, gb = 0.075f * day + 0.005f;
             r = horR * 0.8f + (gr - horR * 0.8f) * t; g = horG * 0.8f + (gg - horG * 0.8f) * t; b = horB * 0.8f + (gb - horB * 0.8f) * t;
         }
-        if (night > 0.05f && dy > -0.02f) {
+        if (overcast > 0.02f && dy > 0) {
+            // Wolkendecke: dunklere und hellere Ballen, zum Horizont flach zusammengedrängt
+            float inv = 1f / (dy + 0.08f);
+            float u = dx * inv * 0.6f, v = dz * inv * 0.6f;
+            float c = com.dan.geyser.core.Noise.tex(u + 3.1f, v + 1.7f) * 0.65f + com.dan.geyser.core.Noise.tex(u * 3.3f + 7, v * 3.3f) * 0.35f;
+            float k = 1 + (c - 0.5f) * 0.9f * overcast * Math.min(1, dy * 5);
+            r *= k; g *= k; b *= k;
+        }
+        if (night > 0.05f && dy > -0.02f && overcast < 0.9f) {
             // Milchstraße: Band entlang des galaktischen Äquators, zum Zentrum (Schütze) heller
             double[] gp = galPole, gc = galCenter;
             float gd = (float) (dx * gp[0] + dy * gp[1] + dz * gp[2]);
