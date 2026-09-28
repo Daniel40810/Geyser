@@ -20,9 +20,10 @@ import java.io.File;
 /**
  * Standbilder ohne Fenster, zum Beispiel für die Bilder im README. Jeder Auftrag ist ein Argument:
  * <pre>
- *   datei|Blickpunkt|Tag im Jahr|Uhrzeit|Geysir oder -|Sekunden nach dem Auslösen|Farbstil|Breite|Höhe|Wetter
+ *   datei|Blickpunkt|Tag im Jahr|Uhrzeit|Geysir oder -|Sekunden nach dem Auslösen|Farbstil|Breite|Höhe|Wetter|Jahr
  * </pre>
- * Wetter ist die Nummer aus {@link com.dan.geyser.effects.Weather#MODES} (fehlt es: klar).
+ * Wetter ist die Nummer aus {@link com.dan.geyser.effects.Weather#MODES} (fehlt es: klar), Jahr das
+ * Jahr für Morning Glory Pool (fehlt es: heute).
  * Blickpunkt ist die Nummer oder der Name aus {@link Viewpoint#NAMES}, oder frei
  * {@code ex,ey,ez,tx,ty,tz} (y über Gelände) mit dem Ort als Nachsatz {@code @1} für Midway, {@code @2} für das Lower Geyser Basin. Beispiel:
  * {@code docs/bilder/readme/old_faithful.png|1|200|8.3|Old Faithful|40|0|1600|900}. Oder eine Einstellung
@@ -89,6 +90,9 @@ public final class StillRender {
             float[] wt = wx.target(day, hour, tair);
             wx.overcast = wt[0]; wx.rain = wt[1]; wx.snow = wt[2];
             com.dan.geyser.effects.Sky.overcastNext = wx.overcast;
+            Thermal.Spring mgp = w.scene.thermal.byName("Morning Glory Pool");
+            mgp.t0 = a.length > 10 ? com.dan.geyser.world.MorningGlory.tempAt(Double.parseDouble(a[10])) : com.dan.geyser.world.MorningGlory.NOW_T;
+            w.scene.thermal.changed(mgp);
             Engine3D.setStyle(style);
             DayNightCycle dc = new DayNightCycle();
             dc.set(day, hour);

@@ -178,7 +178,7 @@ public final class Engine3D {
     // ------------------------------------------------------------ Beleuchtung
 
     /**
-     * Wechselt die Szene (später: Midway). Danach muss die Beleuchtung neu gerechnet werden
+     * Wechselt die Szene. Danach muss die Beleuchtung neu gerechnet werden
      * ({@link #setSky}); Puffer und Schattenkarten bleiben.
      */
     public synchronized void setScene(Scene scene) {
