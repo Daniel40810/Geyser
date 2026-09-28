@@ -42,7 +42,7 @@ forest.visit((mesh, pos, nrm, col, tree) -> {
 int n = forest.leaves.quads(xyz, rgb, nrm);      // fallende und liegende Blätter
 ```
 
-Mit `TreeGenerator.grow(species, seed, age)` und `TreeMesh.build(model, lod)` bekommt man einen einzelnen Baum ohne Wald. `TreeMesh.silhouette(model, sides, rings)` liefert eine sehr leichte Hülle mit etwa 100 Dreiecken für ferne Bäume. Das Geyser-Projekt nutzt sie für die Kiefern im Becken.
+Mit `TreeGenerator.grow(species, seed, age)` und `TreeMesh.build(model, lod)` bekommt man einen einzelnen Baum ohne Wald. `TreeMesh.build(model, lod, barkLod)` baut Laub und Geäst in verschiedenen Stufen, zum Beispiel Blätter der Stufe 1 an Ästen der Stufe 2 für viele Laubbäume in mittlerer Entfernung. `TreeMesh.silhouette(model, sides, rings)` liefert eine sehr leichte Hülle mit etwa 100 Dreiecken für ferne Bäume. Das Geyser-Projekt nutzt die Silhouette für die Kiefern tief im Wald. Am Waldrand und bei den Espen nimmt es die feineren Stufen (siehe `com.dan.geyser.world.Grove`).
 
 ## Aufbau
 

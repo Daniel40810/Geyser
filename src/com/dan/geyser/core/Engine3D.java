@@ -276,6 +276,8 @@ public final class Engine3D {
         long f1 = System.nanoTime();
         Animals an = animals;
         if (an != null && an.n > 0) drawAnimals(an);
+        LeafQuads lq = leaves;
+        if (lq != null && lq.n > 0) drawLeaves(lq);
         com.dan.geyser.effects.ParticleSystem pss = particles;
         if (pss != null && pss.n > 0) drawParticles(pss, rowsPer); else drawnParticles = 0;
         final boolean th = thermo;
@@ -327,7 +329,7 @@ public final class Engine3D {
         int nv = mesh.nv;
         if (vx.length < nv) { vx = new float[nv]; vy = new float[nv]; vz = new float[nv]; }
         if (rnx.length < nv && mesh.spinners.length > 0) { rnx = new float[nv]; rny = new float[nv]; rnz = new float[nv]; }
-        final float[] p = mesh.pos, sw = mesh.sway, nr = mesh.nrm;
+        final float[] p = mesh.pos, sw = mesh.sway, nr = mesh.nrm, fl = mesh.flutter;
         final int[] sp = mesh.spin;
         final float t = time, wx = (float) windX, wz = (float) windZ, wk = (float) wind;
         // Drehkörper: Winkel je Achse für dieses Bild
@@ -354,6 +356,13 @@ public final class Engine3D {
                     float ph = (float) (px * wx + pz * wz) * 0.09f + (float) (px * 0.37 + pz * 0.23);
                     float g = ((float) Math.sin(t * 1.3f - ph * 0.6f) * 0.55f + (float) Math.sin(t * 3.1f + ph * 1.7f) * 0.25f + 0.45f) * wk;
                     px += wx * s * g; pz += wz * s * g; py -= s * g * g * 0.2f;
+                }
+                float f = fl[v];
+                if (f != 0 && wk > 0) {
+                    // Blätter zittern um ihren Stiel: schnell, je Blatt in eigener Phase, stärker in Böen
+                    float fph = (float) (p[3 * v] * 3.7 + p[3 * v + 2] * 2.9 + p[3 * v + 1] * 1.3);
+                    float fa = f * wk * ((float) Math.sin(t * 9.0f + fph) * 0.7f + (float) Math.sin(t * 14.3f + fph * 1.9f) * 0.3f);
+                    px += nr[3 * v] * fa; py += nr[3 * v + 1] * fa; pz += nr[3 * v + 2] * fa;
                 }
                 int q = sp[v];
                 if (q >= 0) {
@@ -1783,6 +1792,48 @@ public final class Engine3D {
 
     /** Tiere der Szene (Bisons, Wapitis) oder null; die Fauna füllt sie vor jedem Bild. */
     public volatile Animals animals;
+    /** Fallendes Laub (null = keins). */
+    public volatile LeafQuads leaves;
+
+    /**
+     * Fallende und liegende Blätter als kleine Rhomben mit Tiefenprüfung. Licht: Sonne nach der
+     * Schattenkarte, von beiden Seiten (dünne Blätter scheinen durch), dazu Himmel; Dunst wie bei den
+     * Tieren. Nur bis 160 m, weiter weg wären sie kleiner als ein Bildpunkt.
+     */
+    private void drawLeaves(LeafQuads lq) {
+        final Sky s = sky;
+        final LightingEngine li = L;
+        final float air = AIR0 + AIR1 * s.haze;
+        float[] hzc = new float[3];
+        s.haze((float) cfx, (float) cfy, (float) cfz, hzc);
+        boolean sunUp = s.sunR + s.sunG + s.sunB > 1e-4f;
+        for (int i = 0; i < lq.n; i++) {
+            int o = 12 * i;
+            double cx = (lq.xyz[o] + lq.xyz[o + 6]) * 0.5, cy = (lq.xyz[o + 1] + lq.xyz[o + 7]) * 0.5, cz = (lq.xyz[o + 2] + lq.xyz[o + 8]) * 0.5;
+            double ddx = cx - ex, ddy = cy - ey, ddz = cz - ez;
+            double vz = ddx * cfx + ddy * cfy + ddz * cfz;
+            if (vz < 0.5 || vz > 160) continue;
+            boolean ok = true;
+            for (int j = 0; j < 4 && ok; j++) {
+                double[] q = project(lq.xyz[o + 3 * j], lq.xyz[o + 3 * j + 1], lq.xyz[o + 3 * j + 2]);
+                if (q == null) ok = false;
+                else { polyX[j] = (float) q[0]; polyY[j] = (float) q[1]; }
+            }
+            if (!ok) continue;
+            float nx = lq.nrm[3 * i], ny = lq.nrm[3 * i + 1], nz = lq.nrm[3 * i + 2];
+            float lit = sunUp ? li.lit(cx, cy + 0.05, cz, 0.3, false) : 0;
+            float cosS = (float) Math.abs(nx * s.sun[0] + ny * s.sun[1] + nz * s.sun[2]);
+            float kSun = lit * (0.35f + 0.65f * cosS) * (float) Math.max(0, s.sun[1] + 0.1);
+            float amb = 0.5f + 0.3f * Math.abs(ny);
+            float r = lq.rgb[3 * i], g = lq.rgb[3 * i + 1], b = lq.rgb[3 * i + 2];
+            float cr = r * (s.sunR * kSun + (s.upR + s.sideR) * amb), cg = g * (s.sunG * kSun + (s.upG + s.sideG) * amb),
+                    cb = b * (s.sunB * kSun + (s.upB + s.sideB) * amb);
+            float dl = (float) Math.sqrt(ddx * ddx + ddy * ddy + ddz * ddz);
+            float fa = 1 - Noise.expNeg(dl * air);
+            cr += (hzc[0] - cr) * fa; cg += (hzc[1] - cg) * fa; cb += (hzc[2] - cb) * fa;
+            fillPoly(4, (float) vz - 0.02f, cr, cg, cb, false, 0);
+        }
+    }
     private final float[] polyX = new float[64], polyY = new float[64];
 
     /**

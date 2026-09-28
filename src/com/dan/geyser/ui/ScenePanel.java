@@ -503,6 +503,7 @@ public final class ScenePanel extends JPanel {
     private volatile boolean tubeOn, thermoOn, soundOn, faunaOn = true;
     private volatile com.dan.geyser.world.Fauna fauna;
     private volatile com.dan.geyser.world.Visitors visitors;
+    private volatile com.dan.geyser.world.Grove grove;
     private volatile boolean visitorsOn = true;
     private boolean ofWasErupting;
 
@@ -941,6 +942,7 @@ public final class ScenePanel extends JPanel {
             World world = Basin.build();
             Scene sc = world.scene;
             geysers = world.geysers;
+            grove = world.grove;
             // Old Faithful beginnt gleich mit dem Vorspiel, die anderen irgendwo in ihrem Abstand
             java.util.Random rr = new java.util.Random();
             for (GeyserModel g : geysers.list) {
@@ -1070,6 +1072,13 @@ public final class ScenePanel extends JPanel {
                 }
             }
             r.animals = animals.n > 0 ? animals : null;
+            // Espen: Laub nach der Jahreszeit, im Herbst fallende Blätter um die Kamera
+            com.dan.geyser.world.Grove gv = grove;
+            if (gv != null) {
+                gv.setSeason(day, Thermal.snow);
+                gv.update(dt, wind, r.windX, r.windZ, cam.ex, cam.ez, scene.terrain);
+                r.leaves = gv.quads;
+            }
             r.thermo = thermoOn;
             GeyserModel ofg = gs.byName("Old Faithful");
             if (ofg != null) {
