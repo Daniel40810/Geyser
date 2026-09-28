@@ -165,7 +165,9 @@ public final class DbSetup {
         for (GeyserModel g : world.geysers.list) if (Sites.index(g.name) >= 0) geyserSites++;
         expect(c, "Geysire", "SELECT COUNT(*) FROM gey_geyser", geyserSites);
         expect(c, "Quellen", "SELECT COUNT(*) FROM gey_spring", world.scene.thermal.springs.size());
-        expect(c, "  davon mit genäherter Lage", "SELECT COUNT(*) FROM gey_spring WHERE genaehert = 'J'", 3);
+        int approx = 0;
+        for (com.dan.geyser.core.Thermal.Spring s : world.scene.thermal.springs) if (Inhalte.approx(Inhalte.springCode(s.name))) approx++;
+        expect(c, "  davon mit genäherter Lage", "SELECT COUNT(*) FROM gey_spring WHERE genaehert = 'J'", approx);
         expect(c, "Mineralien", "SELECT COUNT(*) FROM gey_mineral", Minerals.ALL.length);
         expect(c, "Mineral-Elemente", "SELECT COUNT(*) FROM gey_mineral_element", Inhalte.mineralElements());
         expect(c, "Mineral-Elemente ohne Treffer in am_element", "SELECT COUNT(*) FROM gey_mineral_check_v WHERE pruefung = 'FEHLT'", 0);
@@ -246,7 +248,8 @@ public final class DbSetup {
             sayCheck("Zustand speichern, ersetzen, laden, löschen", back != null && named == 1 && Math.abs(back.hour - 8.5) < 1e-6 && back.thermo
                     && back.site == 1 && Math.abs(back.pose[5] - 150) < 1e-6 && gone, back == null ? "nicht gefunden" : (gone ? "ok" : "nicht gelöscht"));
             List<Object[]> pr = db.prediction();
-            sayCheck("Sicht der Vorhersage", pr.size() == world.geysers.list.size(), pr.size() + " Geysire");
+            // eine Zeile je Geysir mit eigener Stelle (Turban, Indicator, Mortar usw. haben keine)
+            sayCheck("Sicht der Vorhersage", pr.size() == geyserSites, pr.size() + " von " + geyserSites + " Geysiren");
         } catch (SQLException e) {
             problems++;
             say("  FEHLER beim Laden wie die App: " + DbService.msg(e));
