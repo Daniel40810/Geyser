@@ -170,7 +170,7 @@ Eine Datenbank, die vor den neuen Stellen und dem Lower Geyser Basin eingerichte
 
 | | |
 |---|---|
-| ![Die App mit Bedienfeld](Status_Phase2_Uebersicht.png) | ![Die Mineral-Lupe in der App](Status_Phase7.png) |
+| ![Die App mit Bedienfeld](docs/bilder/app/uebersicht.png) | ![Die Mineral-Lupe in der App](docs/bilder/app/mineral_lupe.png) |
 | Die App mit Bedienfeld | Mineral-Lupe in der App |
 
 ## Bauen und starten
@@ -228,6 +228,7 @@ src/com/dan/geyser/
   tools/            Werkzeuge (siehe oben)
 db/sql/             SQL-Skripte 01 bis 04 und 99_abbau
 docs/bilder/readme/ Bilder dieser Seite
+docs/bilder/app/    Bildschirmfotos der App
 docs/bilder/phase*/ Prüfbilder aus der Entwicklung, nach Phasen
 ```
 
