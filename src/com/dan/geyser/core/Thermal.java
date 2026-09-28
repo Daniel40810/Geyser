@@ -20,8 +20,12 @@ public final class Thermal {
         public double y;
         /** Halbachsen des Beckens in x und z (0 bei einem Schlot) und die Tiefe in der Mitte. */
         public final double ax, az, depth;
-        /** Temperatur am Quellmund und Abfall bis zum Beckenrand (°C). */
-        public final double t0, drop;
+        /**
+         * Temperatur am Quellmund und Abfall bis zum Beckenrand (°C). t0 kann sich ändern (Morning
+         * Glory im Zeitraffer, Doublet Pool während Giantess); danach {@link Thermal#changed} rufen.
+         */
+        public volatile double t0;
+        public final double drop;
         /** Abfluss: Richtung (Bogenmaß, 0 = Osten, π/2 = Süden), Reichweite in Metern, Grundbreite des Saums. */
         public final double runDir, runLen, apron;
         /** Anzahl der Finger rundum und Anteil des Beckens, ab dem der flache Schelf beginnt. */
@@ -60,6 +64,28 @@ public final class Thermal {
     public static volatile float snow = 0, rime = 0;
 
     public Spring add(Spring s) { springs.add(s); grid = null; return s; }
+
+    /** Zählt jede Änderung an einer Quelle hoch; der Bildrechner verwirft dann sein gespeichertes Licht. */
+    public static volatile int generation;
+
+    /** Die Quelle s hat eine neue Temperatur: ihre Kacheln werden neu gebacken. */
+    public void changed(Spring s) {
+        Grid g = grid;
+        if (g != null) {
+            double r = Math.sqrt(s.reach2), span = TS * CELL;
+            int i0 = (int) Math.floor((s.x - r) / span) - g.tx0, i1 = (int) Math.floor((s.x + r) / span) - g.tx0;
+            int j0 = (int) Math.floor((s.z - r) / span) - g.tz0, j1 = (int) Math.floor((s.z + r) / span) - g.tz0;
+            for (int j = Math.max(0, j0); j <= Math.min(g.nz - 1, j1); j++)
+                for (int i = Math.max(0, i0); i <= Math.min(g.nx - 1, i1); i++) g.t[j * g.nx + i] = null;
+        }
+        generation++;
+    }
+
+    /** Die Quelle mit diesem Namen oder null. */
+    public Spring byName(String n) {
+        for (Spring s : springs) if (s.name.equals(n)) return s;
+        return null;
+    }
 
     /** Setzt die Jahreszeit aus dem Tag im Jahr (Höhepunkt Mitte Juli). */
     public static void setDay(int day) {

@@ -37,12 +37,23 @@ public final class Inhalte {
             case "Heart Spring": return "HEART";
             case "Grand Prismatic Spring": return "GRAND_PRISMATIC";
             case "Excelsior Geyser Crater": return "EXCELSIOR";
+            case "Daisy Geyser": return "DAISY";
+            case "Splendid Geyser": return "SPLENDID";
+            case "Grotto Geyser": return "GROTTO";
+            case "Fan Geyser": return "FAN";
+            case "Mortar Geyser": return "MORTAR";
+            case "Turban Geyser": return "TURBAN";
+            case "Beehive's Indicator": return "BEEHIVE_INDICATOR";
+            case "Giantess Geyser": return "GIANTESS";
             default: return name.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]+", "_");
         }
     }
 
     /** Quellen, deren Lage im Code nur genähert ist (nicht aus Koordinaten). */
-    static boolean approx(String code) { return code.equals("CRESTED") || code.equals("DOUBLET") || code.equals("HEART"); }
+    static boolean approx(String code) {
+        return code.equals("CRESTED") || code.equals("DOUBLET") || code.equals("HEART") || code.equals("MORTAR") || code.equals("TURBAN")
+                || code.equals("BEEHIVE_INDICATOR");
+    }
 
     static String q(String s) { return s == null ? "NULL" : "'" + s.replace("'", "''") + "'"; }
 
@@ -100,12 +111,13 @@ public final class Inhalte {
             Sites.Site s = Sites.ALL[i];
             stmt(p, "INSERT INTO gey_site (code, name, art, becken, breite, laenge, hoehe_m, lage, saeule_max_m, tafel, taste) VALUES ("
                     + q(Sites.CODES[i]) + ", " + q(s.name) + ", " + q(s.kind == Sites.Kind.GEYSER ? "GEYSIR" : "QUELLE") + ", "
-                    + q(i == 6 ? "MIDWAY" : "UPPER") + ", " + n(s.lat) + ", " + n(s.lon) + ", " + n(s.elevation) + ", "
-                    + point(s.lat, s.lon) + ", " + n(s.height) + ", " + q(s.line) + ", " + (i + 1) + ")");
+                    + q(s.basin == 1 ? "MIDWAY" : "UPPER") + ", " + n(s.lat) + ", " + n(s.lon) + ", " + n(s.elevation) + ", "
+                    + point(s.lat, s.lon) + ", " + n(s.height) + ", " + q(s.line) + ", " + (i < 7 ? String.valueOf(i + 1) : "NULL") + ")");
         }
         p.println("-- ------------------------------------------------------------- Geysire");
         for (GeyserModel g : w.geysers.list) {
             int si = Sites.index(g.name);
+            if (si < 0) continue;                 // Nebengeysire (Turban, Indicator, Mortar, Splendid) ohne eigene Stelle
             double[] v = g.params();
             stmt(p, "INSERT INTO gey_geyser (site_id, typ, schlot_r_m, roehre_m, saeule_max_m, kurz_min_s, kurz_max_s, lang_min_s, lang_max_s, "
                     + "anteil_kurz, abstand_kurz_s, abstand_lang_s, streuung_s, dampfphase_s, neigung_grad, stoesse_min, stoesse_max) VALUES ("

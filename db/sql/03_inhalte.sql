@@ -51,6 +51,30 @@ INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('
 /
 INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('JVGR_2021', 'The structure and volume of large geysers in Yellowstone National Park, USA and the mineralogy and chemistry of their silica sinter deposits', 'Journal of Volcanology and Geothermal Research', 'https://www.sciencedirect.com/science/article/abs/pii/S0377027321002201', 'FACHARTIKEL', DATE '2026-09-27')
 /
+INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('WIKI_DAISY', 'Daisy Geyser', 'Wikipedia', 'https://en.wikipedia.org/wiki/Daisy_Geyser', 'LEXIKON', DATE '2026-09-28')
+/
+INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('WIKI_SPLENDID', 'Splendid Geyser', 'Wikipedia', 'https://en.wikipedia.org/wiki/Splendid_Geyser', 'LEXIKON', DATE '2026-09-28')
+/
+INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('WIKI_GROTTO', 'Grotto Geyser', 'Wikipedia', 'https://en.wikipedia.org/wiki/Grotto_Geyser', 'LEXIKON', DATE '2026-09-28')
+/
+INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('WIKI_FAN', 'Fan and Mortar Geysers', 'Wikipedia', 'https://en.wikipedia.org/wiki/Fan_and_Mortar_Geysers', 'LEXIKON', DATE '2026-09-28')
+/
+INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('WIKI_GIANTESS', 'Giantess Geyser', 'Wikipedia', 'https://en.wikipedia.org/wiki/Giantess_Geyser', 'LEXIKON', DATE '2026-09-28')
+/
+INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('WIKI_TURBAN', 'Turban Geyser', 'Wikipedia', 'https://en.wikipedia.org/wiki/Turban_Geyser', 'LEXIKON', DATE '2026-09-28')
+/
+INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('WIKI_DOUBLET', 'Doublet Pool', 'Wikipedia', 'https://en.wikipedia.org/wiki/Doublet_Pool', 'LEXIKON', DATE '2026-09-28')
+/
+INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('USGS_MG', 'What''s the story, Morning Glory?', 'USGS', 'https://www.usgs.gov/observatories/yvo/news/whats-story-morning-glory', 'BEHOERDE', DATE '2026-09-28')
+/
+INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('GEOLOGY_2008', 'Climate-induced variations of geyser periodicity in Yellowstone National Park, USA (Hurwitz u. a.)', 'Geology', 'https://www.sciencedaily.com/releases/2008/06/080614080441.htm', 'FACHARTIKEL', DATE '2026-09-28')
+/
+INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('GRL_2020', 'Yellowstone''s Old Faithful Geyser shut down by a severe thirteenth century drought (Hurwitz u. a.)', 'Geophysical Research Letters', 'https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2020GL089871', 'FACHARTIKEL', DATE '2026-09-28')
+/
+INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('JGR_1998', 'Bubble collapse as the source of tremor at Old Faithful Geyser (Kedar u. a.)', 'Journal of Geophysical Research', 'https://agupubs.onlinelibrary.wiley.com/doi/10.1029/98JB01824', 'FACHARTIKEL', DATE '2026-09-28')
+/
+INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('GRL_2019', 'Imaging the deep subsurface plumbing of Old Faithful Geyser from low-frequency hydrothermal tremor migration (Wu u. a.)', 'Geophysical Research Letters', 'https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2018GL081771', 'FACHARTIKEL', DATE '2026-09-28')
+/
 INSERT INTO gey_source (code, titel, herausgeber, url, art, abgerufen) VALUES ('FRONTIERS_2012', 'Microbial iron cycling in acidic geothermal springs of Yellowstone National Park', 'Frontiers in Microbiology', 'https://www.frontiersin.org/journals/microbiology/articles/10.3389/fmicb.2012.00109/full', 'FACHARTIKEL', DATE '2026-09-27')
 /
 -- ------------------------------------------------------------- Kennzahlen
@@ -91,6 +115,34 @@ INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id)
 INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('TIER', 'WAPITI', 'Bullen rund 700 lb und fünf Fuß Schulterhöhe; Brunft Anfang September bis Mitte Oktober; im Winter weniger als 2000 im Park', 700, 'lb', 18, (SELECT source_id FROM gey_source WHERE code = 'NPS_ELK'))
 /
 INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('TIER', 'ABSTAND', 'Mindestens 25 Yards (23 m) Abstand zu Bisons und Wapitis', 25, 'yd', 19, (SELECT source_id FROM gey_source WHERE code = 'NPS_SAFETY'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('GEYSIR', 'GRAND', 'Vor Grand bricht Turban alle 15 bis 25 Minuten für fünf Minuten aus; Grand beginnt ein bis zwei Minuten nach dem Beginn eines Turban-Ausbruchs', 2, 'min', 20, (SELECT source_id FROM gey_source WHERE code = 'WIKI_GRAND'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('GEYSIR', 'GRAND', 'Während Grand spielt Turban ununterbrochen, bis 6 m hoch', 6, 'm', 21, (SELECT source_id FROM gey_source WHERE code = 'WIKI_TURBAN'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('GEYSIR', 'BEEHIVE', 'Beehive''s Indicator, 3 m neben Beehive, spritzt 4,6 bis 7,6 m hoch, Sekunden bis 30 Minuten vor Beehive, im Mittel 13,3 Minuten', 13.3, 'min', 22, (SELECT source_id FROM gey_source WHERE code = 'WIKI_BEEHIVE'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('GEYSIR', 'DAISY', '18 bis 23 m schräg, 3 bis 4 Minuten, alle 120 bis über 200 Minuten', 23, 'm', 23, (SELECT source_id FROM gey_source WHERE code = 'WIKI_DAISY'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('GEYSIR', 'DAISY', 'Splendid (bis 61 m) ist meist still, wenn Daisy aktiv ist; zuletzt am 13. Mai 1998; ein Ausbruch von Splendid verändert Daisys Abstand', 1998, 'Jahr', 24, (SELECT source_id FROM gey_source WHERE code = 'WIKI_SPLENDID'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('GEYSIR', 'GROTTO', 'Normale Ausbrüche alle 6 bis 7 Stunden für 1 bis 2 Stunden, nach 2 bis 10 davon ein Marathon von 10 bis 26 Stunden', 26, 'h', 25, (SELECT source_id FROM gey_source WHERE code = 'WIKI_GROTTO'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('GEYSIR', 'FAN', 'Fan bis 125 ft, Mortar bis 80 ft, gemeinsam alle 3 Tage bis Wochen, rund 30 Minuten', 125, 'ft', 26, (SELECT source_id FROM gey_source WHERE code = 'WIKI_FAN'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('GEYSIR', 'GIANTESS', 'Bis 61 m, keine bis 41 Ausbrüche im Jahr, meist 2 bis 6, jeweils 4 bis 48 Stunden mit Stößen etwa zweimal je Stunde', 61, 'm', 27, (SELECT source_id FROM gey_source WHERE code = 'WIKI_GIANTESS'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('QUELLE', 'DOUBLET', 'Doublet Pool brach nur viermal aus, zweimal zusammen mit Giantess', 4, 'Ausbrüche', 28, (SELECT source_id FROM gey_source WHERE code = 'WIKI_DOUBLET'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('GEYSIR', 'OLD_FAITHFUL', 'Abstand 1997 im Mittel 71, 2006 91 Minuten: weniger Niederschlag, weniger Wasser in der Röhre', 91, 'min', 29, (SELECT source_id FROM gey_source WHERE code = 'GEOLOGY_2008'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('GEYSIR', 'OLD_FAITHFUL', 'In einer schweren Dürre des 13. Jahrhunderts brach Old Faithful jahrzehntelang nicht aus', NULL, NULL, 30, (SELECT source_id FROM gey_source WHERE code = 'GRL_2020'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('GEYSIR', 'OLD_FAITHFUL', 'Tremor aus zusammenfallenden Dampfblasen; der tieffrequente Tremor wächst vor jedem Ausbruch und bricht mit dem Beginn ab', NULL, NULL, 31, (SELECT source_id FROM gey_source WHERE code = 'GRL_2019'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('QUELLE', 'MORNING_GLORY', 'Von den 1880ern bis in die 1940er tiefblau und heißer; Münzen und Abfall verstopften den Schlot, die Quelle kühlte ab, gelbe und orange Matten wuchsen zur Mitte', NULL, NULL, 32, (SELECT source_id FROM gey_source WHERE code = 'USGS_MG'))
+/
+INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('QUELLE', 'MORNING_GLORY', '1950 herausgeholt: 76 Taschentücher, 86,27 Dollar in Pennys und 8,10 Dollar in anderen Münzen', 76, 'Taschentücher', 33, (SELECT source_id FROM gey_source WHERE code = 'WIKI_MG'))
 /
 INSERT INTO gey_fact (thema, bezug, text, wert, einheit, reihenfolge, source_id) VALUES ('MINERAL', 'SINTER', 'Frischer Sinter: Opal-A, rund 10 % des Gewichts Wasser', NULL, NULL, 1, (SELECT source_id FROM gey_source WHERE code = 'USGS_SINTER'))
 /
@@ -149,6 +201,14 @@ INSERT INTO gey_site (code, name, art, becken, breite, laenge, hoehe_m, lage, sa
 /
 INSERT INTO gey_site (code, name, art, becken, breite, laenge, hoehe_m, lage, saeule_max_m, tafel, taste) VALUES ('GRAND_PRISMATIC', 'Grand Prismatic Spring', 'QUELLE', 'MIDWAY', 44.525, -110.83806, 2216, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.83806, 44.525, NULL), NULL, NULL), 0, 'Quelle in Midway · 110 m breit · 50 m tief · 70 °C', 7)
 /
+INSERT INTO gey_site (code, name, art, becken, breite, laenge, hoehe_m, lage, saeule_max_m, tafel, taste) VALUES ('DAISY', 'Daisy Geyser', 'GEYSIR', 'UPPER', 44.4699327, -110.8449336, NULL, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8449336, 44.4699327, NULL), NULL, NULL), 23, 'Geysir · 18–23 m schräg · alle 2 bis gut 3 Std. · Splendid daneben schläft seit 1998', NULL)
+/
+INSERT INTO gey_site (code, name, art, becken, breite, laenge, hoehe_m, lage, saeule_max_m, tafel, taste) VALUES ('GROTTO', 'Grotto Geyser', 'GEYSIR', 'UPPER', 44.47181, -110.84178, NULL, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.84178, 44.47181, NULL), NULL, NULL), 3, 'Geysir im Sintergewölbe · 3 m · 1–2 Std., Marathons 10–26 Std.', NULL)
+/
+INSERT INTO gey_site (code, name, art, becken, breite, laenge, hoehe_m, lage, saeule_max_m, tafel, taste) VALUES ('FAN', 'Fan Geyser', 'GEYSIR', 'UPPER', 44.47444, -110.8425, NULL, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8425, 44.47444, NULL), NULL, NULL), 38, 'Fan und Mortar am Fluss · 38 und 24 m · alle 3 Tage bis Wochen', NULL)
+/
+INSERT INTO gey_site (code, name, art, becken, breite, laenge, hoehe_m, lage, saeule_max_m, tafel, taste) VALUES ('GIANTESS', 'Giantess Geyser', 'GEYSIR', 'UPPER', 44.4635358, -110.828924, NULL, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.828924, 44.4635358, NULL), NULL, NULL), 61, 'Geysir auf Geyser Hill · bis 61 m · 2- bis 6-mal im Jahr, 4–48 Std.', NULL)
+/
 -- ------------------------------------------------------------- Geysire
 INSERT INTO gey_geyser (site_id, typ, schlot_r_m, roehre_m, saeule_max_m, kurz_min_s, kurz_max_s, lang_min_s, lang_max_s, anteil_kurz, abstand_kurz_s, abstand_lang_s, streuung_s, dampfphase_s, neigung_grad, stoesse_min, stoesse_max) VALUES ((SELECT site_id FROM gey_site WHERE code = 'OLD_FAITHFUL'), 'KEGEL', 0.6, 22, 55, 90, 150, 150, 300, 0.3, 3900, 5460, 600, 100, 0, 0, 0)
 /
@@ -159,6 +219,14 @@ INSERT INTO gey_geyser (site_id, typ, schlot_r_m, roehre_m, saeule_max_m, kurz_m
 INSERT INTO gey_geyser (site_id, typ, schlot_r_m, roehre_m, saeule_max_m, kurz_min_s, kurz_max_s, lang_min_s, lang_max_s, anteil_kurz, abstand_kurz_s, abstand_lang_s, streuung_s, dampfphase_s, neigung_grad, stoesse_min, stoesse_max) VALUES ((SELECT site_id FROM gey_site WHERE code = 'GRAND'), 'FONTAENE', 3.8, 12, 61, 0, 0, 540, 720, 0, 0, 23400, 1800, 60, 0, 2, 4)
 /
 INSERT INTO gey_geyser (site_id, typ, schlot_r_m, roehre_m, saeule_max_m, kurz_min_s, kurz_max_s, lang_min_s, lang_max_s, anteil_kurz, abstand_kurz_s, abstand_lang_s, streuung_s, dampfphase_s, neigung_grad, stoesse_min, stoesse_max) VALUES ((SELECT site_id FROM gey_site WHERE code = 'RIVERSIDE'), 'KEGEL', 0.4, 15, 23, 0, 0, 1080, 1320, 0, 0, 21600, 2700, 360, 28, 0, 0)
+/
+INSERT INTO gey_geyser (site_id, typ, schlot_r_m, roehre_m, saeule_max_m, kurz_min_s, kurz_max_s, lang_min_s, lang_max_s, anteil_kurz, abstand_kurz_s, abstand_lang_s, streuung_s, dampfphase_s, neigung_grad, stoesse_min, stoesse_max) VALUES ((SELECT site_id FROM gey_site WHERE code = 'DAISY'), 'KEGEL', 0.35, 12, 23, 0, 0, 180, 240, 0, 0, 9000, 1800, 60, 25, 0, 0)
+/
+INSERT INTO gey_geyser (site_id, typ, schlot_r_m, roehre_m, saeule_max_m, kurz_min_s, kurz_max_s, lang_min_s, lang_max_s, anteil_kurz, abstand_kurz_s, abstand_lang_s, streuung_s, dampfphase_s, neigung_grad, stoesse_min, stoesse_max) VALUES ((SELECT site_id FROM gey_site WHERE code = 'GROTTO'), 'KEGEL', 0.5, 10, 3, 3600, 7200, 36000, 93600, 0.83, 23400, 129600, 3600, 1800, 0, 0, 0)
+/
+INSERT INTO gey_geyser (site_id, typ, schlot_r_m, roehre_m, saeule_max_m, kurz_min_s, kurz_max_s, lang_min_s, lang_max_s, anteil_kurz, abstand_kurz_s, abstand_lang_s, streuung_s, dampfphase_s, neigung_grad, stoesse_min, stoesse_max) VALUES ((SELECT site_id FROM gey_site WHERE code = 'FAN'), 'KEGEL', 0.5, 14, 38, 0, 0, 1500, 2100, 0, 0, 432000, 172800, 600, 22, 0, 0)
+/
+INSERT INTO gey_geyser (site_id, typ, schlot_r_m, roehre_m, saeule_max_m, kurz_min_s, kurz_max_s, lang_min_s, lang_max_s, anteil_kurz, abstand_kurz_s, abstand_lang_s, streuung_s, dampfphase_s, neigung_grad, stoesse_min, stoesse_max) VALUES ((SELECT site_id FROM gey_site WHERE code = 'GIANTESS'), 'FONTAENE', 3, 20, 61, 0, 0, 14400, 172800, 0, 0, 7862400, 3888000, 3600, 0, 2, 4)
 /
 -- ------------------------------------------------------------- Quellen
 INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('OLD_FAITHFUL', 'Old Faithful', 'SCHLOT', (SELECT site_id FROM gey_site WHERE code = 'OLD_FAITHFUL'), 92, 0, 0, 0, 0, 48, 7, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.82814, 44.46047, NULL), NULL, NULL), 'N')
@@ -180,6 +248,22 @@ INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_
 INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('HEART', 'Heart Spring', 'BECKEN', NULL, 90, 4, 1.7, 1.2, 4, 8, 2, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8297073, 44.4631147, NULL), NULL, NULL), 'J')
 /
 INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('GRAND_PRISMATIC', 'Grand Prismatic Spring', 'BECKEN', (SELECT site_id FROM gey_site WHERE code = 'GRAND_PRISMATIC'), 70, 7, 55, 55, 50, 150, 55, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.83806, 44.525, NULL), NULL, NULL), 'N')
+/
+INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('DAISY', 'Daisy Geyser', 'SCHLOT', (SELECT site_id FROM gey_site WHERE code = 'DAISY'), 92, 0, 0, 0, 0, 24, 4, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8449336, 44.4699327, NULL), NULL, NULL), 'N')
+/
+INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('SPLENDID', 'Splendid Geyser', 'SCHLOT', NULL, 84, 0, 0, 0, 0, 18, 3, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8446526, 44.4702049, NULL), NULL, NULL), 'N')
+/
+INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('GROTTO', 'Grotto Geyser', 'SCHLOT', (SELECT site_id FROM gey_site WHERE code = 'GROTTO'), 92, 0, 0, 0, 0, 26, 5, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.84178, 44.47181, NULL), NULL, NULL), 'N')
+/
+INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('FAN', 'Fan Geyser', 'SCHLOT', (SELECT site_id FROM gey_site WHERE code = 'FAN'), 92, 0, 0, 0, 0, 12, 3, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8425, 44.47444, NULL), NULL, NULL), 'N')
+/
+INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('MORTAR', 'Mortar Geyser', 'SCHLOT', NULL, 92, 0, 0, 0, 0, 10, 2.5, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8425754, 44.474359, NULL), NULL, NULL), 'J')
+/
+INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('TURBAN', 'Turban Geyser', 'SCHLOT', NULL, 92, 0, 0, 0, 0, 10, 2, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.83838, 44.4666626, NULL), NULL, NULL), 'J')
+/
+INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('BEEHIVE_INDICATOR', 'Beehive''s Indicator', 'SCHLOT', NULL, 92, 0, 0, 0, 0, 6, 1.5, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8298958, 44.4629842, NULL), NULL, NULL), 'J')
+/
+INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('GIANTESS', 'Giantess Geyser', 'BECKEN', (SELECT site_id FROM gey_site WHERE code = 'GIANTESS'), 92, 4, 4.6, 3.8, 8, 30, 5, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.828924, 44.4635358, NULL), NULL, NULL), 'N')
 /
 INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ('EXCELSIOR', 'Excelsior Geyser Crater', 'KRATER', NULL, 93, 3, 44, 41, 20, 55, 8, MDSYS.SDO_GEOMETRY(2001, 8307, MDSYS.SDO_POINT_TYPE(-110.8368778, 44.526321, NULL), NULL, NULL), 'N')
 /

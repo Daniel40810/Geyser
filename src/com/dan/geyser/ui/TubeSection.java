@@ -181,6 +181,35 @@ final class TubeSection {
         g.drawString("Temperatur zwischen Spiegel und Grund linear genähert", x0 + 14, ty + 28);
     }
 
+    static final int SEIS_H = 78;
+
+    /**
+     * Seismogramm unter dem Schnitt: der Tremor am Schlot über die letzten Sekunden (Bodenbewegung,
+     * Maßstab frei). Er wächst vor dem Ausbruch und bricht mit ihm ab (Kedar u. a. 1998).
+     */
+    static void seismo(Graphics2D g, float[] trace, int head, double level, int x0, int y0) {
+        g.setColor(new Color(8, 14, 18, 215));
+        g.fillRoundRect(x0, y0, W, SEIS_H, 12, 12);
+        g.setFont(new Font("SansSerif", Font.BOLD, 11));
+        g.setColor(ScenePanel.SULFUR);
+        g.drawString("SEISMOMETER · TREMOR AM SCHLOT", x0 + 14, y0 + 18);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 10));
+        g.setColor(ScenePanel.MUTED);
+        String lv = level > 0.6 ? "stark · der Ausbruch ist nah" : level > 0.3 ? "wächst" : "ruhig";
+        g.drawString(lv, x0 + W - 14 - g.getFontMetrics().stringWidth(lv), y0 + 18);
+        int n = trace.length, gx = x0 + 14, gw = W - 28, mid = y0 + 48;
+        g.setColor(new Color(255, 255, 255, 25));
+        g.drawLine(gx, mid, gx + gw, mid);
+        g.setColor(new Color(236, 240, 244));
+        int px = gx, py = mid;
+        for (int i = 0; i < n; i++) {
+            float v = trace[(head + i) % n];
+            int x = gx + i * gw / (n - 1), y = mid - Math.round(Math.max(-1, Math.min(1, v)) * 24);
+            if (i > 0) g.drawLine(px, py, x, y);
+            px = x; py = y;
+        }
+    }
+
     static double boilAt(double d, double dSurf) {
         double head = Math.max(0, d - dSurf);
         return GeyserModel.boilingPoint(GeyserModel.P_ATM + 960 * 9.81 * head / 1000);

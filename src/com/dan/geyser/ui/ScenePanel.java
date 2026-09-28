@@ -255,12 +255,16 @@ public final class ScenePanel extends JPanel {
             if (protocol.size() > 2000) protocol.remove(0);
         }
         int si = com.dan.geyser.world.Sites.index(e.geyser);
-        if (si >= 0) db.logEruption(com.dan.geyser.world.Sites.CODES[si], d, h, e.start, e.duration, e.maxHeight, e.predicted, e.interval, e.manual);
+        // eine ältere Datenbank kennt die neuen Geysire noch nicht (DbSetup neu)
+        java.util.Set<String> known = dbGeysers;
+        if (si >= 0 && (known == null || known.contains(com.dan.geyser.world.Sites.CODES[si]))) db.logEruption(com.dan.geyser.world.Sites.CODES[si], d, h, e.start, e.duration, e.maxHeight, e.predicted, e.interval, e.manual);
     }
 
     // ------------------------------------------------------------ Datenbank
 
     private final com.dan.geyser.db.DbService db = new com.dan.geyser.db.DbService();
+    /** Geysire, deren Kennwerte die Datenbank geliefert hat (null: noch keine Datenbank). */
+    private volatile java.util.Set<String> dbGeysers;
     private volatile long totalFrames;
     private volatile double totalTime;
     private Consumer<double[]> airListener = v -> { };
@@ -283,6 +287,7 @@ public final class ScenePanel extends JPanel {
             if (t != null) m.line = t;
         }
         int applied = 0;
+        dbGeysers = new java.util.HashSet<>(s.params.keySet());
         for (GeyserModel g : geysers.list) {
             int i = com.dan.geyser.world.Sites.index(g.name);
             double[] p = i < 0 ? null : s.params.get(com.dan.geyser.world.Sites.CODES[i]);
@@ -359,6 +364,7 @@ public final class ScenePanel extends JPanel {
         p.setProperty("fauna", String.valueOf(faunaOn));
         p.setProperty("haze", String.valueOf(haze));
         p.setProperty("wind", String.valueOf(wind));
+        p.setProperty("water", String.valueOf(water));
         try {
             java.io.File f = stateFile();
             f.getParentFile().mkdirs();
@@ -394,6 +400,10 @@ public final class ScenePanel extends JPanel {
             thermoOn = Boolean.parseBoolean(p.getProperty("thermo", "false"));
             faunaOn = Boolean.parseBoolean(p.getProperty("fauna", "true"));
             extrasChanged();
+            double wt = Double.parseDouble(p.getProperty("water", "1"));
+            water = wt;
+            geysers.setWater(wt);
+            SwingUtilities.invokeLater(() -> waterListener.accept(wt));
             showToast("Zustand vom letzten Beenden: " + DayNightCycle.dateLabel(d) + ", " + DayNightCycle.timeLabel(h), 3500);
         } catch (Exception e) {
             System.err.println("Zustand nicht gelesen: " + e);
@@ -407,6 +417,10 @@ public final class ScenePanel extends JPanel {
     private final com.dan.geyser.core.Animals animals = new com.dan.geyser.core.Animals();
     private final com.dan.geyser.effects.GeyserSound sound = new com.dan.geyser.effects.GeyserSound();
     private volatile GeyserModel tubeGeyser;
+    /** Seismogramm der letzten 20 s (20 Werte je Sekunde) am Geysir des Schnitts. */
+    private final float[] seis = new float[400];
+    private volatile int seisHead;
+    private double seisAcc;
     private double bugleIn = 20, bellowIn = 15;
     private final java.util.Random zrnd = new java.util.Random();
     private Consumer<boolean[]> extrasListener = b -> { };
@@ -464,6 +478,14 @@ public final class ScenePanel extends JPanel {
                 splash += (float) (att * (g.surgeDrop() > 0 ? 1 : 0.3));
             }
         }
+        // Tremor: in der Nähe spürbar, hier hörbar gemacht
+        float trem = 0, tpan = 0;
+        for (GeyserModel g : gs.list) {
+            double dx = g.x - cam.ex, dy = g.y - cam.ey, dz = g.z - cam.ez, d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            float v = (float) (g.tremor() * g.tubeDepth / 22 / (1 + Math.pow(d / 45, 2)));
+            if (v > trem) { trem = v; tpan = (float) ((dx * rx + dz * rz) / Math.max(1, Math.hypot(dx, dz))); }
+        }
+        sound.tremor = Math.min(1, trem); sound.tremorPan = tpan;
         float boil = 0, bpan = 0;
         double bd = 1e9;
         for (Thermal.Spring s : scene.terrain.thermal.springs) {
@@ -634,6 +656,27 @@ public final class ScenePanel extends JPanel {
     public void trigger(String name) { triggerReq = name; }
 
     private volatile double wind = 0.35;
+    private volatile double water = 1;
+    private Consumer<Double> waterListener = v -> { };
+    public void setWaterListener(Consumer<Double> l) { waterListener = l; }
+
+    /**
+     * Grundwasser 0,2..1,5 (1 = heute), siehe {@link GeyserModel#water}. Die Vorhersagetafel rechnet
+     * weiter mit der Regel der Ranger von heute; wie weit sie danebenliegt, zeigt das Protokoll.
+     */
+    public void setWater(double w) {
+        double old = water;
+        water = w;
+        Geysers gs = geysers;
+        if (gs != null) gs.setWater(w);
+        if (Math.abs(old - w) > 1e-9) {
+            GeyserModel of = gs == null ? null : gs.byName("Old Faithful");
+            if (of != null && of.silenced()) showToast("Grundwasser " + Math.round(w * 100) + " %: Old Faithful verstummt, wie in der Dürre des 13. Jahrhunderts", 4500);
+            else showToast(String.format(java.util.Locale.GERMANY, "Grundwasser %d %%: Abstände etwa × %.2f", Math.round(w * 100), GeyserModel.intervalScale(w)), 3000);
+        }
+    }
+
+    public double water() { return water; }
     /** Windstärke 0..1 (1 ≈ 9 m/s): treibt Dampf und Gischt und bewegt die Kronen. */
     public void setWind(double w) { wind = w; }
     private volatile double airTemp = 8;
@@ -662,20 +705,28 @@ public final class ScenePanel extends JPanel {
             GeyserModel g = gs.byName(m.name);
             if (g == null) continue;
             String st = g.state(gClock);
-            if (g.phase == GeyserModel.Phase.RECHARGE && !Double.isNaN(g.predicted)) st = "nächster etwa " + clockAt(g.predicted) + "  ·  " + st;
+            if (g.phase == GeyserModel.Phase.RECHARGE && !Double.isNaN(g.predicted) && !g.silenced()) st = "nächster etwa " + clockAt(g.predicted) + "  ·  " + st;
+            if (g.phase == GeyserModel.Phase.RECHARGE && g.tremor() > 0.45) st += "  ·  der Boden zittert";
             m.live = st;
         }
     }
 
-    /** Uhrzeit der Szene zu einem Zeitpunkt der Geysir-Uhr. */
+    /** Uhrzeit der Szene zu einem Zeitpunkt der Geysir-Uhr; ab einem Tag voraus mit dem Datum. */
     private String clockAt(double t) {
+        double ahead = (t - gClock) / 86400.0;
+        if (ahead > 1) {
+            int d = day + (int) Math.floor((hour / 24.0) + ahead);
+            while (d > 365) d -= 365;
+            return ahead > 60 ? "in " + Math.round(ahead / 7) + " Wochen" : "am " + DayNightCycle.dateLabel(d);
+        }
         double h = hour + (t - gClock) / 3600.0;
         h = ((h % 24) + 24) % 24;
         return DayNightCycle.timeLabel(h);
     }
 
     public String[] geyserNames() {
-        return new String[]{"Old Faithful", "Beehive Geyser", "Castle Geyser", "Grand Geyser", "Riverside Geyser"};
+        return new String[]{"Old Faithful", "Beehive Geyser", "Castle Geyser", "Grand Geyser", "Riverside Geyser", "Daisy Geyser",
+                "Grotto Geyser", "Fan Geyser", "Giantess Geyser", "Splendid Geyser"};
     }
 
     public void goOverview() { goViewpoint(0); }
@@ -896,6 +947,15 @@ public final class ScenePanel extends JPanel {
                     if (d < tbd) { tbd = d; tb = g0; }
                 }
                 tubeGeyser = tb;
+                // Seismogramm: zwanzigmal je Sekunde ein Ausschlag nach dem Tremor, dazu einzelne Blasenschläge
+                seisAcc += dt;
+                while (seisAcc >= 0.05 && tb != null) {
+                    seisAcc -= 0.05;
+                    double tr = tb.tremor();
+                    float v = (float) (zrnd.nextGaussian() * 0.25 * tr + (zrnd.nextDouble() < 0.02 + 0.1 * tr ? (zrnd.nextDouble() - 0.5) * 1.6 * tr : 0));
+                    seis[seisHead] = v;
+                    seisHead = (seisHead + 1) % seis.length;
+                }
             }
             // Qualität: fest oder automatisch. Auto hält 30 Bilder/s: in Bewegung und im Stillstand je
             // ein eigener Maßstab; im Stillstand übernimmt der Bildrechner das Licht aus dem letzten
@@ -1347,7 +1407,10 @@ public final class ScenePanel extends JPanel {
         g.drawString(sub, 26, 75);
         predictionBoard(g);
         GeyserModel tg = tubeGeyser;
-        if (tubeOn && tg != null) TubeSection.paint(g, tg, getWidth() - TubeSection.W - 16, 100, gClock);
+        if (tubeOn && tg != null) {
+            TubeSection.paint(g, tg, getWidth() - TubeSection.W - 16, 100, gClock);
+            TubeSection.seismo(g, seis, seisHead, tg.tremor(), getWidth() - TubeSection.W - 16, 100 + TubeSection.H + 8);
+        }
         if (thermoOn) thermoLegend(g);
         Director dr = director;
         if (dr != null && dr.active()) { timeline(g, dr); return; }

@@ -128,10 +128,11 @@ public final class Terrain {
         }
     }
 
-    /** Sinterflächen: Mitte x, z und Radius; die großen Gruppen des Beckens und Midway. */
+    /** Sinterflächen: Mitte x, z und Radius; die großen Gruppen des Beckens (mit Daisy, Fan und Giantess) und Midway. */
     static final double[][] SINTER = {
             {0, 0, 120}, {-150, -300, 150}, {-677, -329, 95}, {-804, -678, 110}, {-560, -520, 120},
             {-981, -1446, 60}, {-1221, -1610, 55}, {-1080, -1250, 90}, {-1787, -2680, 160},
+            {-1310, -1070, 55}, {-1140, -1548, 40}, {-60, -340, 45},
             {-791, -7171, 230}, {-640, -7250, 170}, {-850, -7400, 150}, {-700, -7000, 130}};
 
     /** Heiße Quellen und Geysire für die Farben am Boden; wird beim Bau gesetzt. */

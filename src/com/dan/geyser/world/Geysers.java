@@ -20,7 +20,15 @@ public final class Geysers {
     /** Sichtbarkeit von Dampf 0..1 (kalte Luft: viel) und Menge der Teilchen 0..1 (Qualität). */
     public volatile float steamVis = 0.6f, amount = 1f;
 
+    /** Wie die Geysire einander auslösen (Turban und Grand, Indicator und Beehive, …). */
+    public final Couplings couplings = new Couplings(this);
+
     public Geysers(Terrain t, Thermal th) { terrain = t; thermal = th; }
+
+    Thermal thermal() { return thermal; }
+
+    /** Grundwasser für alle Geysire setzen (1 = heute), siehe {@link GeyserModel#water}. */
+    public void setWater(double w) { for (GeyserModel g : list) g.water = w; }
 
     /**
      * Ein beendeter Ausbruch für das Protokoll: Geysir, Beginn und Dauer (Sekunden der Geysir-Uhr),
@@ -51,7 +59,7 @@ public final class Geysers {
         if (erupt && s[0] != GeyserModel.Phase.ERUPTION.ordinal()) { s[2] = s[1]; s[3] = 0; }
         if (erupt) s[3] = Math.max(s[3], g.height(now));
         if (!erupt && s[0] == GeyserModel.Phase.ERUPTION.ordinal()) {
-            java.util.function.Consumer<Eruption> l = onEruption;
+            java.util.function.Consumer<Eruption> l = g.minor ? null : onEruption;
             double interval = Double.isNaN(s[4]) ? Double.NaN : g.lastStart - s[4];
             if (l != null) l.accept(new Eruption(g.name, g.lastStart, g.duration, s[3], g.manual ? Double.NaN : s[2], interval, g.manual));
             s[4] = g.lastStart;
@@ -88,6 +96,7 @@ public final class Geysers {
             double h = Math.min(2.0, left);
             t += h;
             for (GeyserModel g : list) g.step(t, h);
+            couplings.step(t);
             left -= h;
         }
         for (GeyserModel g : list) watch(g, simNow);
@@ -173,6 +182,7 @@ public final class Geysers {
         double v = Math.sqrt((Math.exp(2 * k * target) - 1) * ParticleSystem.G / k);
         // Streuung: enger Kern, weiter Mantel; Fontänen breiter
         double sig = core ? (fountain ? 0.08 : 0.022) : fountain ? 0.2 : (ps.rand() < 0.85 ? 0.05 : 0.16);
+        sig *= g.spread;
         double a1 = (ps.rand() - 0.5) * 2 * sig, a2 = (ps.rand() - 0.5) * 2 * sig;
         // Basis senkrecht zur Achse
         double bx = ay, by = -ax, bz = 0;

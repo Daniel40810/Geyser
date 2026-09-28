@@ -18,12 +18,27 @@ public final class Basin {
 
     /** Wie weit Geyseritkegel über den Boden ragen: y des Schlots über dem Boden. */
     static final double OF_TOP = 1.35, BEEHIVE_TOP = 1.25, CASTLE_TOP = 4.1, RIVERSIDE_TOP = 1.3;
+    static final double DAISY_TOP = 0.9, SPLENDID_TOP = 0.5, GROTTO_TOP = 2.4, FAN_TOP = 0.7, MORTAR_TOP = 1.1, TURBAN_TOP = 0.9,
+            INDICATOR_TOP = 0.6;
+
+    /**
+     * Lage der Nebengeysire, die keine eigene Stelle haben, relativ zu ihrem Nachbarn (m): Turban
+     * liegt am Rand von Grands Becken, Beehive's Indicator rund 3 m neben Beehive (Wikipedia), Mortar
+     * ein paar Meter von Fan. Die genauen Richtungen sind genähert.
+     */
+    static final double[] TURBAN_OFF = {-9, -7}, INDICATOR_OFF = {3, 0.5}, MORTAR_OFF = {-6, 9};
+    /** Splendid Geyser: 44,4702049° N, 110,8446526° W (Wikipedia). */
+    static final double SPLENDID_LAT = 44.4702049, SPLENDID_LON = -110.8446526;
 
     public static World build() {
         Terrain t = new Terrain();
         double[] of = {0, 0}, bh = xz(1), ca = xz(2), gr = xz(3), rs = xz(4), mg = xz(5), gps = xz(6);
         double[] exc = {Sites.x(Sites.EXC_LON), Sites.z(Sites.EXC_LAT)};
         double[] crested = {ca[0] + 26, ca[1] - 24}, doublet = {bh[0] - 48, bh[1] - 32}, heart = {bh[0] + 18, bh[1] - 14};
+        double[] dy = xz(7), gt = xz(8), fan = xz(9), gi = xz(10);
+        double[] spl = {Sites.x(SPLENDID_LON), Sites.z(SPLENDID_LAT)};
+        double[] tu = {gr[0] + TURBAN_OFF[0], gr[1] + TURBAN_OFF[1]}, ind = {bh[0] + INDICATOR_OFF[0], bh[1] + INDICATOR_OFF[1]};
+        double[] mo = {fan[0] + MORTAR_OFF[0], fan[1] + MORTAR_OFF[1]};
         // Geebnete Stellen mit bekannter Höhe (m über 2240 m)
         t.pad(of[0], of[1], 45, 0, 40);
         t.pad(bh[0], bh[1], 22, 4, 32);
@@ -39,6 +54,16 @@ public final class Basin {
         double dbl = t.exact(doublet[0], doublet[1]), hrt = t.exact(heart[0], heart[1]);
         t.pad(doublet[0], doublet[1], 5, dbl, 8);
         t.pad(heart[0], heart[1], 3, hrt, 6);
+        // Die Stellen ab Daisy: Boden vor Ort, im Umkreis geebnet (Höhen über dem Meer unbekannt)
+        // Die Daisy-Gruppe liegt auf einer Sinterterrasse über dem Talboden; das Gelände hier hätte sie am
+        // Hang, darum eine weite Terrasse auf rund 2236 m (Höhe genähert)
+        double dyL = -4;
+        t.pad(dy[0] + 8, dy[1] - 12, 70, dyL, 150);
+        t.pad(-1190, -1160, 90, -6.5, 70);            // offen zum Talboden hin
+        double gtL = t.exact(gt[0], gt[1]), fanL = t.exact(fan[0], fan[1]), giL = t.exact(gi[0], gi[1]);
+        t.pad(gt[0], gt[1], 10, gtL, 10);
+        t.pad(fan[0], fan[1], 12, fanL, 8);
+        t.pad(gi[0], gi[1], 10, giL, 10);
         t.build();
 
         // ------------------------------------------------------------ Quellen fürs Temperaturfeld
@@ -54,7 +79,16 @@ public final class Basin {
         th.add(new Thermal.Spring("Doublet Pool", Thermal.Kind.POOL, doublet[0], doublet[1], 3.4, 2.3, 5, 88, 6, toRiver(t, doublet), 16, 3, 9, 0.8)).y = dbl + 0.08;
         th.add(new Thermal.Spring("Heart Spring", Thermal.Kind.POOL, heart[0], heart[1], 1.7, 1.2, 4, 90, 4, toRiver(t, heart), 8, 2, 6, 0.8)).y = hrt + 0.08;
         th.add(new Thermal.Spring("Grand Prismatic Spring", Thermal.Kind.POOL, gps[0], gps[1], 55, 55, 50, 70, 7, toRiver(t, gps), 150, 55, 44, 0.82)).y = -24 + 0.08;
+        th.add(new Thermal.Spring("Daisy Geyser", Thermal.Kind.VENT, dy[0], dy[1], 0, 0, 0, 92, 0, toRiver(t, dy), 24, 4, 10, 0)).y = dyL + DAISY_TOP;
+        th.add(new Thermal.Spring("Splendid Geyser", Thermal.Kind.VENT, spl[0], spl[1], 0, 0, 0, 84, 0, toRiver(t, spl), 18, 3, 8, 0)).y = dyL + SPLENDID_TOP;
+        th.add(new Thermal.Spring("Grotto Geyser", Thermal.Kind.VENT, gt[0], gt[1], 0, 0, 0, 92, 0, toRiver(t, gt), 26, 5, 12, 0)).y = gtL + GROTTO_TOP;
+        th.add(new Thermal.Spring("Fan Geyser", Thermal.Kind.VENT, fan[0], fan[1], 0, 0, 0, 92, 0, toRiver(t, fan), 12, 3, 8, 0)).y = fanL + FAN_TOP;
+        th.add(new Thermal.Spring("Mortar Geyser", Thermal.Kind.VENT, mo[0], mo[1], 0, 0, 0, 92, 0, toRiver(t, mo), 10, 2.5, 8, 0)).y = fanL + MORTAR_TOP;
+        th.add(new Thermal.Spring("Turban Geyser", Thermal.Kind.VENT, tu[0], tu[1], 0, 0, 0, 92, 0, toRiver(t, tu), 10, 2, 6, 0)).y = -6 + TURBAN_TOP;
+        th.add(new Thermal.Spring("Beehive's Indicator", Thermal.Kind.VENT, ind[0], ind[1], 0, 0, 0, 92, 0, toRiver(t, ind), 6, 1.5, 6, 0)).y = 4 + INDICATOR_TOP;
         for (Thermal.Spring sp : th.springs) if (sp.kind == Thermal.Kind.VENT) sp.mats = 0.5;
+        // Giantess bricht aus einem weiten Becken aus, wie Grand
+        th.add(new Thermal.Spring("Giantess Geyser", Thermal.Kind.POOL, gi[0], gi[1], 4.6, 3.8, 8, 92, 4, toRiver(t, gi), 30, 5, 12, 0.8)).y = giL + 0.08;
         th.add(new Thermal.Spring("Excelsior Geyser Crater", Thermal.Kind.CRATER, exc[0], exc[1], 44, 41, 20, 93, 3, toRiver(t, exc), 55, 8, 22, 0.9)).y = -31;
 
         // ------------------------------------------------------------ Netz
@@ -71,6 +105,15 @@ public final class Basin {
         formation(mb, ca[0], -5, ca[1], 18, 18, 1.1, 0, 0, 0, 0.22, 0, 0, 1.3, 31);        // Sockel von Castle
         formation(mb, ca[0], -5 + 1.0, ca[1], 5.6, 5.0, CASTLE_TOP - 1.0, 0.9, 0.9, 0.35, 0.3, 9, 0.75, 1.1, 37);
         formation(mb, rs[0], rsLevel, rs[1], 3.2, 2.6, RIVERSIDE_TOP, 0.45, 0.5, 0.2, 0.18, 0, 0, 1.2, 41);
+        formation(mb, dy[0], dyL, dy[1], 3.4, 2.8, DAISY_TOP, 0.4, 0.4, 0.15, 0.14, 0, 0, 1.4, 43);
+        formation(mb, spl[0], dyL, spl[1], 4.5, 4.0, SPLENDID_TOP, 1.1, 0.4, 0.12, 0.08, 0, 0, 1.8, 47);
+        // Grotto: niedriger Hügel mit hohen, knorrigen Sinterbuckeln (übersinterte Baumstämme)
+        formation(mb, gt[0], gtL, gt[1], 6.5, 5.0, 1.0, 0, 0, 0, 0.25, 0, 0, 1.6, 53);
+        formation(mb, gt[0], gtL + 0.8, gt[1], 3.4, 2.8, GROTTO_TOP - 0.8, 0.9, 1.0, 0.3, 0.35, 5, 1.1, 1.0, 59);
+        formation(mb, fan[0], fanL, fan[1], 3.0, 2.4, FAN_TOP, 0.35, 0.3, 0.12, 0.2, 0, 0, 1.3, 61);
+        formation(mb, mo[0], fanL, mo[1], 2.2, 2.0, MORTAR_TOP, 0.3, 0.4, 0.15, 0.2, 0, 0, 1.1, 67);
+        formation(mb, tu[0], -6, tu[1], 1.8, 1.6, TURBAN_TOP, 0.25, 0.3, 0.1, 0.15, 0, 0, 1.2, 71);
+        formation(mb, ind[0], 4, ind[1], 0.8, 0.7, INDICATOR_TOP, 0.12, 0.2, 0.05, 0.25, 0, 0, 1.1, 73);
         // Becken mit Geyseritrand und Wasser
         for (Thermal.Spring s : th.springs) {
             if (s.kind == Thermal.Kind.VENT) continue;
@@ -85,10 +128,11 @@ public final class Basin {
         Scene sc = new Scene("Upper Geyser Basin", mb.build(64), t, th);
         sc.trees = counts[0];
         sc.snags = counts[1];
-        double[] tops = {OF_TOP + 1.5, 4 + BEEHIVE_TOP + 1.5, -5 + CASTLE_TOP + 1.5, -6 + 2.5, rsLevel + RIVERSIDE_TOP + 1.5, -15 + 2.5, -24 + 3};
+        double[] tops = {OF_TOP + 1.5, 4 + BEEHIVE_TOP + 1.5, -5 + CASTLE_TOP + 1.5, -6 + 2.5, rsLevel + RIVERSIDE_TOP + 1.5, -15 + 2.5, -24 + 3,
+                dyL + DAISY_TOP + 1.5, gtL + GROTTO_TOP + 1.5, fanL + FAN_TOP + 1.5, giL + 2.5};
         for (int i = 0; i < Sites.ALL.length; i++) {
             Sites.Site s = Sites.ALL[i];
-            sc.markers.add(new Scene.Marker(s.name, s.line, s.x(), tops[i], s.z(), i == 6 ? 1 : 0));
+            sc.markers.add(new Scene.Marker(s.name, s.line, s.x(), tops[i], s.z(), s.basin));
         }
 
         // ------------------------------------------------------------ Geysire
@@ -109,6 +153,31 @@ public final class Basin {
         double[] o = new double[6];
         t.nearest(rs[0], rs[1], o);
         g.floor = o[1];
+        // Weitere Geysire (Kennzahlen: Wikipedia zu jedem Geysir; Neigungsrichtungen genähert)
+        String wiki = "Wikipedia";
+        gs.add(new GeyserModel("Daisy Geyser", GeyserModel.Type.CONE, dy[0], dyL + DAISY_TOP, dy[1], 0.35, 12, 23,
+                0, 0, 180, 240, 0, 0, 150 * 60, 30 * 60, 60, 25, toRiver(t, dy) + 0.6, 0, 0, wiki, 43));
+        g = gs.add(new GeyserModel("Splendid Geyser", GeyserModel.Type.FOUNTAIN, spl[0], dyL + SPLENDID_TOP, spl[1], 1.4, 15, 61,
+                0, 0, 540, 720, 0, 0, 20 * 365.25 * 86400, 5 * 365.25 * 86400, 120, 0, 0, 2, 4, wiki, 47));
+        gs.add(new GeyserModel("Grotto Geyser", GeyserModel.Type.CONE, gt[0], gtL + GROTTO_TOP, gt[1], 0.5, 10, 3,
+                3600, 7200, 10 * 3600, 26 * 3600, 0.83, 6.5 * 3600, 36 * 3600, 3600, 1800, 0, 0, 0, 0, wiki, 53));
+        g = gs.add(new GeyserModel("Fan Geyser", GeyserModel.Type.CONE, fan[0], fanL + FAN_TOP, fan[1], 0.5, 14, 38,
+                0, 0, 25 * 60, 35 * 60, 0, 0, 5 * 86400, 2 * 86400, 600, 22, toRiver(t, fan), 0, 0, wiki, 61));
+        g.spread = 3;
+        g = gs.add(new GeyserModel("Mortar Geyser", GeyserModel.Type.CONE, mo[0], fanL + MORTAR_TOP, mo[1], 0.4, 12, 24,
+                0, 0, 25 * 60, 35 * 60, 0, 0, 5 * 86400, 2 * 86400, 600, 8, toRiver(t, mo), 0, 0, wiki, 67));
+        g.minor = true;
+        g = gs.add(new GeyserModel("Giantess Geyser", GeyserModel.Type.FOUNTAIN, gi[0], giL + 0.1, gi[1], 3.0, 20, 61,
+                0, 0, 4 * 3600, 48 * 3600, 0, 0, 91 * 86400, 45 * 86400, 3600, 0, 0, 2, 4, wiki, 79));
+        g.burstsPerHour = 2;
+        g = gs.add(new GeyserModel("Turban Geyser", GeyserModel.Type.CONE, tu[0], -6 + TURBAN_TOP, tu[1], 0.3, 6, 3,
+                0, 0, 280, 320, 0, 0, 20 * 60, 5 * 60, 30, 0, 0, 0, 0, wiki, 71));
+        g.minor = true;
+        g.refill = 120;
+        g = gs.add(new GeyserModel("Beehive's Indicator", GeyserModel.Type.CONE, ind[0], 4 + INDICATOR_TOP, ind[1], 0.12, 5, 7.6,
+                0, 0, 60, 90, 0, 0, 16 * 3600, 8 * 3600, 20, 0, 0, 0, 0, wiki, 73));
+        g.minor = true;
+        gs.couplings.init();
         return new World(sc, gs);
     }
 

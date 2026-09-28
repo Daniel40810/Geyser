@@ -86,7 +86,7 @@ BEGIN
   IF :new.site_id IS NULL THEN :new.site_id := gey_site_seq.NEXTVAL; END IF;
 END;
 /
-COMMENT ON TABLE gey_site IS 'Geyser: die sieben Stellen der Absteckung, Punkt in SRID 8307'
+COMMENT ON TABLE gey_site IS 'Geyser: die Stellen der Absteckung (Tasten 1 bis 7 und weitere), Punkt in SRID 8307'
 /
 
 CREATE SEQUENCE gey_geyser_seq

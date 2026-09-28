@@ -30,7 +30,7 @@ public final class ControlPanel extends JPanel {
     private final ScenePanel scene;
     private final JLabel timeLbl = new JLabel(), dayLbl = new JLabel(), hazeLbl = new JLabel();
     private final FSlider time = new FSlider(0, 239, 90), day = new FSlider(1, 365, DayNightCycle.today()), haze = new FSlider(0, 100, 12);
-    private boolean fromScene, fromSite;
+    private boolean fromScene, fromSite, fromWater;
 
     public ControlPanel(ScenePanel scene) {
         this.scene = scene;
@@ -71,6 +71,19 @@ public final class ControlPanel extends JPanel {
         scene.setFastListener(fast::setSelected);
         add(row(fast));
         note("Jeder Geysir ist ein Röhrenmodell: Das Wasser am Grund siedet erst beim Druck der Säule darüber. Schwappt im Vorspiel Wasser über, sinkt der Druck, das Wasser verdampft schlagartig. Die Tafel oben rechts sagt Old Faithful voraus wie die Ranger: 65 min nach Ausbrüchen unter 2½ min, sonst 91 min. „Warten abkürzen“ läuft bis zum nächsten Ausbruch, X löst den Geysir am Drehpunkt aus.");
+        note("Gekoppelt: Grand bricht ein bis zwei Minuten nach einem Ausbruch von Turban aus, Beehive gut 13 Minuten nach seinem Indicator, Mortar mit Fan. Splendid schläft seit 1998; bricht er aus, verschiebt er Daisy. Während Giantess wallt Doublet Pool.");
+        JLabel waterLbl = new JLabel("Grundwasser  100 %");
+        waterLbl.setForeground(INK);
+        waterLbl.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        add(row(waterLbl));
+        FSlider water = new FSlider(20, 150, 100);
+        water.addChangeListener(e -> {
+            waterLbl.setText("Grundwasser  " + water.getValue() + " %");
+            if (!fromWater) scene.setWater(water.getValue() / 100.0);
+        });
+        scene.setWaterListener(v -> { fromWater = true; water.setValue((int) Math.round(v * 100)); fromWater = false; });
+        add(row(water));
+        note("Wie viel Regen und Schnee der letzten Jahre im Boden steckt. In Dürrejahren werden die Abstände länger: Old Faithful 1997 im Mittel 71, 2006 91 Minuten (Hurwitz u. a. 2008). Unter rund 40 % verstummt er, wie in der Dürre des 13. Jahrhunderts (Hurwitz u. a. 2020). Die Tafel rechnet weiter mit der Regel von heute.");
 
         gap();
         head("STELLEN");
@@ -89,7 +102,7 @@ public final class ControlPanel extends JPanel {
         lab.addActionListener(e -> { scene.setLabels(lab.isSelected()); scene.requestFocusInWindow(); });
         scene.setLabelListener(lab::setSelected);
         add(row(lab));
-        note("Die Tafeln stehen an den Koordinaten (WGS 84) und zeigen Kennzahlen und Zustand: Füllung der Röhre, Temperatur am Grund und Siedepunkt dort. Tasten 1 bis 7, L für die Beschriftung.");
+        note("Die Tafeln stehen an den Koordinaten (WGS 84) und zeigen Kennzahlen und Zustand: Füllung der Röhre, Temperatur am Grund und Siedepunkt dort. Tasten 1 bis 7 für die ersten sieben Stellen, Daisy, Grotto, Fan und Giantess über die Liste; L für die Beschriftung.");
 
         gap();
         head("REGIE");
