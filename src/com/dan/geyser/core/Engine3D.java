@@ -40,7 +40,7 @@ public final class Engine3D {
     /** km: Material am Bildpunkt (−1 keins); kk: was in khr..khb liegt (0 nichts, 1 Dunstfarbe, 2 Himmel). */
     private byte[] km, kk;
     private boolean cacheOk, keep;
-    private final double[] cacheKey = new double[20];
+    private final double[] cacheKey = new double[21];
     private LightingEngine cacheL;
     private int cacheLightGen = -1, lightGen;
     /** Zwischenspeicher ein- oder ausschalten (zum Messen). */
@@ -178,7 +178,7 @@ public final class Engine3D {
     // ------------------------------------------------------------ Beleuchtung
 
     /**
-     * Wechselt die Szene (später: Midway). Danach muss die Beleuchtung neu gerechnet werden
+     * Wechselt die Szene. Danach muss die Beleuchtung neu gerechnet werden
      * ({@link #setSky}); Puffer und Schattenkarten bleiben.
      */
     public synchronized void setScene(Scene scene) {
@@ -264,7 +264,7 @@ public final class Engine3D {
         cacheHit = hitAcc.get() / (double) Math.max(1, eligAcc.get());
         IntStream.range(0, strips).parallel().forEach(s -> shadeWaterStrip(s * rowsPer, Math.min(H, (s + 1) * rowsPer)));
         long t3 = System.nanoTime();
-        if (sky.night > 0.05f) drawStars();
+        if (sky.night > 0.05f && sky.overcast < 0.7f) drawStars();
         int qPer = (QH + strips - 1) / strips;
         long f0 = System.nanoTime();
         if (rays && !thermo) {
@@ -284,6 +284,19 @@ public final class Engine3D {
             IntStream.range(0, strips).parallel().forEach(st -> thermoStrip(st * rowsPer, Math.min(H, (st + 1) * rowsPer), hasP));
         }
         if (sprites.n > 0) drawSprites();
+        float[] bl = bolt;
+        if (bl != null && !th) drawBolt(bl);
+        float fl = flash;
+        if (fl > 0.01f && !th) {
+            // Blitz: der Himmel leuchtet auf, der Boden weniger; bezogen auf die jetzige Belichtung
+            final float k = (float) (fl * 0.9 / Math.max(1e-3, exposure));
+            IntStream.range(0, strips).parallel().forEach(st -> {
+                for (int p = st * rowsPer * W; p < Math.min(H, (st + 1) * rowsPer) * W; p++) {
+                    float a = gm[p] == 0 ? k : k * 0.3f;
+                    hr[p] += a * 0.85f; hg[p] += a * 0.9f; hb[p] += a;
+                }
+            });
+        }
         long f2 = System.nanoTime();
         long f3 = System.nanoTime();
         if (bloom && !th) doBloom(rowsPer, qPer);
@@ -591,7 +604,7 @@ public final class Engine3D {
     /** Prüft, ob der Zwischenspeicher fürs Licht noch gilt, und merkt sich den Stand. */
     private void checkCache() {
         double[] k = {W, H, ex, ey, ez, cfx, cfy, cfz, crx, cry, crz, cux, cuy, cuz, pfx, pfy,
-                Thermal.snow * 50, Thermal.season * 50, Thermal.rime * 50, Thermal.ambient * 2};
+                Thermal.snow * 50, Thermal.season * 50, Thermal.rime * 50, Thermal.ambient * 2, Thermal.generation};
         // Zwischenspeicher nur bis gut 4 Millionen Bildpunkte (Standbilder in 4K rechnen ohne ihn)
         int n = W * H;
         keep = shadeCache && n <= 4_500_000;
@@ -603,13 +616,13 @@ public final class Engine3D {
             cacheL = null;
         }
         boolean same = keep && L == cacheL && lightGen == cacheLightGen;
-        if (k[0] != cacheKey[0] || k[1] != cacheKey[1] || k[14] != cacheKey[14] || k[15] != cacheKey[15]) same = false;
+        if (k[0] != cacheKey[0] || k[1] != cacheKey[1] || k[14] != cacheKey[14] || k[15] != cacheKey[15] || k[20] != cacheKey[20]) same = false;
         // Kamera: winzige Reste der Dämpfung zählen nicht als Bewegung
         for (int i = 2; same && i < 14; i++) if (Math.abs(k[i] - cacheKey[i]) > 1e-5) same = false;
         // Klima: kleine Schritte (die Luft wird mit der Uhr langsam wärmer) lösen nichts aus
         for (int i = 16; same && i < 20; i++) if (Math.abs(k[i] - cacheKey[i]) > 0.5) same = false;
         if (!same) {
-            System.arraycopy(k, 0, cacheKey, 0, 20);
+            System.arraycopy(k, 0, cacheKey, 0, 21);
             cacheL = L;
             cacheLightGen = lightGen;
         }
@@ -673,6 +686,7 @@ public final class Engine3D {
                 if (Mat.wettable(m)) {
                     Wetness.Set ws = wetness;
                     if (ws != null) wet = ws.at(wx, wz);
+                    wet = Math.max(wet, rainWet);
                     Thermal th = thermal;
                     if (th != null && m != Mat.BOARD) {
                         float fl;
@@ -1089,11 +1103,28 @@ public final class Engine3D {
         }
     }
 
+    /** Blitz: Punkte des Kanals (x, y, z …), gerade im Bild; null = keiner. Helligkeit 0..1 für das Aufleuchten. */
+    public volatile float[] bolt;
+    public volatile float flash;
+    /** Nässe vom Regen 0..1 überall am Boden. */
+    public volatile float rainWet;
+
+    /** Der Blitzkanal als helle, doppelte Linie mit Tiefenprüfung. */
+    private void drawBolt(float[] b) {
+        float k = (float) (6 / Math.max(1e-3, exposure));
+        for (int i = 0; i + 5 < b.length; i += 3) {
+            double[] p0 = project(b[i], b[i + 1], b[i + 2]), p1 = project(b[i + 3], b[i + 4], b[i + 5]);
+            if (p0 == null || p1 == null) continue;
+            float z = (float) Math.min(p0[2], p1[2]);
+            for (int o = 0; o < 2; o++) line(p0[0] + o, p0[1], p1[0] + o, p1[1], z, k * 0.8f, k * 0.85f, k, 1);
+        }
+    }
+
     /** Dünne Linie mit Tiefenprüfung (für Vögel), deckend mit al. */
     private void line(double x0, double y0, double x1, double y1, float z, float cr, float cg, float cb, float al) {
         double dx = x1 - x0, dy = y1 - y0;
         int n = (int) Math.ceil(Math.max(Math.abs(dx), Math.abs(dy))) + 1;
-        if (n > 200) return;
+        if (n > 2000) return;
         for (int k = 0; k <= n; k++) {
             double t = k / (double) n;
             int px = (int) Math.floor(x0 + dx * t), py = (int) Math.floor(y0 + dy * t);
@@ -1264,6 +1295,7 @@ public final class Engine3D {
         final LightingEngine li = L;
         Thermal th = thermal;
         Thermal.Spring sp = th == null ? null : th.poolAt(wx, wz);
+        if (sp != null && sp.kind == Thermal.Kind.MUD) { shadeMud(p, sp, wx, wy, wz, vx, vy, vz, dist, sk, hz); return; }
         float t = time;
         float lx = (float) s.sun[0], ly = (float) s.sun[1], lz = (float) s.sun[2];
         boolean sunUp = s.sunR + s.sunG + s.sunB > 0.001f;
@@ -1336,6 +1368,84 @@ public final class Engine3D {
             r += (hz[0] - r) * fa; g += (hz[1] - g) * fa; bl += (hz[2] - bl) * fa;
         }
         hr[p] = r; hg[p] = g; hb[p] = bl;
+    }
+
+    /**
+     * Schlammtopf: undurchsichtiger, nasser Ton (Kaolinit, von Eisenoxiden rosa bis orange getönt).
+     * Blasen wachsen in Zellen von knapp einem Meter, platzen und werfen einen Ring, der verläuft.
+     * Licht wie am Boden, dazu Glanz und Himmelsspiegelung der nassen Oberfläche.
+     */
+    private void shadeMud(int p, Thermal.Spring sp, float wx, float wy, float wz, float vx, float vy, float vz, float dist, float[] sk, float[] hz) {
+        final Sky s = sky;
+        final LightingEngine li = L;
+        float t = time;
+        float lx = (float) s.sun[0], ly = (float) s.sun[1], lz = (float) s.sun[2];
+        boolean sunUp = s.sunR + s.sunG + s.sunB > 0.001f;
+        // Höhe der Oberfläche aus den Blasen der Nachbarzellen, Normale aus der Ableitung
+        float e = 0.05f;
+        float h0 = mudHeight(wx, wz, t), hx = mudHeight(wx + e, wz, t), hzz = mudHeight(wx, wz + e, t);
+        float nx = -(hx - h0) / e, nz = -(hzz - h0) / e, ny = 1;
+        float nl = (float) Math.sqrt(nx * nx + 1 + nz * nz);
+        nx /= nl; ny /= nl; nz /= nl;
+        // Farbe: grau-rosa Ton, zum Rand hin wärmer und trockener
+        float u = (float) Math.min(1, sp.u(wx, wz));
+        float n1 = Noise.tex(wx * 0.9f + 3.3f, wz * 0.9f), n2 = Noise.tex(wx * 3.1f, wz * 3.1f + 7);
+        float ar = 0.46f + 0.10f * u + 0.06f * n1, ag = 0.40f + 0.04f * u + 0.04f * n1, ab = 0.39f - 0.03f * u + 0.03f * n2;
+        float dark = 0.85f + 0.15f * n2;
+        ar *= dark; ag *= dark; ab *= dark;
+        float sunV = sunUp ? li.lit(wx, wy + 0.05, wz, 0.5, dist < 300) : 0;
+        float ndl = Math.max(0, nx * lx + ny * ly + nz * lz);
+        float skyv = Math.max(0.3f, Math.min(1, gsk[p]));
+        float r = ar * (s.sunR * ndl * sunV + s.upR * skyv), g = ag * (s.sunG * ndl * sunV + s.upG * skyv), bl = ab * (s.sunB * ndl * sunV + s.upB * skyv);
+        // nasser Glanz
+        float cosV = Math.max(0.02f, nx * vx + ny * vy + nz * vz);
+        float F = 0.03f + 0.5f * (float) Math.pow(1 - cosV, 5);
+        float rx = 2 * cosV * nx - vx, ry = 2 * cosV * ny - vy, rz = 2 * cosV * nz - vz;
+        s.radiance(rx, Math.max(ry, 0.01f), rz, sk);
+        r += (sk[0] - r) * F; g += (sk[1] - g) * F; bl += (sk[2] - bl) * F;
+        if (sunV > 0) {
+            float rs = Math.max(0, rx * lx + ry * ly + rz * lz);
+            float spk = (float) Math.pow(rs, 80) * 1.2f * sunV;
+            r += s.sunR * spk; g += s.sunG * spk; bl += s.sunB * spk;
+        }
+        float air = AIR0 + AIR1 * s.haze;
+        float fa = 1 - Noise.expNeg(dist * air);
+        if (fa > 0.002f) {
+            s.haze(-vx, -vy, -vz, hz);
+            r += (hz[0] - r) * fa; g += (hz[1] - g) * fa; bl += (hz[2] - bl) * fa;
+        }
+        hr[p] = r; hg[p] = g; hb[p] = bl;
+    }
+
+    /** Oberfläche des Schlamms (m über dem Spiegel): Blasen je Zelle von 0,9 m, die wachsen, platzen und Ringe werfen. */
+    static float mudHeight(float x, float z, float t) {
+        final float C = 0.9f;
+        int ci = (int) Math.floor(x / C), cj = (int) Math.floor(z / C);
+        float h = 0;
+        for (int dj = -1; dj <= 1; dj++) {
+            for (int di = -1; di <= 1; di++) {
+                int i = ci + di, j = cj + dj;
+                int hs = Noise.hash(i, j, 77);
+                float ox = ((hs & 255) / 255f) * C, oz = (((hs >> 8) & 255) / 255f) * C;
+                float period = 1.6f + 3.4f * (((hs >> 16) & 255) / 255f), ph = ((hs >> 24) & 255) / 255f;
+                float tau = (t / period + ph) % 1;
+                float dx = x - (i * C + ox), dz = z - (j * C + oz), d = (float) Math.sqrt(dx * dx + dz * dz);
+                float rMax = 0.18f + 0.22f * (((hs >> 4) & 255) / 255f);
+                if (tau < 0.7f) {
+                    // Blase wächst als flache Kuppel
+                    float rr = rMax * (float) Math.sqrt(tau / 0.7f);
+                    if (d < rr) { float q = 1 - d * d / (rr * rr); h += 0.08f * rr / rMax * q * q; }
+                } else {
+                    // geplatzt: ein Ring läuft nach außen und verebbt
+                    float k = (tau - 0.7f) / 0.3f;
+                    float ring = rMax * (0.6f + 2.4f * k), w = 0.06f + 0.05f * k;
+                    float q = (d - ring) / w;
+                    h += 0.03f * (1 - k) * (float) Math.exp(-q * q);
+                    if (d < rMax * 0.6f) h -= 0.03f * (1 - k) * (1 - d / (rMax * 0.6f));
+                }
+            }
+        }
+        return h;
     }
 
     // ------------------------------------------------------------ Teilchen
@@ -1437,10 +1547,12 @@ public final class Engine3D {
                     lit *= 0.3f + 0.7f * Noise.expNeg(od * 0.45f);
                     occ = 1 / (1 + 0.25f * steamGrid.at(x, y, z));
                 }
-                float alb = steam ? 0.95f : 0.9f;
+                boolean mud = k == com.dan.geyser.effects.ParticleSystem.MUD;
+                float alb = steam ? 0.95f : mud ? 0.45f : 0.9f;
                 float amb = (steam ? 0.55f : 0.5f) * (0.55f + 0.45f * occ);
                 float br = 1, bg = 1, bb = 1;
-                if (bowOn && !steam && lit > 0) {
+                if (mud) { br = 1.1f; bg = 0.95f; bb = 0.9f; }
+                else if (bowOn && !steam && lit > 0) {
                     float th = (float) Math.toDegrees(Math.acos(Math.max(-1, Math.min(1, -mu))));
                     if (th < 58) { bow(th, bw); br = bw[0]; bg = bw[1]; bb = bw[2]; }
                 }
@@ -1457,8 +1569,10 @@ public final class Engine3D {
                     qtm[i] = steam ? tAmb + (90 - tAmb) * Noise.expNeg(ag * 0.35f) : Math.max(tAmb, 88 - ag * 4);
                 }
                 qline[i] = 0;
-                if (k == com.dan.geyser.effects.ParticleSystem.DROP && rad < 2.5 && vz < 220) {
-                    double bx = x - ps.vx[i] * 0.025 - ex, by = y - ps.vy[i] * 0.025 - ey, bz = z - ps.vz[i] * 0.025 - ez;
+                boolean rainK = k == com.dan.geyser.effects.ParticleSystem.RAIN;
+                if ((k == com.dan.geyser.effects.ParticleSystem.DROP || rainK) && rad < 2.5 && vz < 220) {
+                    double st = rainK ? 0.05 : 0.025;
+                    double bx = x - ps.vx[i] * st - ex, by = y - ps.vy[i] * st - ey, bz = z - ps.vz[i] * st - ez;
                     double bvz = bx * cfx + by * cfy + bz * cfz;
                     if (bvz > 0.3) {
                         qx2[i] = (float) (W / 2.0 + (bx * crx + by * cry + bz * crz) / bvz * pfx);
@@ -1712,6 +1826,19 @@ public final class Engine3D {
             byte k = an.kind[i];
             boolean bison = k == Animals.BISON || k == Animals.BISON_CALF;
             float dep = (float) vz;
+            if (k == Animals.PERSON) {
+                if (vz > 900) continue;
+                shadowBlob(ax, ay, az, hx, hz, sc * 0.3f, sc * 0.2f, 0.3f + 0.3f * lit, dep);
+                float st = an.step[i], gt = an.gait[i];
+                for (int L0 = 0; L0 < 2; L0++) {
+                    float sw = (float) Math.sin(st + L0 * Math.PI) * 0.28f * gt;
+                    float[] q = {-0.07f, 0.9f, 0.07f, 0.9f, sw + 0.06f, 0, sw - 0.06f, 0};
+                    fillShape(q, ax, ay, az, hx, hz, sc, an.pr[i], an.pg[i], an.pb[i], kSun, s, hzc, fa, dep - 0.01f * L0, 0, 0, 0);
+                }
+                fillShape(Animals.PERSON_BODY, ax, ay, az, hx, hz, sc, an.cr[i], an.cg[i], an.cb[i], kSun, s, hzc, fa, dep - 0.03f, 0, 0, 0);
+                fillShape(Animals.PERSON_HEAD, ax, ay, az, hx, hz, sc, 0.30f, 0.20f, 0.14f, kSun, s, hzc, fa, dep - 0.04f, 0, 0, 0);
+                continue;
+            }
             // Schattenfleck am Boden
             shadowBlob(ax, ay, az, hx, hz, sc * (bison ? 1.5f : 1.1f), sc * 0.55f, 0.35f + 0.35f * lit, dep);
             float[][] legs = bison ? Animals.BISON_LEGS : Animals.ELK_LEGS;

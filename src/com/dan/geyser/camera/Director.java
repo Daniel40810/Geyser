@@ -25,7 +25,7 @@ public final class Director {
         public final double h0, h1;          // Uhrzeit am Anfang und Ende, NaN = nicht ändern
         public final String head, text, source;
         public boolean fadeIn, fadeOut;
-        /** Ort: 0 Upper Geyser Basin, 1 Midway, −1 unverändert. */
+        /** Ort: 0 Upper Geyser Basin, 1 Midway, 2 Lower Geyser Basin, −1 unverändert. */
         public int site = -1;
         /** Geysir, der triggerAt Sekunden nach Beginn der Einstellung ausbricht (oder null). */
         public String trigger;

@@ -161,7 +161,9 @@ public final class DbSetup {
         expect(c, "Kennzahlen", "SELECT COUNT(*) FROM gey_fact", Inhalte.facts());
         expect(c, "Kennzahlen ohne Beleg", "SELECT COUNT(*) FROM gey_fact WHERE source_id IS NULL", 0);
         expect(c, "Stellen", "SELECT COUNT(*) FROM gey_site", Sites.ALL.length);
-        expect(c, "Geysire", "SELECT COUNT(*) FROM gey_geyser", world.geysers.list.size());
+        int geyserSites = 0;
+        for (GeyserModel g : world.geysers.list) if (Sites.index(g.name) >= 0) geyserSites++;
+        expect(c, "Geysire", "SELECT COUNT(*) FROM gey_geyser", geyserSites);
         expect(c, "Quellen", "SELECT COUNT(*) FROM gey_spring", world.scene.thermal.springs.size());
         expect(c, "  davon mit genäherter Lage", "SELECT COUNT(*) FROM gey_spring WHERE genaehert = 'J'", 3);
         expect(c, "Mineralien", "SELECT COUNT(*) FROM gey_mineral", Minerals.ALL.length);
@@ -199,13 +201,16 @@ public final class DbSetup {
             for (int i = 0; i < Sites.ALL.length; i++) if (Sites.ALL[i].line.equals(s.tafel.get(Sites.CODES[i]))) same++;
             sayCheck("Tafeltexte gleich wie im Code", same == Sites.ALL.length, same + " von " + Sites.ALL.length);
             int sp = 0;
+            int withSite = 0;
             for (GeyserModel g : world.geysers.list) {
+                if (Sites.index(g.name) < 0) continue;
+                withSite++;
                 double[] d = s.params.get(Sites.CODES[Sites.index(g.name)]), p = g.params();
                 boolean eq = d != null;
                 for (int i = 0; eq && i < p.length; i++) eq = Math.abs(p[i] - d[i]) < 1e-6;
                 if (eq) sp++;
             }
-            sayCheck("Kennwerte der Geysire gleich wie im Code", sp == world.geysers.list.size(), sp + " von " + world.geysers.list.size());
+            sayCheck("Kennwerte der Geysire gleich wie im Code", sp == withSite, sp + " von " + withSite);
             int sm = 0;
             for (int i = 0; i < Minerals.ALL.length && i < s.minerals.length; i++) if (sameMineral(Minerals.ALL[i], s.minerals[i])) sm++;
             sayCheck("Mineralien gleich wie im Code", sm == Minerals.ALL.length && s.minerals.length == Minerals.ALL.length, sm + " von " + Minerals.ALL.length);

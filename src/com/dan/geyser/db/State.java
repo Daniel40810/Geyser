@@ -20,6 +20,6 @@ public final class State {
     public java.sql.Timestamp saved;
 
     public String summary() {
-        return DayNightCycle.dateLabel(day) + ", " + DayNightCycle.timeLabel(hour) + " · " + (site == 1 ? "Midway" : "Upper Geyser Basin");
+        return DayNightCycle.dateLabel(day) + ", " + DayNightCycle.timeLabel(hour) + " · " + (site == 1 ? "Midway" : site == 2 ? "Lower Geyser Basin" : "Upper Geyser Basin");
     }
 }

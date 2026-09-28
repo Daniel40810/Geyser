@@ -52,7 +52,7 @@ public final class ScenePanel extends JPanel {
     private volatile Scene scene;
     private volatile Geysers geysers;
     private final ParticleSystem ps = new ParticleSystem();
-    /** Uhr der Geysire in Sekunden; schneller Vorlauf bis zum nächsten Ausbruch; Ort 0 = Upper, 1 = Midway. */
+    /** Uhr der Geysire in Sekunden; schneller Vorlauf bis zum nächsten Ausbruch; Ort 0 = Upper, 1 = Midway, 2 = Lower. */
     private volatile double gClock;
     private volatile boolean fast;
     private volatile int site;
@@ -163,7 +163,11 @@ public final class ScenePanel extends JPanel {
             case KeyEvent.VK_I: setThermo(!thermoOn); return;
             case KeyEvent.VK_O: setSound(!soundOn); return;
             case KeyEvent.VK_N: setFauna(!faunaOn); return;
+            case KeyEvent.VK_F3: setVisitors(!visitorsOn); return;
+            case KeyEvent.VK_F2: openGuess(); return;
             case KeyEvent.VK_Z: playSinterLapse(); return;
+            case KeyEvent.VK_J: playMorningGlory(); return;
+            case KeyEvent.VK_Y: setWeather((weather.mode + 1) % com.dan.geyser.effects.Weather.MODES.length); return;
             case KeyEvent.VK_SPACE: {
                 takeOver();
                 boolean on = !c.autoOrbit;
@@ -176,7 +180,7 @@ public final class ScenePanel extends JPanel {
             case KeyEvent.VK_L: labels = !labels; SwingUtilities.invokeLater(() -> labelListener.accept(labels)); return;
             case KeyEvent.VK_X: triggerNearest = true; return;
             case KeyEvent.VK_V: setFast(!fast); return;
-            case KeyEvent.VK_M: setSite(site == 0 ? 1 : 0, true); return;
+            case KeyEvent.VK_M: setSite((site + 1) % World.BASINS.length, true); return;
             case KeyEvent.VK_P: requestStill(); return;
             case KeyEvent.VK_K: case KeyEvent.VK_F11: setCinema(!cinema); return;
             case KeyEvent.VK_F1: case KeyEvent.VK_H: help = !help; return;
@@ -199,7 +203,7 @@ public final class ScenePanel extends JPanel {
         takeOver();
         cmds.add(() -> {
             if (m.site != site) setSite(m.site, false);
-            double d = i == 6 ? 420 : (i == 5 ? 60 : 150);
+            double d = i == 6 ? 420 : (com.dan.geyser.world.Sites.ALL[i].kind != com.dan.geyser.world.Sites.Kind.GEYSER ? 60 : 150);
             c.flyTo(m.x, m.y, m.z, Double.NaN, i == 6 ? 30 : 17, d);
         });
         showToast(m.name + "  ·  " + m.line, 3500);
@@ -239,6 +243,84 @@ public final class ScenePanel extends JPanel {
 
     public void stopDirector() { takeOver(); }
 
+    // ------------------------------------------------------------ Rätsel „Wann bricht er aus?“
+
+    private final Guess guess = new Guess();
+    private GeyserModel.Phase ofGuessPhase;
+    { guess.load(); }
+
+    /** Tipp auf den nächsten Ausbruch von Old Faithful abgeben (F2, Knopf im Bedienfeld). */
+    public void openGuess() {
+        Geysers gs = geysers;
+        GeyserModel of = gs == null ? null : gs.byName("Old Faithful");
+        if (of == null) return;
+        if (guess.open()) { showToast("Dein Tipp steht schon: " + clockAt(guess.tipAt) + ". V kürzt das Warten ab.", 3500); return; }
+        boolean after = of.phase == GeyserModel.Phase.STEAM || (of.phase == GeyserModel.Phase.RECHARGE && !Double.isNaN(of.lastDuration));
+        if (!after || of.silenced()) {
+            showToast("Tippen kann man nach einem Ausbruch von Old Faithful, solange er sich wieder füllt (X löst ihn aus).", 4000);
+            return;
+        }
+        double dur = of.lastEruptionDuration();
+        String[] lines = {
+                String.format(java.util.Locale.GERMANY, "Letzter Ausbruch: %d:%02d min, Beginn %s", (int) dur / 60, (int) dur % 60, clockAt(of.lastStart)),
+                "Wann beginnt der nächste?",
+                "Jetzt ist es " + DayNightCycle.timeLabel(hour) + ".",
+                "Die Ranger rechnen nach Ausbrüchen unter 2½ min",
+                "mit 65 min Abstand, sonst mit 91 min (±10 min)."};
+        SwingUtilities.invokeLater(() -> {
+            Guess.ask(this, lines, in -> {
+                double mins = Guess.parse(in, hour);
+                if (Double.isNaN(mins) || mins > 600) { showToast("Nicht verstanden: „" + in + "“ – etwa 10:45 oder +70", 3500); requestFocusInWindow(); return; }
+                cmds.add(() -> {
+                    GeyserModel o = geysers.byName("Old Faithful");
+                    if (o.phase == GeyserModel.Phase.ERUPTION) { showToast("Zu spät, er bricht schon aus", 3000); return; }
+                    guess.tipAt = gClock + mins * 60;
+                    guess.rangerAt = o.rulePrediction();
+                    showToast("Dein Tipp: " + clockAt(guess.tipAt) + ". Die Tafel der Ranger ist verdeckt, bis er ausbricht. V kürzt das Warten ab.", 4000);
+                });
+                requestFocusInWindow();
+            });
+            requestFocusInWindow();
+        });
+    }
+
+    /** Beim Beginn eines Ausbruchs von Old Faithful: Tipp auswerten. */
+    private void checkGuess(GeyserModel of) {
+        if (!guess.open()) return;
+        if (of.manual) {
+            guess.tipAt = Double.NaN; guess.rangerAt = Double.NaN;
+            showToast("Von Hand ausgelöst: der Tipp zählt nicht", 3500);
+            return;
+        }
+        guess.result = guess.score(of.lastStart, clockAt(guess.tipAt), Double.isNaN(guess.rangerAt) ? "–" : clockAt(guess.rangerAt), clockAt(of.lastStart));
+        guess.resultUntil = System.currentTimeMillis() + 30000;
+    }
+
+    /** Ergebnis des Tipps, oben in der Mitte. */
+    private void guessHud(Graphics2D g) {
+        String[] r = guess.result;
+        if (r == null || System.currentTimeMillis() > guess.resultUntil) return;
+        int W = getWidth();
+        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        int w = 0;
+        for (int i = 1; i < r.length; i++) w = Math.max(w, g.getFontMetrics().stringWidth(r[i]));
+        g.setFont(new Font("SansSerif", Font.BOLD, 14));
+        w = Math.max(w, g.getFontMetrics().stringWidth(r[0]));
+        int bw = w + 40, bh = 100, x = (W - bw) / 2, y = 96;
+        g.setColor(new Color(58, 40, 26, 215));
+        g.fillRoundRect(x, y, bw, bh, 10, 10);
+        g.setColor(new Color(244, 234, 216, 90));
+        g.drawRoundRect(x, y, bw, bh, 10, 10);
+        g.setColor(SULFUR);
+        g.drawString(r[0], x + 20, y + 24);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        g.setColor(new Color(250, 244, 232));
+        g.drawString(r[1], x + 20, y + 46);
+        g.drawString(r[2], x + 20, y + 66);
+        g.setColor(new Color(220, 206, 184));
+        g.drawString(r[3], x + 20, y + 86);
+    }
+
     // ------------------------------------------------------------ Eruptionsprotokoll und Zustand
 
     private final java.util.List<ProtocolDialog.Entry> protocol = new java.util.ArrayList<>();
@@ -255,12 +337,16 @@ public final class ScenePanel extends JPanel {
             if (protocol.size() > 2000) protocol.remove(0);
         }
         int si = com.dan.geyser.world.Sites.index(e.geyser);
-        if (si >= 0) db.logEruption(com.dan.geyser.world.Sites.CODES[si], d, h, e.start, e.duration, e.maxHeight, e.predicted, e.interval, e.manual);
+        // eine ältere Datenbank kennt die neuen Geysire noch nicht (DbSetup neu)
+        java.util.Set<String> known = dbGeysers;
+        if (si >= 0 && (known == null || known.contains(com.dan.geyser.world.Sites.CODES[si]))) db.logEruption(com.dan.geyser.world.Sites.CODES[si], d, h, e.start, e.duration, e.maxHeight, e.predicted, e.interval, e.manual);
     }
 
     // ------------------------------------------------------------ Datenbank
 
     private final com.dan.geyser.db.DbService db = new com.dan.geyser.db.DbService();
+    /** Geysire, deren Kennwerte die Datenbank geliefert hat (null: noch keine Datenbank). */
+    private volatile java.util.Set<String> dbGeysers;
     private volatile long totalFrames;
     private volatile double totalTime;
     private Consumer<double[]> airListener = v -> { };
@@ -283,6 +369,7 @@ public final class ScenePanel extends JPanel {
             if (t != null) m.line = t;
         }
         int applied = 0;
+        dbGeysers = new java.util.HashSet<>(s.params.keySet());
         for (GeyserModel g : geysers.list) {
             int i = com.dan.geyser.world.Sites.index(g.name);
             double[] p = i < 0 ? null : s.params.get(com.dan.geyser.world.Sites.CODES[i]);
@@ -357,8 +444,11 @@ public final class ScenePanel extends JPanel {
         p.setProperty("tube", String.valueOf(tubeOn));
         p.setProperty("thermo", String.valueOf(thermoOn));
         p.setProperty("fauna", String.valueOf(faunaOn));
+        p.setProperty("visitors", String.valueOf(visitorsOn));
         p.setProperty("haze", String.valueOf(haze));
         p.setProperty("wind", String.valueOf(wind));
+        p.setProperty("water", String.valueOf(water));
+        p.setProperty("weather", String.valueOf(weather.mode));
         try {
             java.io.File f = stateFile();
             f.getParentFile().mkdirs();
@@ -393,7 +483,15 @@ public final class ScenePanel extends JPanel {
             tubeOn = Boolean.parseBoolean(p.getProperty("tube", "false"));
             thermoOn = Boolean.parseBoolean(p.getProperty("thermo", "false"));
             faunaOn = Boolean.parseBoolean(p.getProperty("fauna", "true"));
+            visitorsOn = Boolean.parseBoolean(p.getProperty("visitors", "true"));
             extrasChanged();
+            int wm = Integer.parseInt(p.getProperty("weather", "0"));
+            weather.mode = Math.max(0, Math.min(com.dan.geyser.effects.Weather.MODES.length - 1, wm));
+            SwingUtilities.invokeLater(() -> weatherListener.accept(weather.mode));
+            double wt = Double.parseDouble(p.getProperty("water", "1"));
+            water = wt;
+            geysers.setWater(wt);
+            SwingUtilities.invokeLater(() -> waterListener.accept(wt));
             showToast("Zustand vom letzten Beenden: " + DayNightCycle.dateLabel(d) + ", " + DayNightCycle.timeLabel(h), 3500);
         } catch (Exception e) {
             System.err.println("Zustand nicht gelesen: " + e);
@@ -404,16 +502,30 @@ public final class ScenePanel extends JPanel {
 
     private volatile boolean tubeOn, thermoOn, soundOn, faunaOn = true;
     private volatile com.dan.geyser.world.Fauna fauna;
+    private volatile com.dan.geyser.world.Visitors visitors;
+    private volatile boolean visitorsOn = true;
+    private boolean ofWasErupting;
+
+    /** Besucher auf den Stegen an oder aus. */
+    public void setVisitors(boolean on) {
+        visitorsOn = on;
+        if (on) showToast("Besucher: im Juli bis über 1000 am Halbrund um Old Faithful; gezeigt höchstens " + com.dan.geyser.world.Visitors.MAX, 3500);
+        extrasChanged();
+    }
     private final com.dan.geyser.core.Animals animals = new com.dan.geyser.core.Animals();
     private final com.dan.geyser.effects.GeyserSound sound = new com.dan.geyser.effects.GeyserSound();
     private volatile GeyserModel tubeGeyser;
+    /** Seismogramm der letzten 20 s (20 Werte je Sekunde) am Geysir des Schnitts. */
+    private final float[] seis = new float[400];
+    private volatile int seisHead;
+    private double seisAcc;
     private double bugleIn = 20, bellowIn = 15;
     private final java.util.Random zrnd = new java.util.Random();
     private Consumer<boolean[]> extrasListener = b -> { };
 
     public void setExtrasListener(Consumer<boolean[]> l) { extrasListener = l; }
     private void extrasChanged() {
-        boolean[] v = {tubeOn, thermoOn, soundOn, faunaOn};
+        boolean[] v = {tubeOn, thermoOn, soundOn, faunaOn, visitorsOn};
         SwingUtilities.invokeLater(() -> extrasListener.accept(v));
     }
 
@@ -447,37 +559,7 @@ public final class ScenePanel extends JPanel {
     /** Pegel des Klangs aus dem Ort der Kamera: Säulen, Quellen, Fluss, Wind, Tiere zur Brunftzeit. */
     private void listen(Geysers gs, double dt) {
         double rx = cam.rx, rz = cam.rz;
-        float roar = 0, rpan = 0, hiss = 0, splash = 0;
-        double best = 0;
-        for (GeyserModel g : gs.list) {
-            double dx = g.x - cam.ex, dy = g.y - cam.ey, dz = g.z - cam.ez, d = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            double att = 1 / (1 + Math.pow(d / 70, 2));
-            double pan = (dx * rx + dz * rz) / Math.max(1, Math.hypot(dx, dz));
-            if (g.phase == GeyserModel.Phase.ERUPTION) {
-                double v = Math.min(1, g.height(gClock) / Math.max(1, g.hMax) + 0.25) * att;
-                roar += v;
-                if (v > best) { best = v; rpan = (float) pan; }
-            } else if (g.phase == GeyserModel.Phase.STEAM) {
-                hiss += (float) (g.steamShare() * att);
-                if (att > best) { best = att * 0.5; rpan = (float) pan; }
-            } else if (g.phase == GeyserModel.Phase.PREPLAY) {
-                splash += (float) (att * (g.surgeDrop() > 0 ? 1 : 0.3));
-            }
-        }
-        float boil = 0, bpan = 0;
-        double bd = 1e9;
-        for (Thermal.Spring s : scene.terrain.thermal.springs) {
-            if (s.t0 < 85) continue;
-            double d = Math.max(0, Math.hypot(s.x - cam.ex, s.z - cam.ez) - Math.max(s.ax, s.az));
-            if (d < bd) { bd = d; bpan = (float) (((s.x - cam.ex) * rx + (s.z - cam.ez) * rz) / Math.max(1, Math.hypot(s.x - cam.ex, s.z - cam.ez))); }
-        }
-        double alt = Math.max(0, cam.ey - scene.terrain.sample(cam.ex, cam.ez));
-        boil = (float) (1 / (1 + Math.pow((bd + alt) / 18, 2)));
-        float rd = scene.terrain.riverDist((float) cam.ex, (float) cam.ez);
-        sound.roar = Math.min(1.2f, roar); sound.roarPan = rpan; sound.hiss = Math.min(1, hiss); sound.splash = Math.min(1, splash);
-        sound.boil = boil; sound.boilPan = bpan;
-        sound.river = (float) (0.5 / (1 + Math.pow((Math.max(0, rd) + alt) / 35, 2)));
-        sound.wind = (float) (wind * (0.25 + 0.75 * Math.min(1, alt / 60)));
+        com.dan.geyser.world.SoundScape.levels(sound, gs, scene.terrain, cam, gClock, wind);
         // Tiere zur Brunft: Wapitis Anfang September bis Mitte Oktober, Bisons Juli und August (NPS)
         com.dan.geyser.world.Fauna f = fauna;
         if (f != null && faunaOn) {
@@ -546,6 +628,86 @@ public final class ScenePanel extends JPanel {
         });
     }
 
+    // ------------------------------------------------------------ Morning Glory über die Jahrzehnte
+
+    private volatile boolean gloryOn;
+    private volatile double gloryYear = -1;
+    private double gloryAppliedT = Double.NaN;
+
+    /** Zeitraffer an Morning Glory Pool von 1883 bis heute (Taste J). */
+    public void playMorningGlory() {
+        cmds.add(() -> {
+            Scene sc = scene;
+            if (site != 0) applySite(0);
+            timelapse = 0;
+            if (fast) setFast(false);
+            com.dan.geyser.world.Sites.Site mg = com.dan.geyser.world.Sites.ALL[5];
+            double cx = mg.x(), cz = mg.z(), cy = -15;
+            com.dan.geyser.camera.CameraPath p = new com.dan.geyser.camera.CameraPath();
+            for (int k = 0; k <= 10; k++) {
+                double a = Math.toRadians(150 + k * 14), r = 17 - k * 0.5;
+                double ex = cx + r * Math.sin(a), ez = cz + r * Math.cos(a);
+                p.add(k * 4.2, ex, sc.terrain.sample(ex, ez) + 5.5 - k * 0.15, ez, cx, cy - 1.5, cz);
+            }
+            double[] last = p.key(p.size() - 1);
+            p.add(47, last[1], last[2], last[3], last[4], last[5], last[6]);   // 5 s stehen bleiben
+            Director.Program pr = new Director.Program("Morning Glory im Zeitraffer");
+            pr.add(new Director.Shot(p, 12.0, 12.2, "Morning Glory Pool, 1883 bis heute",
+                    "Bis in die 1940er heiß und tiefblau. Münzen und Abfall verstopften den Schlot, die Quelle kühlte ab, und gelbe und orange Matten wuchsen zur Mitte. Temperaturen zwischen den Eckpunkten genähert.",
+                    "USGS: What's the story, Morning Glory?; Wikipedia: Morning Glory Pool").site(0).fades(true, false));
+            director.play(pr);
+            gloryOn = true;
+        });
+    }
+
+    /** Temperatur von Morning Glory zum Fortschritt u (u ≥ 1: heute) setzen; die Kacheln des Temperaturfelds neu backen. */
+    private void applyGlory(double u, boolean show) {
+        Thermal th = scene.terrain.thermal;
+        Thermal.Spring mg = th.byName("Morning Glory Pool");
+        if (mg == null) return;
+        double y = com.dan.geyser.world.MorningGlory.year(u);
+        double t = u >= 1 ? com.dan.geyser.world.MorningGlory.NOW_T : com.dan.geyser.world.MorningGlory.tempAt(y);
+        gloryYear = show ? y : -1;
+        if (Double.isNaN(gloryAppliedT) || Math.abs(t - gloryAppliedT) > 0.12 || (u >= 1 && t != gloryAppliedT)) {
+            mg.t0 = t;
+            th.changed(mg);
+            gloryAppliedT = t;
+        }
+    }
+
+    /** Jahr, Temperatur und Ereignis während des Zeitraffers an Morning Glory, oben in der Mitte. */
+    private void gloryHud(Graphics2D g) {
+        double y = gloryYear;
+        if (y < 0) return;
+        int W = getWidth();
+        String yr = String.valueOf((int) Math.floor(y));
+        String sub = String.format(java.util.Locale.GERMANY, "Quellmund %.1f °C  ·  %s", com.dan.geyser.world.MorningGlory.tempAt(y),
+                com.dan.geyser.world.MorningGlory.tempAt(y) > 78 ? "tiefblau" : com.dan.geyser.world.MorningGlory.tempAt(y) > 73 ? "Matten wachsen vom Rand" : "gelb und orange bis zur Mitte");
+        String ev = com.dan.geyser.world.MorningGlory.event(y);
+        g.setFont(new Font("SansSerif", Font.BOLD, 30));
+        int w1 = g.getFontMetrics().stringWidth(yr);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        int w2 = Math.max(g.getFontMetrics().stringWidth(sub), ev == null ? 0 : g.getFontMetrics().stringWidth(ev));
+        int bw = Math.max(w1, w2) + 40, x = (W - bw) / 2, top = cinema ? Math.max(20, (int) ((getHeight() - W / 2.39) / 2) + 14) : 96;
+        g.setColor(new Color(10, 16, 20, 180));
+        g.fillRoundRect(x, top, bw, ev == null ? 78 : 96, 12, 12);
+        g.setColor(INK);
+        g.setFont(new Font("SansSerif", Font.BOLD, 30));
+        g.drawString(yr, x + (bw - w1) / 2, top + 38);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        g.setColor(SULFUR);
+        g.drawString(sub, x + (bw - g.getFontMetrics().stringWidth(sub)) / 2, top + 58);
+        if (ev != null) {
+            g.setColor(MUTED);
+            g.drawString(ev, x + (bw - g.getFontMetrics().stringWidth(ev)) / 2, top + 78);
+        }
+        g.setColor(new Color(255, 255, 255, 40));
+        int by = top + (ev == null ? 66 : 86);
+        g.fillRect(x + 20, by, bw - 40, 3);
+        g.setColor(POOL);
+        g.fillRect(x + 20, by, (int) ((bw - 40) * (y - com.dan.geyser.world.MorningGlory.FIRST) / (com.dan.geyser.world.MorningGlory.LAST - com.dan.geyser.world.MorningGlory.FIRST)), 3);
+    }
+
     /** Stand des Zeitraffers aus dem Fortschritt u 0..1; u ≥ 1 stellt den heutigen Kegel wieder her. */
     private void applySinter(double u, boolean show, Geysers gs) {
         com.dan.geyser.atom.SinterGrowth sg = sinter;
@@ -572,7 +734,7 @@ public final class ScenePanel extends JPanel {
             double d = Math.hypot(s.x - p[0], s.z - p[2]) - Math.max(s.ax, s.az);
             if (d < bd) { bd = d; best = s; }
         }
-        if (best == null) return site == 1 ? "Midway Geyser Basin" : "Upper Geyser Basin";
+        if (best == null) return World.BASINS[site];
         return String.format(java.util.Locale.GERMANY, "am Rand von %s · %.0f °C", best.name, best.t0);
     }
 
@@ -593,28 +755,31 @@ public final class ScenePanel extends JPanel {
     public void setFastListener(Consumer<Boolean> l) { fastListener = l; }
 
     /**
-     * Ort wählen: Upper Geyser Basin (0) oder Midway mit Grand Prismatic (1). Die feine Schattenkarte
-     * wandert mit; mit fly gleitet die Kamera zur Übersicht des Ortes.
+     * Ort wählen: Upper Geyser Basin (0), Midway mit Grand Prismatic (1) oder Lower Geyser Basin mit
+     * dem Fountain Paint Pot (2). Die feine Schattenkarte wandert mit; mit fly gleitet die Kamera zur
+     * Übersicht des Ortes.
      */
     public void setSite(int s, boolean fly) {
         if (fly) takeOver();
         applySite(s);
-        double[] c = s == 0 ? World.UPPER : World.MIDWAY;
+        double[] c = World.center(s);
         CameraController ctl0 = ctl;
         if (fly && ctl0 != null) {
             cmds.add(() -> {
                 if (s == 0) ctl0.goOverview();
-                else { Scene sc = scene; ctl0.flyTo(c[0], sc == null ? -24 : sc.terrain.sample(c[0], c[1]), c[1], 215, 22, 900); }
+                else if (s == 1) { Scene sc = scene; ctl0.flyTo(c[0], sc == null ? -24 : sc.terrain.sample(c[0], c[1]), c[1], 215, 22, 900); }
+                else { Scene sc = scene; ctl0.flyTo(c[0], sc == null ? -23 : sc.terrain.sample(c[0], c[1]), c[1], 235, 24, 140); }
             });
         }
-        showToast(s == 0 ? "Upper Geyser Basin" : "Midway Geyser Basin · Grand Prismatic Spring und Excelsior", 3000);
+        showToast(s == 0 ? "Upper Geyser Basin" : s == 1 ? "Midway Geyser Basin · Grand Prismatic Spring und Excelsior"
+                : "Lower Geyser Basin · Fountain Paint Pot, Schlammtöpfe", 3000);
     }
 
     /** Ort umstellen ohne Kamerafahrt und Hinweis: feine Schattenkarte, Bedienfeld. */
     private void applySite(int s) {
         if (s == site) return;
         site = s;
-        double[] c = s == 0 ? World.UPPER : World.MIDWAY;
+        double[] c = World.center(s);
         LightingEngine.centerX = s == 0 ? LightingEngine.FCX : c[0];
         LightingEngine.centerZ = s == 0 ? LightingEngine.FCZ : c[1];
         sunDirty = true;
@@ -634,6 +799,41 @@ public final class ScenePanel extends JPanel {
     public void trigger(String name) { triggerReq = name; }
 
     private volatile double wind = 0.35;
+    private volatile double water = 1;
+    private final com.dan.geyser.effects.Weather weather = new com.dan.geyser.effects.Weather();
+    private double rainWet, litOvercast;
+    private Consumer<Integer> weatherListener = v -> { };
+    public void setWeatherListener(Consumer<Integer> l) { weatherListener = l; }
+
+    /** Wetter: 0 nach Jahreszeit, dann klar, bewölkt, Regen, Gewitter, Schneefall (siehe {@link com.dan.geyser.effects.Weather}). */
+    public void setWeather(int mode) {
+        weather.mode = mode;
+        int m = mode;
+        SwingUtilities.invokeLater(() -> weatherListener.accept(m));
+        showToast("Wetter: " + com.dan.geyser.effects.Weather.MODES[mode] + (mode == 0 ? " (Modell: Sommergewitter, Winterschnee)" : ""), 2500);
+    }
+
+    public int weatherMode() { return weather.mode; }
+    private Consumer<Double> waterListener = v -> { };
+    public void setWaterListener(Consumer<Double> l) { waterListener = l; }
+
+    /**
+     * Grundwasser 0,2..1,5 (1 = heute), siehe {@link GeyserModel#water}. Die Vorhersagetafel rechnet
+     * weiter mit der Regel der Ranger von heute; wie weit sie danebenliegt, zeigt das Protokoll.
+     */
+    public void setWater(double w) {
+        double old = water;
+        water = w;
+        Geysers gs = geysers;
+        if (gs != null) gs.setWater(w);
+        if (Math.abs(old - w) > 1e-9) {
+            GeyserModel of = gs == null ? null : gs.byName("Old Faithful");
+            if (of != null && of.silenced()) showToast("Grundwasser " + Math.round(w * 100) + " %: Old Faithful verstummt, wie in der Dürre des 13. Jahrhunderts", 4500);
+            else showToast(String.format(java.util.Locale.GERMANY, "Grundwasser %d %%: Abstände etwa × %.2f", Math.round(w * 100), GeyserModel.intervalScale(w)), 3000);
+        }
+    }
+
+    public double water() { return water; }
     /** Windstärke 0..1 (1 ≈ 9 m/s): treibt Dampf und Gischt und bewegt die Kronen. */
     public void setWind(double w) { wind = w; }
     private volatile double airTemp = 8;
@@ -662,20 +862,29 @@ public final class ScenePanel extends JPanel {
             GeyserModel g = gs.byName(m.name);
             if (g == null) continue;
             String st = g.state(gClock);
-            if (g.phase == GeyserModel.Phase.RECHARGE && !Double.isNaN(g.predicted)) st = "nächster etwa " + clockAt(g.predicted) + "  ·  " + st;
+            boolean hidden = guess.open() && g.name.equals("Old Faithful");
+            if (g.phase == GeyserModel.Phase.RECHARGE && !Double.isNaN(g.predicted) && !g.silenced() && !hidden) st = "nächster etwa " + clockAt(g.predicted) + "  ·  " + st;
+            if (g.phase == GeyserModel.Phase.RECHARGE && g.tremor() > 0.45) st += "  ·  der Boden zittert";
             m.live = st;
         }
     }
 
-    /** Uhrzeit der Szene zu einem Zeitpunkt der Geysir-Uhr. */
+    /** Uhrzeit der Szene zu einem Zeitpunkt der Geysir-Uhr; ab einem Tag voraus mit dem Datum. */
     private String clockAt(double t) {
+        double ahead = (t - gClock) / 86400.0;
+        if (ahead > 1) {
+            int d = day + (int) Math.floor((hour / 24.0) + ahead);
+            while (d > 365) d -= 365;
+            return ahead > 60 ? "in " + Math.round(ahead / 7) + " Wochen" : "am " + DayNightCycle.dateLabel(d);
+        }
         double h = hour + (t - gClock) / 3600.0;
         h = ((h % 24) + 24) % 24;
         return DayNightCycle.timeLabel(h);
     }
 
     public String[] geyserNames() {
-        return new String[]{"Old Faithful", "Beehive Geyser", "Castle Geyser", "Grand Geyser", "Riverside Geyser"};
+        return new String[]{"Old Faithful", "Beehive Geyser", "Castle Geyser", "Grand Geyser", "Riverside Geyser", "Daisy Geyser",
+                "Grotto Geyser", "Fan Geyser", "Giantess Geyser", "Splendid Geyser"};
     }
 
     public void goOverview() { goViewpoint(0); }
@@ -753,6 +962,7 @@ public final class ScenePanel extends JPanel {
             c = new CameraController(sc.terrain);
             director = new Director(sc.terrain);
             fauna = new com.dan.geyser.world.Fauna(sc.terrain, sc.thermal);
+            visitors = new com.dan.geyser.world.Visitors(sc.terrain);
             geysers.onEruption = this::logEruption;
             restoreState(c);
             db.start(hostName(), System.getProperty("user.name"), System.getProperty("java.version"), resolution(),
@@ -814,6 +1024,7 @@ public final class ScenePanel extends JPanel {
                 GeyserModel best = null;
                 double bd = Double.MAX_VALUE;
                 for (GeyserModel g : gs.list) {
+                    if (g.minor) continue;
                     double d = Math.hypot(g.x - pz[0], g.z - pz[2]);
                     if (d < bd) { bd = d; best = g; }
                 }
@@ -822,16 +1033,49 @@ public final class ScenePanel extends JPanel {
             GeyserModel was = gs.erupting();
             climate();
             float wind = (float) this.wind;
+            // Wetter: Bewölkung ins Licht, Regen und Schnee um die Kamera, Blitz und Donner
+            if (weather.step(dt, day, hour, airTemp, cam.ex, cam.ez)) {
+                weather.makeBolt(scene.terrain);
+                double bd = Math.hypot(weather.boltX - cam.ex, weather.boltZ - cam.ez);
+                float bp = (float) (((weather.boltX - cam.ex) * cam.rx + (weather.boltZ - cam.ez) * cam.rz) / Math.max(1, bd));
+                if (soundOn) sound.thunder((float) Math.min(1, 1.6 / (1 + bd / 900)), (float) (bd / 343), bp);
+            }
+            com.dan.geyser.effects.Sky.overcastNext = weather.overcast;
+            if (Math.abs(weather.overcast - litOvercast) > 0.03) { litOvercast = weather.overcast; sunDirty = true; }
+            weather.emit(ps, scene.terrain, cam.ex, cam.ey, cam.ez, (float) dt, (float) (0.8 * wind * 9), (float) (0.6 * wind * 9));
+            rainWet = Math.max(0, Math.min(1, rainWet + (weather.rain > 0.15 ? dt / 90 * weather.rain : -dt / 900)));
+            r.rainWet = (float) (0.8 * rainWet);
+            r.flash = weather.flash;
+            r.bolt = weather.bolt;
+            if (soundOn) sound.rain = (float) (weather.rain * 0.8 / (1 + Math.max(0, cam.ey - scene.terrain.sample(cam.ex, cam.ez)) / 80));
             gs.update(gClock, simDt, (float) dt, ps, (float) (0.8 * wind * 9), (float) (0.6 * wind * 9), (float) Math.max(0, cycle.elevationDeg / 40.0));
             r.plumes = gs.plumes;
             r.wind = wind;
             com.dan.geyser.world.Fauna fa = fauna;
+            animals.clear();
             if (faunaOn && fa != null) {
                 fa.update(dt, day, Thermal.snow);
                 fa.fill(animals);
-                r.animals = animals;
-            } else r.animals = null;
+            }
+            com.dan.geyser.world.Visitors vi = visitors;
+            if (vi != null) {
+                GeyserModel of = gs.byName("Old Faithful");
+                boolean er = of != null && of.phase == GeyserModel.Phase.ERUPTION;
+                boolean ended = ofWasErupting && !er;
+                ofWasErupting = er;
+                double mins = of == null || Double.isNaN(of.predicted) || er || of.silenced() ? Double.NaN : (of.predicted - gClock) / 60;
+                if (visitorsOn) {
+                    vi.update(dt * (ff ? 4 : 1), day, hour, Math.max(weather.rain, weather.snow * 0.5), mins, er || (of != null && of.phase == GeyserModel.Phase.PREPLAY), ended);
+                    vi.fill(animals);
+                }
+            }
+            r.animals = animals.n > 0 ? animals : null;
             r.thermo = thermoOn;
+            GeyserModel ofg = gs.byName("Old Faithful");
+            if (ofg != null) {
+                if (ofg.phase == GeyserModel.Phase.ERUPTION && ofGuessPhase != GeyserModel.Phase.ERUPTION) checkGuess(ofg);
+                ofGuessPhase = ofg.phase;
+            }
             GeyserModel now2 = gs.erupting();
             if (now2 != null && now2 != was && ff) {
                 fast = false;
@@ -886,6 +1130,11 @@ public final class ScenePanel extends JPanel {
                 if (!run) sinterOn = false;
                 if (!run || t - sinterShadowAt > 0.5) { sinterShadowAt = t; sunDirty = true; }
             }
+            if (gloryOn) {
+                boolean run = dr.active() && "Morning Glory im Zeitraffer".equals(dr.title());
+                applyGlory(run ? dr.elapsedSeconds() / Math.max(1, dr.totalSeconds() - 5) : 1, run);
+                if (!run) gloryOn = false;
+            }
             if (soundOn) listen(gs, dt);
             if (tubeOn) {
                 double[] pz0 = c.pose();
@@ -896,6 +1145,15 @@ public final class ScenePanel extends JPanel {
                     if (d < tbd) { tbd = d; tb = g0; }
                 }
                 tubeGeyser = tb;
+                // Seismogramm: zwanzigmal je Sekunde ein Ausschlag nach dem Tremor, dazu einzelne Blasenschläge
+                seisAcc += dt;
+                while (seisAcc >= 0.05 && tb != null) {
+                    seisAcc -= 0.05;
+                    double tr = tb.tremor();
+                    float v = (float) (zrnd.nextGaussian() * 0.25 * tr + (zrnd.nextDouble() < 0.02 + 0.1 * tr ? (zrnd.nextDouble() - 0.5) * 1.6 * tr : 0));
+                    seis[seisHead] = v;
+                    seisHead = (seisHead + 1) % seis.length;
+                }
             }
             // Qualität: fest oder automatisch. Auto hält 30 Bilder/s: in Bewegung und im Stillstand je
             // ein eigener Maßstab; im Stillstand übernimmt der Bildrechner das Licht aus dem letzten
@@ -1060,7 +1318,7 @@ public final class ScenePanel extends JPanel {
             sunDirty = false;
             dc.set(day, hour);
             long t0 = System.nanoTime();
-            spare.compute(r.mesh(), dc.dir, dc.moonDir, dc.moonLit, haze);
+            spare.compute(r.mesh(), dc.dir, dc.moonDir, dc.moonLit, Math.min(1, haze + 0.3 * weather.overcast));
             shadowMs = (System.nanoTime() - t0) / 1e6;
             cycle.set(dc.day(), dc.hour());
             r.offer(spare);
@@ -1126,7 +1384,7 @@ public final class ScenePanel extends JPanel {
         int bar = (int) Math.max(0, (H - W / 2.39) / 2);
         java.awt.Composite old = g.getComposite();
         g.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, a));
-        String t1 = "GEYSER", t2 = "Upper Geyser Basin · Yellowstone · " + DayNightCycle.dateLabel(day) + " " + DayNightCycle.YEAR;
+        String t1 = "GEYSER", t2 = World.BASINS[site] + " · Yellowstone · " + DayNightCycle.dateLabel(day) + " " + DayNightCycle.YEAR;
         g.setFont(new Font("SansSerif", Font.BOLD, 36));
         int y = H - bar - 70;
         g.setColor(new Color(0, 0, 0, 90));
@@ -1263,6 +1521,8 @@ public final class ScenePanel extends JPanel {
             }
             caption(g);
             sinterHud(g);
+            gloryHud(g);
+            guessHud(g);
             if (help) helpHud(g);
             if (toast != null && System.currentTimeMillis() < toastUntil) {
                 g.setFont(new Font("SansSerif", Font.PLAIN, 13));
@@ -1329,8 +1589,11 @@ public final class ScenePanel extends JPanel {
         }
     }
 
+    /** Lage und Höhe je Ort (Old Faithful, Grand Prismatic, Fountain Paint Pot). */
+    static final String[] PLACES = {"44,46° N  110,83° W  ·  2240 m", "44,53° N  110,84° W  ·  2216 m", "44,55° N  110,81° W  ·  2227 m"};
+
     private void hud(Graphics2D g) {
-        String place = "UPPER GEYSER BASIN  ·  YELLOWSTONE";
+        String place = World.BASINS[site].toUpperCase(java.util.Locale.ROOT) + "  ·  YELLOWSTONE";
         g.setFont(new Font("SansSerif", Font.BOLD, 20));
         int w = g.getFontMetrics().stringWidth(place);
         g.setColor(new Color(0, 0, 0, 90));
@@ -1339,7 +1602,8 @@ public final class ScenePanel extends JPanel {
         g.drawString(place, 28, 40);
         g.setFont(new Font("SansSerif", Font.PLAIN, 12));
         String sub = DayNightCycle.dateLabel(day) + " " + DayNightCycle.YEAR + "  ·  " + DayNightCycle.timeLabel(hour) + " "
-                + DayNightCycle.zone(day, hour) + "  ·  44,46° N  110,83° W  ·  2240 m";
+                + DayNightCycle.zone(day, hour) + "  ·  " + weather.label + String.format(java.util.Locale.GERMANY, ", %.0f °C", airTemp)
+                + "  ·  " + PLACES[site];
         int sw = g.getFontMetrics().stringWidth(sub);
         g.setColor(new Color(0, 0, 0, 80));
         g.fillRoundRect(14, 58, sw + 24, 24, 8, 8);
@@ -1347,7 +1611,10 @@ public final class ScenePanel extends JPanel {
         g.drawString(sub, 26, 75);
         predictionBoard(g);
         GeyserModel tg = tubeGeyser;
-        if (tubeOn && tg != null) TubeSection.paint(g, tg, getWidth() - TubeSection.W - 16, 100, gClock);
+        if (tubeOn && tg != null) {
+            TubeSection.paint(g, tg, getWidth() - TubeSection.W - 16, 100, gClock);
+            TubeSection.seismo(g, seis, seisHead, tg.tremor(), getWidth() - TubeSection.W - 16, 100 + TubeSection.H + 8);
+        }
         if (thermoOn) thermoLegend(g);
         Director dr = director;
         if (dr != null && dr.active()) { timeline(g, dr); return; }
@@ -1371,11 +1638,11 @@ public final class ScenePanel extends JPanel {
         GeyserModel er = null;
         double bd = 3000;
         for (GeyserModel g0 : gs.list) {
-            if (g0.phase != GeyserModel.Phase.ERUPTION) continue;
+            if (g0.phase != GeyserModel.Phase.ERUPTION || g0.minor) continue;
             double d = Math.hypot(g0.x - cam.ex, g0.z - cam.ez);
             if (d < bd) { bd = d; er = g0; }
         }
-        if (site == 1 && er == null) return;
+        if (site != 0 && er == null) return;
         String head, big, small;
         if (er != null) {
             head = er.name.toUpperCase(java.util.Locale.ROOT);
@@ -1383,7 +1650,11 @@ public final class ScenePanel extends JPanel {
             small = String.format("Ausbruch seit %d:%02d", (int) er.tPhase / 60, (int) er.tPhase % 60);
         } else if (of != null && of.phase == GeyserModel.Phase.PREPLAY) {
             head = "OLD FAITHFUL"; big = "gleich"; small = "Vorspiel: Wasser schwappt über";
-        } else if (of != null && !Double.isNaN(of.predicted)) {
+        } else if (of != null && guess.open()) {
+            head = "OLD FAITHFUL · DEIN TIPP";
+            big = clockAt(guess.tipAt) + " " + DayNightCycle.zone(day, hour);
+            small = "Tafel der Ranger verdeckt, bis er ausbricht";
+        } else if (of != null && !Double.isNaN(of.predicted) && !of.silenced()) {
             head = "OLD FAITHFUL · NÄCHSTER AUSBRUCH";
             big = clockAt(of.predicted) + " " + DayNightCycle.zone(day, hour);
             small = Double.isNaN(of.lastDuration) ? "± 10 min" : String.format(java.util.Locale.GERMANY, "± 10 min · letzter Ausbruch %d:%02d min", (int) of.lastDuration / 60, (int) of.lastDuration % 60);
@@ -1488,49 +1759,8 @@ public final class ScenePanel extends JPanel {
         Director dr = director;
         Object[] c = dr == null ? null : dr.caption();
         if (c == null) return;
-        String head = (String) c[0], text = (String) c[1], src = (String) c[2];
-        float a = (float) Math.max(0, Math.min(1, (Double) c[3]));
-        if (a <= 0.01) return;
         int W = getWidth(), H = getHeight();
-        int bw = Math.min(480, W - 40);
-        Font fh = new Font("SansSerif", Font.BOLD, 22), ft = new Font("SansSerif", Font.PLAIN, 14), fs = new Font("SansSerif", Font.ITALIC, 12);
-        java.util.List<String> lines = new java.util.ArrayList<>();
-        if (text != null) {
-            java.awt.FontMetrics fm = g.getFontMetrics(ft);
-            StringBuilder line = new StringBuilder();
-            for (String w : text.split(" ")) {
-                if (line.length() > 0 && fm.stringWidth(line + " " + w) > bw - 40) { lines.add(line.toString()); line.setLength(0); }
-                if (line.length() > 0) line.append(' ');
-                line.append(w);
-            }
-            if (line.length() > 0) lines.add(line.toString());
-        }
-        int bh = 24 + (head != null ? 30 : 0) + lines.size() * 20 + (src != null ? 24 : 0) + 8;
-        int x = 24, y = H - bh - (cinema ? Math.max(20, (int) ((H - W / 2.39) / 2) + 16) : 72);
-        java.awt.Composite old = g.getComposite();
-        g.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, a));
-        g.setColor(new Color(10, 16, 20, 180));
-        g.fillRoundRect(x, y, bw, bh, 12, 12);
-        g.setColor(SULFUR);
-        g.fillRect(x, y + 14, 3, bh - 28);
-        int cy = y + 20;
-        if (head != null) {
-            g.setFont(fh);
-            g.setColor(INK);
-            cy += 18;
-            g.drawString(head, x + 20, cy);
-            cy += 12;
-        }
-        g.setFont(ft);
-        g.setColor(new Color(222, 226, 220));
-        for (String l : lines) { cy += 20; g.drawString(l, x + 20, cy); }
-        if (src != null) {
-            g.setFont(fs);
-            g.setColor(SULFUR);
-            cy += 24;
-            g.drawString("Quelle: " + src, x + 20, cy);
-        }
-        g.setComposite(old);
+        Captions.draw(g, c, W, H, cinema ? Math.max(20, (int) ((H - W / 2.39) / 2) + 16) : 72);
     }
 
     private void helpHud(Graphics2D g) {
@@ -1543,21 +1773,22 @@ public final class ScenePanel extends JPanel {
                 {"G", "nächster Blickpunkt"}, {"F", "nächste Kamerafahrt"}, {"T", "Rundgang"}, {"B", "Drehbuch"},
                 {"Esc, Maus", "Kamera übernehmen"},
                 {"MINERALIEN", null},
-                {"U, Strg+Klick", "Mineral-Lupe"}, {"Z", "Sinter-Zeitraffer an Castle"},
+                {"U, Strg+Klick", "Mineral-Lupe"}, {"Z", "Sinter-Zeitraffer an Castle"}, {"J", "Morning Glory 1883 bis heute"},
                 {"ZUGABEN", null},
-                {"C", "Schnitt durch die Röhre"}, {"I", "Wärmebild"}, {"O", "Klang"}, {"N", "Bisons und Wapitis"},
+                {"C", "Schnitt und Seismometer"}, {"I", "Wärmebild"}, {"O", "Klang"}, {"N", "Bisons und Wapitis"}, {"F3", "Besucher"},
+                {"Y", "Wetter wechseln"},
                 {"STELLEN", null},
-                {"1 bis 6", "Old Faithful bis Morning Glory"}, {"7", "Grand Prismatic (Midway)"}, {"M", "Upper Basin oder Midway"},
+                {"1 bis 6", "Old Faithful bis Morning Glory"}, {"7", "Grand Prismatic (Midway)"}, {"M", "Upper, Midway oder Lower Basin"},
                 {"L", "Beschriftung"},
                 {"GEYSIRE", null},
-                {"X", "nächsten Geysir auslösen"}, {"V", "Warten abkürzen (60-fach)"},
+                {"X", "nächsten Geysir auslösen"}, {"V", "Warten abkürzen (60-fach)"}, {"F2", "Rätsel: Wann bricht er aus?"},
                 {"SONNE", null},
                 {"+ und −", "½ Stunde vor, zurück"},
                 {"BILD", null},
                 {"P", "Standbild speichern"}, {"K oder F11", "Kinomodus"}, {"F1 oder H", "diese Übersicht"}, {"Esc", "schließen"}};
         int W = getWidth(), H = getHeight();
         int perCol = (rows.length + 1) / 2;
-        int bw = 600, bh = 56 + perCol * 20 + 30;
+        int bw = 700, bh = 56 + perCol * 20 + 30;
         int x = (W - bw) / 2, y = Math.max(20, (H - bh) / 2);
         g.setColor(new Color(8, 14, 18, 215));
         g.fillRoundRect(x, y, bw, bh, 14, 14);
@@ -1576,7 +1807,7 @@ public final class ScenePanel extends JPanel {
                 g.drawString(rows[i][0], cx, cy);
                 g.setFont(new Font("SansSerif", Font.PLAIN, 12));
                 g.setColor(MUTED);
-                g.drawString(rows[i][1], cx + 118, cy);
+                g.drawString(rows[i][1], cx + 112, cy);
             }
         }
         g.setFont(new Font("SansSerif", Font.ITALIC, 11));

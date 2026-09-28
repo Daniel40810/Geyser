@@ -9,7 +9,8 @@ import com.dan.geyser.core.Terrain;
  * um Old Faithful, über eine Brücke nach Geyser Hill mit einer Runde um Beehive, auf dem Südwestufer
  * an Castle vorbei, über den Fluss zu Grand, zurück auf das Westufer gegenüber von Riverside und bis
  * zum Ende bei Morning Glory; in Midway über den Fluss, am Krater von Excelsior entlang und um Grand
- * Prismatic, dazu die Plattform am Hang südlich davon. Die Linienführung ist genähert.
+ * Prismatic, dazu die Plattform am Hang südlich davon; im Lower Geyser Basin eine Runde um den
+ * Fountain Paint Pot. Die Linienführung ist genähert.
  */
 final class Walks {
     private Walks() { }
@@ -17,7 +18,7 @@ final class Walks {
     static final double WIDTH = 2.4, STEP = 2.5;
 
     static void build(MeshBuilder mb, Terrain t, double[] of, double[] bh, double[] ca, double[] gr, double[] rs, double[] mg,
-                      double[] gps, double[] exc) {
+                      double[] gps, double[] exc, double[] fpp) {
         double keep = mb.maxEdge;
         mb.maxEdge = 1e9;
         World.ROUTES.clear();
@@ -43,6 +44,15 @@ final class Walks {
             mw.add(new double[]{gps[0] + 82 * Math.cos(r), gps[1] + 82 * Math.sin(r)});
         }
         walk(mb, t, mw);
+        // Fountain Paint Pot: Runde um die Schlammtöpfe, vom Parkplatz im Westen her
+        java.util.List<double[]> fp = new java.util.ArrayList<>();
+        fp.add(new double[]{fpp[0] - 150, fpp[1] + 70});
+        fp.add(new double[]{fpp[0] - 80, fpp[1] + 50});
+        for (int a = 160; a >= -160; a -= 8) {
+            double r = Math.toRadians(a);
+            fp.add(new double[]{fpp[0] + 34 * Math.cos(r), fpp[1] + 30 * Math.sin(r)});
+        }
+        walk(mb, t, fp);
         overlook(mb, t, -900, -6880, gps);
         mb.maxEdge = keep;
     }

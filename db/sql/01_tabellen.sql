@@ -71,7 +71,7 @@ CREATE TABLE gey_site (
   code           VARCHAR2(30 CHAR)  NOT NULL CONSTRAINT gey_site_uk UNIQUE,
   name           VARCHAR2(60 CHAR)  NOT NULL,
   art            VARCHAR2(8)   NOT NULL CONSTRAINT gey_site_art_ck CHECK (art IN ('GEYSIR', 'QUELLE')),
-  becken         VARCHAR2(8)   NOT NULL CONSTRAINT gey_site_becken_ck CHECK (becken IN ('UPPER', 'MIDWAY')),
+  becken         VARCHAR2(8)   NOT NULL CONSTRAINT gey_site_becken_ck CHECK (becken IN ('UPPER', 'MIDWAY', 'LOWER')),
   breite         NUMBER(10,7)  NOT NULL,
   laenge         NUMBER(11,7)  NOT NULL,
   hoehe_m        NUMBER(6,1),
@@ -86,7 +86,7 @@ BEGIN
   IF :new.site_id IS NULL THEN :new.site_id := gey_site_seq.NEXTVAL; END IF;
 END;
 /
-COMMENT ON TABLE gey_site IS 'Geyser: die sieben Stellen der Absteckung, Punkt in SRID 8307'
+COMMENT ON TABLE gey_site IS 'Geyser: die Stellen der Absteckung (Tasten 1 bis 7 und weitere), Punkt in SRID 8307'
 /
 
 CREATE SEQUENCE gey_geyser_seq
@@ -127,7 +127,7 @@ CREATE TABLE gey_spring (
   spring_id      NUMBER        CONSTRAINT gey_spring_pk PRIMARY KEY,
   code           VARCHAR2(30 CHAR)  NOT NULL CONSTRAINT gey_spring_uk UNIQUE,
   name           VARCHAR2(60 CHAR)  NOT NULL,
-  art            VARCHAR2(8)   NOT NULL CONSTRAINT gey_spring_art_ck CHECK (art IN ('BECKEN', 'SCHLOT', 'KRATER')),
+  art            VARCHAR2(8)   NOT NULL CONSTRAINT gey_spring_art_ck CHECK (art IN ('BECKEN', 'SCHLOT', 'KRATER', 'SCHLAMM')),
   site_id        NUMBER        CONSTRAINT gey_spring_site_fk REFERENCES gey_site (site_id),
   temp_c         NUMBER(4,1),
   abfall_k       NUMBER(4,1),
@@ -259,7 +259,7 @@ CREATE TABLE gey_state (
   name           VARCHAR2(60 CHAR)  NOT NULL CONSTRAINT gey_state_uk UNIQUE,
   tag            NUMBER(3)     CONSTRAINT gey_state_tag_ck CHECK (tag BETWEEN 1 AND 366),
   stunde         NUMBER(6,4)   CONSTRAINT gey_state_stunde_ck CHECK (stunde >= 0 AND stunde < 24),
-  ort            NUMBER(1)     DEFAULT 0 NOT NULL CONSTRAINT gey_state_ort_ck CHECK (ort IN (0, 1)),
+  ort            NUMBER(1)     DEFAULT 0 NOT NULL CONSTRAINT gey_state_ort_ck CHECK (ort IN (0, 1, 2)),
   dreh_x         NUMBER(9,2),
   dreh_y         NUMBER(9,2),
   dreh_z         NUMBER(9,2),

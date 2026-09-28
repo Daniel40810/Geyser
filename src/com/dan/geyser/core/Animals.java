@@ -9,13 +9,16 @@ package com.dan.geyser.core;
  * Die Umrisse sind in Metern gezeichnet (x nach vorn, y nach oben, Boden bei 0).
  */
 public final class Animals {
-    public static final byte BISON = 0, ELK_COW = 1, ELK_BULL = 2, BISON_CALF = 3;
+    public static final byte BISON = 0, ELK_COW = 1, ELK_BULL = 2, BISON_CALF = 3, PERSON = 4;
+    static final int CAP = 320;
 
     public int n;
-    public final float[] x = new float[64], y = new float[64], z = new float[64], hx = new float[64], hz = new float[64];
+    public final float[] x = new float[CAP], y = new float[CAP], z = new float[CAP], hx = new float[CAP], hz = new float[CAP];
     /** Schrittphase (Bogenmaß), Gangstärke 0 (steht, grast) bis 1 (geht), Kopf gesenkt 0..1, Größe. */
-    public final float[] step = new float[64], gait = new float[64], graze = new float[64], scale = new float[64];
-    public final byte[] kind = new byte[64];
+    public final float[] step = new float[CAP], gait = new float[CAP], graze = new float[CAP], scale = new float[CAP];
+    public final byte[] kind = new byte[CAP];
+    /** Besucher: Farbe der Jacke (linear) und der Hose. */
+    public final float[] cr = new float[CAP], cg = new float[CAP], cb = new float[CAP], pr = new float[CAP], pg = new float[CAP], pb = new float[CAP];
 
     /** Körper: Umriss als Punktfolge (x, y) und Farbe (linear, Albedo). */
     static final float[] BISON_BODY = {
@@ -35,6 +38,10 @@ public final class Animals {
     /** Geweih des Bullen: Stange und Enden als Linien (x0, y0, x1, y1), vom Kopf aus. */
     static final float[] ANTLER = {1.12f, 2.15f, 0.70f, 2.85f, 0.70f, 2.85f, 0.25f, 3.20f, 1.05f, 2.30f, 1.40f, 2.55f,
             0.92f, 2.52f, 1.22f, 2.85f, 0.80f, 2.70f, 1.00f, 3.05f, 0.55f, 2.98f, 0.62f, 3.30f};
+
+    /** Mensch, von der Seite: Rumpf mit Jacke, Kopf; Beine eigens (Hüfte bei 0,9 m). */
+    static final float[] PERSON_BODY = {-0.14f, 0.88f, -0.16f, 1.20f, -0.13f, 1.42f, -0.05f, 1.48f, 0.08f, 1.47f, 0.14f, 1.38f, 0.15f, 1.15f, 0.12f, 0.88f};
+    static final float[] PERSON_HEAD = {-0.07f, 1.50f, -0.09f, 1.60f, -0.06f, 1.70f, 0.02f, 1.73f, 0.09f, 1.68f, 0.10f, 1.58f, 0.06f, 1.50f};
 
     /** Beine: Hüft-x, Hüfthöhe, Länge bis zum Huf, Phasenversatz. */
     static final float[][] BISON_LEGS = {{0.75f, 0.70f, 0.70f, 0}, {0.55f, 0.70f, 0.70f, 3.14f}, {-0.95f, 0.85f, 0.85f, 1.57f}, {-1.15f, 0.85f, 0.85f, 4.71f}};

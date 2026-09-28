@@ -37,12 +37,25 @@ public final class Inhalte {
             case "Heart Spring": return "HEART";
             case "Grand Prismatic Spring": return "GRAND_PRISMATIC";
             case "Excelsior Geyser Crater": return "EXCELSIOR";
-            default: return name.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]+", "_");
+            case "Daisy Geyser": return "DAISY";
+            case "Splendid Geyser": return "SPLENDID";
+            case "Grotto Geyser": return "GROTTO";
+            case "Fan Geyser": return "FAN";
+            case "Mortar Geyser": return "MORTAR";
+            case "Turban Geyser": return "TURBAN";
+            case "Beehive's Indicator": return "BEEHIVE_INDICATOR";
+            case "Fountain Paint Pot": return "FOUNTAIN_PAINT_POT";
+            case "Giantess Geyser": return "GIANTESS";
+            default: return name.toUpperCase(Locale.ROOT).replace("Ä", "AE").replace("Ö", "OE").replace("Ü", "UE").replace("ß", "SS")
+                    .replaceAll("[^A-Z0-9]+", "_");
         }
     }
 
     /** Quellen, deren Lage im Code nur genähert ist (nicht aus Koordinaten). */
-    static boolean approx(String code) { return code.equals("CRESTED") || code.equals("DOUBLET") || code.equals("HEART"); }
+    static boolean approx(String code) {
+        return code.equals("CRESTED") || code.equals("DOUBLET") || code.equals("HEART") || code.equals("MORTAR") || code.equals("TURBAN")
+                || code.equals("BEEHIVE_INDICATOR") || code.startsWith("SCHLAMMTOPF");
+    }
 
     static String q(String s) { return s == null ? "NULL" : "'" + s.replace("'", "''") + "'"; }
 
@@ -100,12 +113,13 @@ public final class Inhalte {
             Sites.Site s = Sites.ALL[i];
             stmt(p, "INSERT INTO gey_site (code, name, art, becken, breite, laenge, hoehe_m, lage, saeule_max_m, tafel, taste) VALUES ("
                     + q(Sites.CODES[i]) + ", " + q(s.name) + ", " + q(s.kind == Sites.Kind.GEYSER ? "GEYSIR" : "QUELLE") + ", "
-                    + q(i == 6 ? "MIDWAY" : "UPPER") + ", " + n(s.lat) + ", " + n(s.lon) + ", " + n(s.elevation) + ", "
-                    + point(s.lat, s.lon) + ", " + n(s.height) + ", " + q(s.line) + ", " + (i + 1) + ")");
+                    + q(s.basin == 1 ? "MIDWAY" : s.basin == 2 ? "LOWER" : "UPPER") + ", " + n(s.lat) + ", " + n(s.lon) + ", " + n(s.elevation) + ", "
+                    + point(s.lat, s.lon) + ", " + n(s.height) + ", " + q(s.line) + ", " + (i < 7 ? String.valueOf(i + 1) : "NULL") + ")");
         }
         p.println("-- ------------------------------------------------------------- Geysire");
         for (GeyserModel g : w.geysers.list) {
             int si = Sites.index(g.name);
+            if (si < 0) continue;                 // Nebengeysire (Turban, Indicator, Mortar, Splendid) ohne eigene Stelle
             double[] v = g.params();
             stmt(p, "INSERT INTO gey_geyser (site_id, typ, schlot_r_m, roehre_m, saeule_max_m, kurz_min_s, kurz_max_s, lang_min_s, lang_max_s, "
                     + "anteil_kurz, abstand_kurz_s, abstand_lang_s, streuung_s, dampfphase_s, neigung_grad, stoesse_min, stoesse_max) VALUES ("
@@ -121,7 +135,7 @@ public final class Inhalte {
             double lat = Sites.LAT0 - s.z / Sites.M_LAT, lon = Sites.LON0 + s.x / Sites.M_LON;
             int si = Sites.index(s.name);
             String site = si >= 0 ? "(SELECT site_id FROM gey_site WHERE code = " + q(Sites.CODES[si]) + ")" : "NULL";
-            String art = s.kind == Thermal.Kind.POOL ? "BECKEN" : s.kind == Thermal.Kind.VENT ? "SCHLOT" : "KRATER";
+            String art = s.kind == Thermal.Kind.POOL ? "BECKEN" : s.kind == Thermal.Kind.VENT ? "SCHLOT" : s.kind == Thermal.Kind.MUD ? "SCHLAMM" : "KRATER";
             stmt(p, "INSERT INTO gey_spring (code, name, art, site_id, temp_c, abfall_k, halbachse_x_m, halbachse_z_m, tiefe_m, abfluss_m, saum_m, lage, genaehert) VALUES ("
                     + q(code) + ", " + q(s.name) + ", " + q(art) + ", " + site + ", " + n(round1(s.t0)) + ", " + n(round1(s.drop)) + ", "
                     + n(round1(s.ax)) + ", " + n(round1(s.az)) + ", " + n(round1(s.depth)) + ", " + n(round1(s.runLen)) + ", " + n(round1(s.apron)) + ", "

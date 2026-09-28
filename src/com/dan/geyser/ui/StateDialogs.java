@@ -70,7 +70,7 @@ final class StateDialogs {
             State s = list.get(i);
             String z = (s.tube ? "Schnitt " : "") + (s.thermo ? "Wärmebild " : "") + (s.fauna ? "Tiere" : "");
             rows[i] = new Object[]{s.name, com.dan.geyser.effects.DayNightCycle.dateLabel(s.day) + ", " + com.dan.geyser.effects.DayNightCycle.timeLabel(s.hour),
-                    s.site == 1 ? "Midway" : "Upper", z.trim().isEmpty() ? "–" : z.trim(), s.host == null ? "" : s.host,
+                    s.site == 1 ? "Midway" : s.site == 2 ? "Lower" : "Upper", z.trim().isEmpty() ? "–" : z.trim(), s.host == null ? "" : s.host,
                     s.saved == null ? "" : sf.format(s.saved)};
         }
         FTable t = new FTable();

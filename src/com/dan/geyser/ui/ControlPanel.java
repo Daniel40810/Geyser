@@ -30,7 +30,7 @@ public final class ControlPanel extends JPanel {
     private final ScenePanel scene;
     private final JLabel timeLbl = new JLabel(), dayLbl = new JLabel(), hazeLbl = new JLabel();
     private final FSlider time = new FSlider(0, 239, 90), day = new FSlider(1, 365, DayNightCycle.today()), haze = new FSlider(0, 100, 12);
-    private boolean fromScene, fromSite;
+    private boolean fromScene, fromSite, fromWater, fromWeather;
 
     public ControlPanel(ScenePanel scene) {
         this.scene = scene;
@@ -46,7 +46,7 @@ public final class ControlPanel extends JPanel {
         orbit.addActionListener(e -> { if (scene.controller() != null) scene.controller().autoOrbit = orbit.isSelected(); scene.requestFocusInWindow(); });
         add(row(orbit));
         scene.setOrbitListener(orbit::setSelected);
-        FComboBox where = new FComboBox(new Object[]{"Ort · Upper Geyser Basin", "Ort · Midway (Grand Prismatic)"});
+        FComboBox where = new FComboBox(new Object[]{"Ort · Upper Geyser Basin", "Ort · Midway (Grand Prismatic)", "Ort · Lower (Fountain Paint Pot)"});
         where.addActionListener(e -> {
             if (fromSite) return;
             scene.setSite(where.getSelectedIndex(), true);
@@ -54,7 +54,7 @@ public final class ControlPanel extends JPanel {
         });
         scene.setSiteListener(v -> { fromSite = true; where.setSelectedIndex(v); fromSite = false; });
         add(row(where));
-        note("Das Upper Geyser Basin am Firehole River, von Old Faithful im Südosten bis Morning Glory im Nordwesten; 6,5 km flussabwärts Midway mit Grand Prismatic und Excelsior. Doppelklick auf eine Stelle macht sie zum Drehpunkt; M wechselt den Ort.");
+        note("Das Upper Geyser Basin am Firehole River, von Old Faithful im Südosten bis Morning Glory im Nordwesten; 6,5 km flussabwärts Midway mit Grand Prismatic und Excelsior, 10 km nördlich im Lower Geyser Basin die Schlammtöpfe am Fountain Paint Pot. Doppelklick auf eine Stelle macht sie zum Drehpunkt; M wechselt den Ort.");
 
         gap();
         head("GEYSIRE");
@@ -63,6 +63,9 @@ public final class ControlPanel extends JPanel {
         FButton now = new FButton("Ausbruch jetzt");
         now.addActionListener(e -> { scene.trigger((String) which.getSelectedItem()); scene.requestFocusInWindow(); });
         add(row(now));
+        FButton quiz = new FButton("Rätsel · Wann bricht er aus?");
+        quiz.addActionListener(e -> scene.openGuess());
+        add(row(quiz));
         FButton proto = new FButton("Eruptionsprotokoll");
         proto.addActionListener(e -> { scene.openProtocol(); });
         add(row(proto));
@@ -71,6 +74,19 @@ public final class ControlPanel extends JPanel {
         scene.setFastListener(fast::setSelected);
         add(row(fast));
         note("Jeder Geysir ist ein Röhrenmodell: Das Wasser am Grund siedet erst beim Druck der Säule darüber. Schwappt im Vorspiel Wasser über, sinkt der Druck, das Wasser verdampft schlagartig. Die Tafel oben rechts sagt Old Faithful voraus wie die Ranger: 65 min nach Ausbrüchen unter 2½ min, sonst 91 min. „Warten abkürzen“ läuft bis zum nächsten Ausbruch, X löst den Geysir am Drehpunkt aus.");
+        note("Gekoppelt: Grand bricht ein bis zwei Minuten nach einem Ausbruch von Turban aus, Beehive gut 13 Minuten nach seinem Indicator, Mortar mit Fan. Splendid schläft seit 1998; bricht er aus, verschiebt er Daisy. Während Giantess wallt Doublet Pool.");
+        JLabel waterLbl = new JLabel("Grundwasser  100 %");
+        waterLbl.setForeground(INK);
+        waterLbl.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        add(row(waterLbl));
+        FSlider water = new FSlider(20, 150, 100);
+        water.addChangeListener(e -> {
+            waterLbl.setText("Grundwasser  " + water.getValue() + " %");
+            if (!fromWater) scene.setWater(water.getValue() / 100.0);
+        });
+        scene.setWaterListener(v -> { fromWater = true; water.setValue((int) Math.round(v * 100)); fromWater = false; });
+        add(row(water));
+        note("Wie viel Regen und Schnee der letzten Jahre im Boden steckt. In Dürrejahren werden die Abstände länger: Old Faithful 1997 im Mittel 71, 2006 91 Minuten (Hurwitz u. a. 2008). Unter rund 40 % verstummt er, wie in der Dürre des 13. Jahrhunderts (Hurwitz u. a. 2020). Die Tafel rechnet weiter mit der Regel von heute.");
 
         gap();
         head("STELLEN");
@@ -89,7 +105,7 @@ public final class ControlPanel extends JPanel {
         lab.addActionListener(e -> { scene.setLabels(lab.isSelected()); scene.requestFocusInWindow(); });
         scene.setLabelListener(lab::setSelected);
         add(row(lab));
-        note("Die Tafeln stehen an den Koordinaten (WGS 84) und zeigen Kennzahlen und Zustand: Füllung der Röhre, Temperatur am Grund und Siedepunkt dort. Tasten 1 bis 7, L für die Beschriftung.");
+        note("Die Tafeln stehen an den Koordinaten (WGS 84) und zeigen Kennzahlen und Zustand: Füllung der Röhre, Temperatur am Grund und Siedepunkt dort. Tasten 1 bis 7 für die ersten sieben Stellen, Daisy, Grotto, Fan und Giantess über die Liste; L für die Beschriftung.");
 
         gap();
         head("REGIE");
@@ -129,20 +145,25 @@ public final class ControlPanel extends JPanel {
         FButton grow = new FButton("Sinter-Zeitraffer · Castle");
         grow.addActionListener(e -> { scene.playSinterLapse(); scene.requestFocusInWindow(); });
         add(row(grow));
-        note("Die Lupe zeigt, woraus die Ablagerungen bestehen, bis auf die Atome aus dem ATOMMODEL: Kieselsinter hier im Becken, zum Vergleich Travertin, Schwefel, Eisenoxid, Skorodit und Alunit. Strg+Klick in die Szene öffnet sie für die Quelle dort, Taste U für den Drehpunkt. Der Zeitraffer baut Terrasse und Kegel von Castle in 43 s auf und hält dann an (Taste Z).");
+        FButton glory = new FButton("Morning Glory · 1883 bis heute");
+        glory.addActionListener(e -> { scene.playMorningGlory(); scene.requestFocusInWindow(); });
+        add(row(glory));
+        note("Die Lupe zeigt, woraus die Ablagerungen bestehen, bis auf die Atome aus dem ATOMMODEL: Kieselsinter hier im Becken, zum Vergleich Travertin, Schwefel, Eisenoxid, Skorodit und Alunit. Strg+Klick in die Szene öffnet sie für die Quelle dort, Taste U für den Drehpunkt. Der Zeitraffer baut Terrasse und Kegel von Castle in 43 s auf und hält dann an (Taste Z). Morning Glory zeigt, wie Münzen und Abfall die Quelle abkühlten und die Matten zur Mitte wuchsen (Taste J).");
 
         gap();
         head("ZUGABEN");
         FCheckBox xTube = new FCheckBox("Schnitt durch die Röhre"), xThermo = new FCheckBox("Wärmebild"),
-                xSound = new FCheckBox("Klang"), xFauna = new FCheckBox("Bisons und Wapitis");
+                xSound = new FCheckBox("Klang"), xFauna = new FCheckBox("Bisons und Wapitis"), xPeople = new FCheckBox("Besucher auf den Stegen");
         xFauna.setSelected(true);
+        xPeople.setSelected(true);
+        xPeople.addActionListener(e -> { scene.setVisitors(xPeople.isSelected()); scene.requestFocusInWindow(); });
         xTube.addActionListener(e -> { scene.setTube(xTube.isSelected()); scene.requestFocusInWindow(); });
         xThermo.addActionListener(e -> { scene.setThermo(xThermo.isSelected()); scene.requestFocusInWindow(); });
         xSound.addActionListener(e -> { scene.setSound(xSound.isSelected()); scene.requestFocusInWindow(); });
         xFauna.addActionListener(e -> { scene.setFauna(xFauna.isSelected()); scene.requestFocusInWindow(); });
-        for (FCheckBox cb : new FCheckBox[]{xTube, xThermo, xSound, xFauna}) add(row(cb));
-        scene.setExtrasListener(v -> { xTube.setSelected(v[0]); xThermo.setSelected(v[1]); xSound.setSelected(v[2]); xFauna.setSelected(v[3]); });
-        note("Der Schnitt zeigt Röhre, Wassersäule und Siedepunkt über der Tiefe für den Geysir am Drehpunkt (C). Das Wärmebild färbt nach der Temperatur des Modells (I). Der Klang wird gerechnet: Säulen, Quellen, Fluss, Wind, zur Brunft Wapitis und Bisons (O). Die Tiere grasen auf den Wiesen, im Winter stehen die Bisons auf warmem Boden (N).");
+        for (FCheckBox cb : new FCheckBox[]{xTube, xThermo, xSound, xFauna, xPeople}) add(row(cb));
+        scene.setExtrasListener(v -> { xTube.setSelected(v[0]); xThermo.setSelected(v[1]); xSound.setSelected(v[2]); xFauna.setSelected(v[3]); xPeople.setSelected(v[4]); });
+        note("Der Schnitt zeigt Röhre, Wassersäule und Siedepunkt über der Tiefe für den Geysir am Drehpunkt (C). Das Wärmebild färbt nach der Temperatur des Modells (I). Der Klang wird gerechnet: Säulen, Quellen, Fluss, Wind, zur Brunft Wapitis und Bisons (O). Die Tiere grasen auf den Wiesen, im Winter stehen die Bisons auf warmem Boden (N). Die Besucher sammeln sich vor der Vorhersage am Halbrund um Old Faithful und gehen nach dem Ausbruch; im Juli am meisten, im Winter wenige, bei Regen weniger (F3, Modell).");
 
         gap();
         head("SONNE UND MOND");
@@ -211,6 +232,13 @@ public final class ControlPanel extends JPanel {
         });
         add(row(wind));
         scene.setAirListener(v -> { haze.setValue((int) Math.round(v[0] * 100)); wind.setValue((int) Math.round(v[1] * 100)); });
+        Object[] wm = new Object[com.dan.geyser.effects.Weather.MODES.length];
+        for (int i = 0; i < wm.length; i++) wm[i] = "Wetter · " + com.dan.geyser.effects.Weather.MODES[i];
+        FComboBox weather = new FComboBox(wm);
+        weather.addActionListener(e -> { if (!fromWeather) scene.setWeather(weather.getSelectedIndex()); scene.requestFocusInWindow(); });
+        scene.setWeatherListener(v -> { fromWeather = true; weather.setSelectedIndex(v); fromWeather = false; });
+        add(row(weather));
+        note("Nach Jahreszeit: im Juli und August an etwa jedem dritten Tag nachmittags ein Gewitter, Juli sonst meist trocken, im Winter Schneefall, im Frühjahr und Herbst Regen. Welcher Tag welches Wetter hat, ist ein Modell. Donner kommt mit rund 3 s je km Verspätung. Taste Y wechselt.");
         note("Die Lufttemperatur folgt den Klimanormalwerten 1991–2020 am Old Faithful: je kälter, desto dichter der Dampf; von November bis in den Mai liegt Schnee, an Bäumen nahe den Quellen Raureif. Der Regenbogen steht 42° vom Gegenpunkt der Sonne, bei Vollmond nachts als blasser Mondregenbogen. Dunst ist im Spätsommer oft Rauch von Waldbränden.");
 
         gap();
@@ -256,7 +284,7 @@ public final class ControlPanel extends JPanel {
 
         gap();
         head("TASTEN");
-        note("F1 oder H zeigt alle Tasten. Die wichtigsten: 0 Übersicht · Leertaste Rundflug · 1 bis 7 Stellen · G Blickpunkte · F Fahrten · T Rundgang · B Drehbuch · + − Uhrzeit · P Standbild · K Kinomodus");
+        note("F1 oder H zeigt alle Tasten. Die wichtigsten: 0 Übersicht · Leertaste Rundflug · 1 bis 7 Stellen · G Blickpunkte · F Fahrten · T Rundgang · B Drehbuch · + − Uhrzeit · Y Wetter · J Morning Glory · F2 Rätsel · F3 Besucher · P Standbild · K Kinomodus");
         add(Box.createVerticalGlue());
         sunChanged();
     }

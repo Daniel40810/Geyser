@@ -15,7 +15,9 @@ package com.dan.geyser.world;
  * nachfließen und aufgeheizt werden. Die Heizleistung ist so eingestellt, dass die Abstände der
  * beobachteten Regel folgen (bei Old Faithful 65 min nach Ausbrüchen unter 2½ min, sonst 91 min).</li>
  * </ol>
- * Zeiten in Sekunden der Szenenzeit.
+ * Dazu zwei Einflüsse von außen: das Grundwasser ({@link #water}) bestimmt, wie schnell sich die Röhre
+ * füllt, und gekoppelte Geysire ({@link #gated}) brechen erst aus, wenn ein Nachbar sie auslöst
+ * (siehe {@link Couplings}). Zeiten in Sekunden der Szenenzeit.
  */
 public final class GeyserModel {
     public enum Type { CONE, FOUNTAIN }
@@ -44,6 +46,29 @@ public final class GeyserModel {
     public double floor = Double.NaN;
     /** Quelle für Bildschirm und Werkbuch. */
     public final String source;
+    /** Streuung der Strahlen (1 = normal; Fan Geyser fächert weit auf). */
+    public double spread = 1;
+    /** Stöße je Stunde bei langen Fontänenausbrüchen (Giantess); 0 = Anzahl aus burstsMin, burstsMax. */
+    public double burstsPerHour;
+    /**
+     * Grundwasser 0,2..1,5 (1 = heute): Wie schnell und wie hoch sich die Röhre füllt. In Dürrejahren
+     * werden die Abstände länger (Old Faithful 1997 im Mittel 71, 2006 91 Minuten, Hurwitz u. a. 2008);
+     * unter rund 40 % füllt sich die Röhre nicht mehr bis zum Rand und der Geysir verstummt, wie Old
+     * Faithful in der Dürre des 13. Jahrhunderts (Hurwitz u. a. 2020). Der Verlauf ist ein Modell.
+     */
+    public double water = 1;
+    /**
+     * Gekoppelt: Am Siedepunkt bricht der Geysir nicht selbst aus, sondern wartet, bis ein Nachbar ihn
+     * mit {@link #release} auslöst; nach holdMax Sekunden bricht er trotzdem aus.
+     */
+    public boolean gated;
+    public double holdMax = 1800;
+    /** Worauf ein gekoppelter Geysir wartet (für die Tafel), etwa „Turban“. */
+    public String waitsFor;
+    /** Nebengeysir (Turban, Indicator, Mortar): nicht im Protokoll und nicht in der Auswahl. */
+    public boolean minor;
+    /** Zeitkonstante des Nachfüllens (s); kleine Geysire mit kurzen Abständen füllen schneller. */
+    public double refill = 600;
 
     // ------------------------------------------------------------ Zustand
 
@@ -63,6 +88,13 @@ public final class GeyserModel {
     public int eruptions;
     /** true, wenn der laufende Ausbruch von Hand ausgelöst wurde (dann zählt die Vorhersage nicht). */
     public boolean manual;
+    /** Am Grund siedet es, der gekoppelte Geysir wartet auf den Auslöser; seit readyFor Sekunden. */
+    public boolean ready;
+    private double readyFor;
+    /** Geplanter Beginn durch eine Kopplung (NaN: keiner), fest vorgegebene Dauer und Höhe (NaN: frei). */
+    private double pendingAt = Double.NaN, forceDur = Double.NaN, forceH = Double.NaN;
+    /** Der laufende oder letzte Ausbruch war ein kurzer (für die Regel der Ranger). */
+    private boolean shortOne;
     private final java.util.Random rnd;
 
     GeyserModel(String name, Type type, double x, double y, double z, double ventR, double tubeDepth, double hMax,
@@ -139,14 +171,54 @@ public final class GeyserModel {
         manual = true;
     }
 
+    /** Kopplung: Ausbruch in delay Sekunden (aus Vorspiel oder Nachfüllen). */
+    public void release(double now, double delay) {
+        if (phase == Phase.ERUPTION || phase == Phase.STEAM) return;
+        pendingAt = now + Math.max(0, delay);
+    }
+
+    /** Kopplung: jetzt ausbrechen, mit fester Dauer (s) und Höhenfaktor; läuft ein Ausbruch, wird er verlängert. */
+    public void forceEruption(double now, double dur, double hf) {
+        if (phase == Phase.ERUPTION) { duration = Math.max(duration, tPhase + dur); hFactor = Math.max(hFactor, hf); return; }
+        forceDur = dur;
+        forceH = hf;
+        fill = 1;
+        tBottom = boilAtBottom(1, 0);
+        beginEruption(now);
+    }
+
+    /** Dauer des letzten beendeten oder gerade laufenden Wasserausbruchs (s), NaN: keiner. */
+    public double lastEruptionDuration() { return phase == Phase.ERUPTION || phase == Phase.STEAM ? duration : lastDuration; }
+
+    /** Vorhersage nach der Regel der Ranger aus dem letzten Ausbruch (auch schon in der Dampfphase). */
+    public double rulePrediction() {
+        if (Double.isNaN(lastStart)) return Double.NaN;
+        return lastStart + (shortOne && intShort > 0 ? intShort : intLong);
+    }
+
+    /** Ist ein Ausbruch durch eine Kopplung geplant? */
+    public boolean pending() { return !Double.isNaN(pendingAt); }
+
+    /** Füllung, der die Röhre beim Nachfüllen zustrebt: mit wenig Grundwasser bleibt sie unter dem Rand. */
+    double fillTarget() { return Math.min(1.05, 0.7 + 0.75 * water); }
+
+    /** Faktor auf die Abstände nach dem Grundwasser (1 bei heutigem Stand). */
+    public static double intervalScale(double water) { return Math.sqrt(1 / Math.max(0.2, water)); }
+
+    /** Verstummt der Geysir bei diesem Grundwasser (die Röhre füllt sich nicht mehr bis zum Rand)? */
+    public boolean silenced() { return fillTarget() < 0.985; }
+
     /** Ein Zeitschritt dt (Sekunden Szenenzeit). */
     public void step(double now, double dt) {
         tPhase += dt;
         switch (phase) {
             case RECHARGE: {
-                fill = Math.min(1, fill + dt / 600.0 * (1.05 - fill));
+                fill = Math.min(1, fill + dt / refill * water * (fillTarget() - fill));
                 tBottom += heat * dt;
+                if (!Double.isNaN(pendingAt) && now >= pendingAt) { fill = 1; tBottom = boilAtBottom(1, 0); beginEruption(now); break; }
                 double tb = boilAtBottom(fill, 0);
+                // ohne volle Röhre kein Vorspiel: das Wasser am Grund bleibt knapp unter dem Sieden
+                if (fill <= 0.985) tBottom = Math.min(tBottom, tb - PRE);
                 if (fill > 0.985 && tBottom > tb - PRE) { phase = Phase.PREPLAY; tPhase = 0; nextSurge = 5 + 20 * rnd.nextDouble(); }
                 break;
             }
@@ -161,7 +233,15 @@ public final class GeyserModel {
                     surgeH = 1 + 5 * rnd.nextDouble() * rnd.nextDouble();
                     nextSurge = tPhase + surgeLeft + 12 + 40 * rnd.nextDouble();
                 }
-                if (tBottom >= boilAtBottom(fill, drop)) beginEruption(now);
+                if (!Double.isNaN(pendingAt) && now >= pendingAt) { beginEruption(now); break; }
+                double bb = boilAtBottom(fill, drop);
+                if (tBottom >= bb) {
+                    if (!gated || readyFor >= holdMax) { beginEruption(now); break; }
+                    // Gekoppelt: am Siedepunkt halten und auf den Nachbarn warten
+                    tBottom = bb;
+                    ready = true;
+                    readyFor += dt;
+                }
                 break;
             }
             case ERUPTION: {
@@ -182,13 +262,19 @@ public final class GeyserModel {
         phase = Phase.ERUPTION;
         tPhase = 0;
         surgeLeft = 0;
-        boolean shortOne = rnd.nextDouble() < shortFrac;
+        pendingAt = Double.NaN;
+        ready = false;
+        readyFor = 0;
+        shortOne = rnd.nextDouble() < shortFrac;
         duration = shortOne ? lerp(shortMin, shortMax, rnd.nextDouble()) : lerp(longMin, longMax, rnd.nextDouble());
         hFactor = 0.78 + 0.22 * rnd.nextDouble();
+        if (!Double.isNaN(forceDur)) { duration = forceDur; shortOne = false; forceDur = Double.NaN; }
+        if (!Double.isNaN(forceH)) { hFactor = forceH; forceH = Double.NaN; }
         lastStart = now;
         eruptions++;
         if (type == Type.FOUNTAIN) {
-            int nb = burstsMin + rnd.nextInt(Math.max(1, burstsMax - burstsMin + 1));
+            int nb = burstsPerHour > 0 ? Math.max(1, (int) Math.round(duration / 3600 * burstsPerHour))
+                    : burstsMin + rnd.nextInt(Math.max(1, burstsMax - burstsMin + 1));
             bursts = new double[3 * nb];
             double gap = duration / nb;
             for (int b = 0; b < nb; b++) {
@@ -203,14 +289,16 @@ public final class GeyserModel {
 
     private void endCycle(double now) {
         lastDuration = duration;
-        double interval = duration < 150 && intShort > 0 ? intShort : intLong;
-        interval += (rnd.nextDouble() * 2 - 1) * intSpread;
-        predicted = lastStart + (duration < 150 && intShort > 0 ? intShort : intLong);
+        boolean sh = shortOne && intShort > 0;
+        // Regel der Ranger: der Abstand hängt an der Art des letzten Ausbruchs; das Grundwasser kennt sie nicht
+        double rule = sh ? intShort : intLong;
+        double interval = (rule + (rnd.nextDouble() * 2 - 1) * intSpread) * intervalScale(water);
+        predicted = lastStart + rule;
         double wait = Math.max(120, lastStart + interval - now);
         // So viel Säule ging hinaus: nachfüllen, dabei kühlt das Wasser am Grund; Heizleistung passt zum Abstand
         phase = Phase.RECHARGE;
         tPhase = 0;
-        fill = Math.max(0.2, 0.9 - 0.6 * duration / Math.max(longMax, 1));
+        fill = Math.min(fillTarget() - 0.02, Math.max(0.2, 0.9 - 0.6 * duration / Math.max(longMax, 1)));
         double target = boilAtBottom(1, 0) - PRE;
         double start = target - 18 - 10 * (1 - fill);
         tBottom = start;
@@ -256,6 +344,26 @@ public final class GeyserModel {
         }
     }
 
+    /**
+     * Hydrothermaler Tremor 0..1, wie ihn Seismometer am Old Faithful messen: Dampfblasen fallen in
+     * kälterem Wasser zusammen. Der tieffrequente Tremor wächst in den letzten rund 45 Minuten vor
+     * einem Ausbruch, ist im Vorspiel am stärksten und bricht mit dem Ausbruch ab (Kedar u. a. 1998;
+     * Wu u. a. 2019). Hier aus der Zeit, bis das Wasser am Grund siedet.
+     */
+    public double tremor() {
+        switch (phase) {
+            case RECHARGE: {
+                if (silenced()) return 0.05;
+                double left = heat > 0 ? (boilAtBottom(fill, 0) - PRE - tBottom) / heat : 1e9;
+                if (fill < 0.9) left = Math.max(left, (0.985 - fill) / Math.max(1e-6, water) * refill);
+                return 0.05 + 0.6 * smooth(2700, 0, left);
+            }
+            case PREPLAY: return Math.min(1, 0.7 + 0.3 * (surgeLeft > 0 ? 1 : 0) + (ready ? 0.1 : 0));
+            case ERUPTION: return tPhase < 20 ? 0.6 * (1 - tPhase / 20) : 0.03;
+            default: return 0.03;
+        }
+    }
+
     /** Wie weit die Säule in der Röhre gerade durch Überschwappen abgesenkt ist (m), für den Schnitt. */
     public double surgeDrop() { return phase == Phase.PREPLAY && surgeLeft > 0 ? 0.25 + surgeH * 0.12 : 0; }
 
@@ -284,8 +392,9 @@ public final class GeyserModel {
         switch (phase) {
             case ERUPTION: return String.format(java.util.Locale.GERMANY, "Ausbruch · %.0f m · %d:%02d", height(now), (int) tPhase / 60, (int) tPhase % 60);
             case STEAM: return "Dampfphase";
-            case PREPLAY: return "Vorspiel · bald";
+            case PREPLAY: return ready && waitsFor != null ? "bereit · wartet auf " + waitsFor : "Vorspiel · bald";
             default: {
+                if (silenced()) return "verstummt · zu wenig Grundwasser";
                 double tb = boilAtBottom(fill, 0);
                 return String.format(java.util.Locale.GERMANY, "Röhre %.0f %% · Grund %.1f °C, siedet bei %.1f °C", fill * 100, tBottom, tb);
             }

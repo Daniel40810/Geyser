@@ -8,14 +8,20 @@ import javax.sound.sampled.SourceDataLine;
  * Klang des Beckens, ohne Tondateien Probe für Probe gerechnet (Aufbau aus Semiramis), in Stereo:
  * das Tosen einer Säule, das Zischen der Dampfphase, das Schwappen im Vorspiel, Blasen in heißen
  * Quellen, der Firehole, Wind, im Herbst das Röhren der Wapitibullen (Brunft Anfang September bis
- * Mitte Oktober, NPS) und im Sommer das Brüllen der Bisons (Brunft Juli und August, NPS). Die
- * Bildschleife setzt die Pegel und die Richtung nach dem Ort der Kamera.
+ * Mitte Oktober, NPS) und im Sommer das Brüllen der Bisons (Brunft Juli und August, NPS). Vor einem
+ * Ausbruch dumpfe Schläge zusammenfallender Dampfblasen und ein Grollen (der Tremor, den Seismometer
+ * messen, liegt mit 1 bis 5 Hz unter der Hörschwelle; hörbar gemacht). Die Bildschleife setzt die
+ * Pegel und die Richtung nach dem Ort der Kamera.
  */
 public final class GeyserSound {
     public static final int RATE = 22050;
 
     /** Pegel 0..1 und Richtung −1 (links) .. 1 (rechts), von der Bildschleife gesetzt. */
     public volatile float roar, roarPan, hiss, splash, boil, boilPan, river, wind, master = 1.6f;
+    /** Tremor vor dem Ausbruch 0..1 und Richtung; Regen 0..1. */
+    public volatile float tremor, tremorPan, rain;
+    /** Donner auslösen: Pegel, Verzögerung (s, Schall braucht rund 3 s je km) und Richtung. */
+    private volatile float thunderReq = -1, thunderDelay, thunderPan;
     /** Ruf eines Wapitibullen oder Bisons auslösen: Pegel und Richtung. */
     private volatile float bugleReq = -1, buglePan, bellowReq = -1, bellowPan;
 
@@ -29,9 +35,14 @@ public final class GeyserSound {
     private float bubT;
     private double bgT = -1, bgPh, bgPh2, bgLevel, bgPan;
     private double blT = -1, blPh, blLevel, blPan;
+    private float thT, thEnv, thF, lp7, lp8, lp9, rnLp;
+    private double thPh;
+    private double tdT = -1, tdLevel, tdPan, tdWait;
+    private float tdLp, tdLp2;
 
     public void bugle(float level, float pan) { buglePan = pan; bugleReq = level; }
     public void bellow(float level, float pan) { bellowPan = pan; bellowReq = level; }
+    public void thunder(float level, float delay, float pan) { thunderPan = pan; thunderDelay = delay; thunderReq = level; }
 
     /** Öffnet den Tonausgang und startet den Klang; false, wenn es keinen gibt. */
     public synchronized boolean start() {
@@ -87,6 +98,8 @@ public final class GeyserSound {
         float ro = roar, rp = roarPan, hi = hiss, spl = splash, bo = boil, bp = boilPan, rv = river, wi = wind, ms = master;
         if (bugleReq >= 0) { bgT = 0; bgLevel = bugleReq; bgPan = buglePan; bgPh = 0; bgPh2 = 0; bugleReq = -1; }
         if (bellowReq >= 0) { blT = 0; blLevel = bellowReq; blPan = bellowPan; blPh = 0; bellowReq = -1; }
+        if (thunderReq >= 0) { tdT = 0; tdWait = thunderDelay; tdLevel = thunderReq; tdPan = thunderPan; thunderReq = -1; }
+        float tr = tremor, tp = tremorPan, rn = rain;
         for (int i = 0; i < n; i++) {
             float w = noise();
             // Säule: tiefes Grollen und breites Rauschen, in langsamen Stößen
@@ -168,15 +181,49 @@ public final class GeyserSound {
                 blT += dt;
                 if (blT > 1.4) blT = -1;
             }
+            // Tremor: dumpfe Schläge zusammenfallender Blasen, darunter ein Grollen
+            float sTrem = 0;
+            if (tr > 0.01f) {
+                thT -= dt;
+                if (thT <= 0) { thT = (0.12f + 1.1f * rnd()) / (0.25f + 2.2f * tr); thEnv = 0.4f + 0.6f * rnd(); thF = 34 + 32 * rnd(); thPh = 0; }
+                thPh += 2 * Math.PI * thF * dt;
+                thEnv *= 0.99925f;
+                lp7 += (w - lp7) * 0.010f;
+                lp8 += (lp7 - lp8) * 0.010f;
+                sTrem = (float) (Math.sin(thPh) * thEnv * 0.9 + lp8 * 9.0 * tr) * tr;
+            }
+            // Regen: dichtes, helles Rauschen
+            float sRain = 0;
+            if (rn > 0.01f) {
+                rnLp += (w - rnLp) * 0.6f;
+                lp9 += (w - lp9) * 0.08f;
+                sRain = ((w - rnLp) * 0.35f + lp9 * 0.6f) * rn;
+            }
+            // Donner: nach der Laufzeit ein Knall, dann langes Rollen
+            float sThu = 0;
+            if (tdT >= 0) {
+                tdT += dt;
+                double u = tdT - tdWait;
+                if (u > 0) {
+                    tdLp += (w - tdLp) * 0.03f;
+                    tdLp2 += (tdLp - tdLp2) * 0.05f;
+                    double env = (u < 0.08 ? u / 0.08 : Math.exp(-(u - 0.08) / 1.6)) * (0.7 + 0.3 * Math.sin(u * 7.3) * Math.sin(u * 2.1));
+                    sThu = (float) (tdLp2 * 14 * env * tdLevel);
+                    if (u > 7) tdT = -1;
+                }
+            }
             // Mischen mit Richtung (gleiche Leistung)
             float c = sRiver + sWind;
             float rl = (float) Math.cos((rp + 1) * Math.PI / 4), rr = (float) Math.sin((rp + 1) * Math.PI / 4);
             float bl = (float) Math.cos((bp + 1) * Math.PI / 4), br = (float) Math.sin((bp + 1) * Math.PI / 4);
             float gl = (float) Math.cos((bgPan + 1) * Math.PI / 4), gr = (float) Math.sin((bgPan + 1) * Math.PI / 4);
             float nl = (float) Math.cos((blPan + 1) * Math.PI / 4), nr = (float) Math.sin((blPan + 1) * Math.PI / 4);
+            float tl = (float) Math.cos((tp + 1) * Math.PI / 4), trr = (float) Math.sin((tp + 1) * Math.PI / 4);
+            float dl = (float) Math.cos((tdPan + 1) * Math.PI / 4), dr = (float) Math.sin((tdPan + 1) * Math.PI / 4);
             float g = sRoar + sHiss + sSplash;
-            float L = (c * 0.7071f + g * rl + sBub * bl + sBug * gl + sBel * nl) * ms;
-            float R = (c * 0.7071f + g * rr + sBub * br + sBug * gr + sBel * nr) * ms;
+            c += sRain;
+            float L = (c * 0.7071f + g * rl + sBub * bl + sBug * gl + sBel * nl + sTrem * tl + sThu * dl) * ms;
+            float R = (c * 0.7071f + g * rr + sBub * br + sBug * gr + sBel * nr + sTrem * trr + sThu * dr) * ms;
             out[2 * i] = (short) (Math.tanh(L) * 30000);
             out[2 * i + 1] = (short) (Math.tanh(R) * 30000);
         }
