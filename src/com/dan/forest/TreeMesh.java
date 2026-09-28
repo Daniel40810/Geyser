@@ -33,17 +33,26 @@ public final class TreeMesh {
     private TreeMesh(TreeModel model, int lod) { this.model = model; this.lod = lod; }
 
     /** Baut die Geometrie der Stufe lod (0 bis 3). */
-    public static TreeMesh build(TreeModel m, int lod) {
+    public static TreeMesh build(TreeModel m, int lod) { return build(m, lod, lod); }
+
+    /**
+     * Wie {@link #build(TreeModel, int)}, aber Stamm und Äste in der Stufe barkLod (0 bis 2, nicht
+     * feiner als lod): etwa Blätter der Stufe 1 an Ästen der Stufe 2 für viele Laubbäume in mittlerer
+     * Entfernung. Blätter an weggelassenen Zweigen bleiben an ihrem Ort.
+     */
+    public static TreeMesh build(TreeModel m, int lod, int barkLod) {
         TreeMesh t = new TreeMesh(m, lod);
         if (lod >= 3) return silhouette(m, 6, 7);
+        barkLod = Math.max(lod, Math.min(2, barkLod));
         Species sp = m.species;
         int[][] sides = {{10, 6, 4, 3}, {6, 4, 3, 3}, {5, 3, 3, 3}};
-        int skipLevel = lod == 0 ? 99 : lod == 1 ? 3 : 2;
+        int skipBark = barkLod == 0 ? 99 : barkLod == 1 ? 3 : 2;
         for (TreeModel.Branch b : m.branches) {
-            if (b.level >= skipLevel) continue;
-            if (lod == 2 && b.level == 1 && b.rel < 0.35f) continue;
-            t.tube(b, sides[lod][Math.min(3, b.level)]);
+            if (b.level >= skipBark) continue;
+            if (barkLod == 2 && b.level == 1 && b.rel < 0.35f) continue;
+            t.tube(b, sides[barkLod][Math.min(3, b.level)]);
         }
+        int skipLevel = lod == 0 ? 99 : lod == 1 ? 3 : 2;
         java.util.Random rnd = new java.util.Random(m.seed ^ 0x5DEECE66DL);
         if (lod < 2) {
             java.util.List<Integer> ids = new java.util.ArrayList<>(), first = new java.util.ArrayList<>();

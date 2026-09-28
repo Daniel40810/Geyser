@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 /** Sammelt Ecken und Dreiecke und baut daraus ein {@link Mesh}. Übernommen aus Semiramis. */
 public final class MeshBuilder {
-    private float[] pos = new float[3 * 8192], nrm = new float[3 * 8192], sky = new float[8192], sway = new float[8192];
+    private float[] pos = new float[3 * 8192], nrm = new float[3 * 8192], sky = new float[8192], sway = new float[8192], flutter = new float[8192];
     private int[] spin = new int[8192];
     private final java.util.List<double[]> spinners = new java.util.ArrayList<>();
 
@@ -12,6 +12,8 @@ public final class MeshBuilder {
     public double swayValue;
     public interface SwayFn { double sway(double x, double y, double z); }
     public SwayFn swayFn;
+    /** Zittern der Blätter für alle folgenden Ecken (Meter, entlang der Normale). */
+    public double flutterValue;
     /** Drehkörper für alle folgenden Ecken, −1 = keiner. */
     public int spinId = -1;
 
@@ -46,6 +48,7 @@ public final class MeshBuilder {
             nrm = Arrays.copyOf(nrm, nrm.length * 2);
             sky = Arrays.copyOf(sky, sky.length * 2);
             sway = Arrays.copyOf(sway, sway.length * 2);
+            flutter = Arrays.copyOf(flutter, flutter.length * 2);
             spin = Arrays.copyOf(spin, spin.length * 2);
         }
         double l = Math.sqrt(nx * nx + ny * ny + nz * nz);
@@ -55,6 +58,7 @@ public final class MeshBuilder {
         nrm[o] = (float) (nx / l); nrm[o + 1] = (float) (ny / l); nrm[o + 2] = (float) (nz / l);
         sky[nv] = skyFn == null ? 1f : Math.max(0f, Math.min(1f, skyFn.sky(x, y, z, nx / l, ny / l, nz / l)));
         sway[nv] = (float) (swayFn != null ? swayFn.sway(x, y, z) : swayValue);
+        flutter[nv] = (float) flutterValue;
         spin[nv] = spinId;
         return nv++;
     }
@@ -252,6 +256,7 @@ public final class MeshBuilder {
                 nc, Arrays.copyOf(cs, nc), Arrays.copyOf(cc, nc), Arrays.copyOf(cg, nc), cb);
         System.arraycopy(sky, 0, mesh.sky, 0, nv);
         System.arraycopy(sway, 0, mesh.sway, 0, nv);
+        System.arraycopy(flutter, 0, mesh.flutter, 0, nv);
         System.arraycopy(spin, 0, mesh.spin, 0, nv);
         mesh.spinners = spinners.toArray(new double[0][]);
         return mesh;

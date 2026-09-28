@@ -130,6 +130,10 @@ public final class StillRender {
             for (int k = 0; k < 4000; k++) vis.update(0.25, day, hour, Math.max(wx.rain, wx.snow * 0.5), ofOn ? 2 : 40, false, false);
             vis.fill(an);
             r.animals = an;
+            // Laub nach der Jahreszeit; im Herbst eine Minute Blätterfall um die Kamera
+            w.grove.setSeason(day, Thermal.snow);
+            for (int k = 0; k < 1800; k++) w.grove.update(dt, 0.35, 0.8, 0.6, pose[0], pose[2], w.scene.terrain);
+            r.leaves = w.grove.quads;
             r.setSky(dc, Math.min(1, 0.12 + 0.3 * wx.overcast));
             r.rainWet = wx.rain * 0.8f;
             r.day = day; r.hour = hour; r.sidereal = dc.siderealDeg;

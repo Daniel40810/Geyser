@@ -24,7 +24,11 @@ public final class Mat {
     public static final int ANIMAL = 12;
     /** Wasser: der Fluss und die heißen Quellen (Farbe aus Tiefe und Temperatur). */
     public static final int WATER = 13, RIVER = 14, POOL = 15;
-    public static final int COUNT = 19;
+    /** Laub der Espen: Farbe nach Jahreszeit ({@link Materials#leafLut}). */
+    public static final int LEAVES = 19;
+    /** Rinde der Espe: hell, grünlich weiß, mit dunklen Narben. */
+    public static final int WHITEBARK = 20;
+    public static final int COUNT = 21;
 
     public static boolean water(int m) { return m >= WATER && m <= 18; }
 

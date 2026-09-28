@@ -19,7 +19,16 @@ public final class Materials {
         SPEC[Mat.CONE] = 0.05f; SHIN[Mat.CONE] = 30;
         SPEC[Mat.NEEDLES] = 0.03f; SHIN[Mat.NEEDLES] = 14;
         TRANS[Mat.NEEDLES] = 0.18f;
+        SPEC[Mat.LEAVES] = 0.05f; SHIN[Mat.LEAVES] = 20;
+        TRANS[Mat.LEAVES] = 0.35f;
     }
+
+    /**
+     * Farben des Espenlaubs nach der Jahreszeit (linear, 3 je Ton, Töne von 0 bis 1 gleichmäßig
+     * verteilt); gesetzt von {@link com.dan.geyser.world.Grove}. Der Ton kommt aus dem Ort: ganze Haine
+     * (in der Natur ein Klon aus einer Wurzel) färben sich gemeinsam, darin jedes Büschel etwas anders.
+     */
+    public static volatile float[] leafLut = {0.08f, 0.22f, 0.04f, 0.08f, 0.22f, 0.04f};
 
     /** Das Gelände liefert Bodenkarte und Quellen; gesetzt, sobald die Szene steht. */
     public static volatile Terrain terrain;
@@ -136,6 +145,31 @@ public final class Materials {
                 frost(x, z, n[1], a, 0.75f, o);
                 // Tiefe in der Krone: innen dunkler
                 return 0.55f + 0.45f * a;
+            }
+            case Mat.LEAVES: {
+                bump(n, x, y, z, 0.35f, 2.2f);
+                float clone = Noise.tex(x * 0.035f + 3.1f, z * 0.035f + 7.7f);
+                float a = Noise.tex(x * 2.3f + y * 0.9f, z * 2.3f + y * 0.7f);
+                float tone = Math.max(0, Math.min(1, 1.6f * (clone - 0.5f) + 0.5f + 0.5f * (a - 0.5f)));
+                float[] lut = leafLut;
+                int nt = lut.length / 3;
+                float f = tone * (nt - 1);
+                int i0 = Math.min(nt - 2, (int) f);
+                float w = f - i0;
+                float k = 0.8f + 0.4f * (a - 0.5f);
+                for (int c = 0; c < 3; c++) o[c] = (lut[3 * i0 + c] + (lut[3 * i0 + 3 + c] - lut[3 * i0 + c]) * w) * k;
+                frost(x, z, n[1], a, 0.8f, o);
+                return 0.6f + 0.4f * a;
+            }
+            case Mat.WHITEBARK: {
+                // Espe: kalkweiß mit Grünstich, dunkle Narben unter den Ästen
+                float a = Noise.tex(x * 4 + z * 4, y * 1.2f);
+                float scar = Noise.tex((x + z) * 9, y * 5.5f);
+                float k = 0.85f + 0.3f * (a - 0.5f);
+                if (scar > 0.78f) { o[0] = 0.05f; o[1] = 0.05f; o[2] = 0.04f; }
+                else { o[0] = 0.42f * k; o[1] = 0.45f * k; o[2] = 0.36f * k; }
+                frost(x, z, n[1], a, 0.7f, o);
+                return 0.9f;
             }
             case Mat.SNAG: {
                 // abgestorbene Kiefer: silbergrau, unten weiß von aufgesogener Kieselsäure

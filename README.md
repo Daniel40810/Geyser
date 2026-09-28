@@ -47,7 +47,7 @@ Grotto hat normale Ausbrüche von ein bis zwei Stunden und nach einigen davon ei
 - Midway Geyser Basin mit Grand Prismatic Spring, dem Krater von Excelsior und dem Aussichtspunkt am Hang
 - Lower Geyser Basin mit den Schlammtöpfen am Fountain Paint Pot: grau-rosa Ton, in dem Blasen wachsen, platzen und Batzen werfen
 
-Dazu kommen der Firehole River, Stege und Brücken, rund 10 500 Drehkiefern und tote Stämme mit weißen „Bobby Socks“. Die Farben der Quellen folgen einem Temperaturfeld nach den Angaben des NPS: tiefblau in der heißen Mitte, dann gelbgrün, orange, rostrot und braun. Im Sommer leuchten die Matten orange, im Winter werden sie olivgrün.
+Dazu kommen der Firehole River, Stege und Brücken, rund 11 700 Drehkiefern, gut 200 Espen in Hainen am Waldrand und tote Stämme mit weißen „Bobby Socks“. Die Farben der Quellen folgen einem Temperaturfeld nach den Angaben des NPS: tiefblau in der heißen Mitte, dann gelbgrün, orange, rostrot und braun. Im Sommer leuchten die Matten orange, im Winter werden sie olivgrün.
 
 ![Das Upper Geyser Basin von Südosten, vorn Old Faithful](docs/bilder/readme/uebersicht.png)
 
@@ -127,9 +127,21 @@ Dazu kommen der Firehole River, Stege und Brücken, rund 10 500 Drehkiefern und 
 - Yellowstone: Drehkiefer, Espe, Douglasie
 - Mitteleuropa: Eiche, Buche, Birke, Fichte
 
-Stamm, Äste und Blätter bewegen sich getrennt im böigen Wind. Mit der Jahreszeit treiben die Bäume aus, färben sich und werfen ihr Laub ab, die Blätter trudeln zu Boden. Ferne Bäume werden in vier Stufen vereinfacht. Die Kiefern im Becken stammen jetzt aus diesem Paket. Einzelheiten zur Benutzung stehen in [`src/com/dan/forest/README.md`](src/com/dan/forest/README.md). Zum Ausprobieren startet man `com.dan.forest.demo.ForestDemo`.
+Stamm, Äste und Blätter bewegen sich getrennt im böigen Wind. Mit der Jahreszeit treiben die Bäume aus, färben sich und werfen ihr Laub ab, die Blätter trudeln zu Boden. Ferne Bäume werden in vier Stufen vereinfacht. Einzelheiten zur Benutzung stehen in [`src/com/dan/forest/README.md`](src/com/dan/forest/README.md). Zum Ausprobieren startet man `com.dan.forest.demo.ForestDemo`.
 
 ![Die sieben Arten](docs/bilder/wald/arten.png)
+
+**Im Becken.** Die Bäume der Szene kommen aus diesem Paket (`world/Grove`):
+
+- **Drehkiefern:** Tief im Wald stehen sie als leichte Silhouetten. Am Waldrand nahe den Stegen haben sie Äste und Nadelballen.
+- **Espenhaine:** Sie stehen am Waldrand, haben weiße Rinde und Laub, das im Wind zittert. Im Juni treiben sie aus, im September werden sie goldgelb, bis Mitte Oktober sind sie kahl, im Winter liegt Schnee auf den Ästen. Ein Hain ist in der Natur ein einziger Klon und färbt sich gemeinsam.
+- **Laubfall:** Im Herbst lösen sich Blätter um die Kamera, segeln im Wind und bleiben eine Weile liegen.
+
+Alles richtet sich nach dem eingestellten Tag. Die Szene hat damit 2,15 statt 1,29 Mio. Dreiecke. Bei bewegter Kamera braucht ein Bild dadurch etwa 20 bis 35 ms länger.
+
+![Espenhain am Waldrand im September](docs/bilder/wald/geyser_espen.png)
+
+![Ein Espenhain im Jahr: Juni, August, September, Oktober](docs/bilder/wald/geyser_jahr.png)
 
 | | |
 |---|---|
@@ -239,7 +251,7 @@ src/com/dan/geyser/
   GeyserApp.java    Einstieg, FFrame
   core/             Renderer, Gelände, Temperaturfeld, Materialien, Schatten, Tiere
   effects/          Himmel, Sonne und Mond, Sterne, Klima, Wetter, Teilchen, Klang
-  world/            Becken, Geysire und Röhrenmodell, Kopplungen, Stellen, Wege, Tiere, Besucher, Morning Glory
+  world/            Becken, Geysire und Röhrenmodell, Kopplungen, Stellen, Wege, Bäume, Tiere, Besucher, Morning Glory
   camera/           Kamerasteuerung, Pfade, Blickpunkte, Regie
   atom/             Mineral-Lupe, Mineralien, Elemente, Sinter-Zeitraffer
   db/               Datenbankzugriff, Belege, Einrichter

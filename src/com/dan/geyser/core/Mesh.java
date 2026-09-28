@@ -16,16 +16,18 @@ public final class Mesh {
         int[] m = moving;
         if (m != null) return m;
         int n = 0;
-        for (int v = 0; v < nv; v++) if (sway[v] != 0 || spin[v] >= 0) n++;
+        for (int v = 0; v < nv; v++) if (sway[v] != 0 || flutter[v] != 0 || spin[v] >= 0) n++;
         m = new int[n];
         n = 0;
-        for (int v = 0; v < nv; v++) if (sway[v] != 0 || spin[v] >= 0) m[n++] = v;
+        for (int v = 0; v < nv; v++) if (sway[v] != 0 || flutter[v] != 0 || spin[v] >= 0) m[n++] = v;
         return moving = m;
     }
     public final float[] pos, nrm;   // 3 je Ecke
     public final float[] sky;        // Himmelssicht je Ecke, 0..1 (1 = frei)
     /** Ausschlag im Wind je Ecke in Metern bei vollem Wind (0 = starr). */
     public final float[] sway;
+    /** Zittern der Blätter je Ecke in Metern bei vollem Wind, entlang der Normale (0 = keins). */
+    public final float[] flutter;
     /** Drehkörper je Ecke (−1 = keiner) und die Drehachsen: Ursprung, Richtung, Winkelgeschwindigkeit. */
     public final int[] spin;
     public double[][] spinners = new double[0][];
@@ -44,6 +46,7 @@ public final class Mesh {
         this.sky = new float[nv];
         java.util.Arrays.fill(sky, 1f);
         this.sway = new float[nv];
+        this.flutter = new float[nv];
         this.spin = new int[nv];
         java.util.Arrays.fill(spin, -1);
     }

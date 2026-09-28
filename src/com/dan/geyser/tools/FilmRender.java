@@ -133,6 +133,9 @@ public final class FilmRender {
             visitors.update(dt, day, hour, weather.rain, er ? Double.NaN : 5, er, false);
             visitors.fill(animals);
             r.animals = animals.n > 0 ? animals : null;
+            w.grove.setSeason(day, Thermal.snow);
+            w.grove.update(dt, wind, 0.8, 0.6, cam.ex, cam.ez, w.scene.terrain);
+            r.leaves = w.grove.quads;
             // Ton: Pegel aus dem Ort der Kamera, 1/fps Sekunden Proben
             SoundScape.levels(sound, w.geysers, w.scene.terrain, cam, clock, wind);
             sound.rain = weather.rain * 0.8f;

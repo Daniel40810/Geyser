@@ -138,10 +138,12 @@ public final class Basin {
         }
         // Wald, tote Stämme, Stege
         java.util.Random rnd = new java.util.Random(1872);
-        int[] counts = forest(mb, t, th, rnd);
+        Grove grove = new Grove();
+        int[] counts = forest(mb, t, th, rnd, grove);
         Walks.build(mb, t, of, bh, ca, gr, rs, mg, gps, exc, fpp);
 
         Scene sc = new Scene("Upper Geyser Basin", mb.build(64), t, th);
+        grove.attach(sc.mesh);
         sc.trees = counts[0];
         sc.snags = counts[1];
         double[] tops = {OF_TOP + 1.5, 4 + BEEHIVE_TOP + 1.5, -5 + CASTLE_TOP + 1.5, -6 + 2.5, rsLevel + RIVERSIDE_TOP + 1.5, -15 + 2.5, -24 + 3,
@@ -194,7 +196,7 @@ public final class Basin {
                 0, 0, 60, 90, 0, 0, 16 * 3600, 8 * 3600, 20, 0, 0, 0, 0, wiki, 73));
         g.minor = true;
         gs.couplings.init();
-        return new World(sc, gs);
+        return new World(sc, gs, grove);
     }
 
     private static double[] xz(int i) { return new double[]{Sites.ALL[i].x(), Sites.ALL[i].z()}; }
@@ -445,9 +447,12 @@ public final class Basin {
 
     /**
      * Drehkiefern entlang der Waldränder (bis 280 m in den Wald, dahinter trägt die Bodenfarbe),
-     * tote Stämme am Sinterrand. Liefert die Anzahl Bäume und Stämme.
+     * am Rand Espenhaine, tote Stämme am Sinterrand. Die Bäume setzt {@link Grove}. Liefert die Anzahl
+     * Bäume und Stämme.
      */
-    static int[] forest(MeshBuilder mb, Terrain t, Thermal th, java.util.Random rnd) {
+    static int[] forest(MeshBuilder mb, Terrain t, Thermal th, java.util.Random rnd, Grove grove) {
+        double[][] sites = new double[Sites.ALL.length][];
+        for (int i = 0; i < sites.length; i++) sites[i] = new double[]{Sites.ALL[i].x(), Sites.ALL[i].z()};
         double keepEdge = mb.maxEdge;
         mb.maxEdge = 1e9;
         float[] gm = new float[5];
@@ -466,7 +471,13 @@ public final class Basin {
                         float e = t.forestEdge(px, pz);
                         if (e < 0 || e > 280) continue;
                         if (rnd.nextDouble() > 0.9 - e / 400.0) continue;
-                        tree(mb, px, t.sample(px, pz), pz, rnd);
+                        double y = t.sample(px, pz);
+                        // Espenhaine: Flecken am Waldrand, wo es feuchter ist (in der Natur je ein Klon)
+                        float hain = com.dan.forest.Noise2.value((float) (px * 0.011 + 40), (float) (pz * 0.011 + 17));
+                        double ds = 1e9;
+                        for (double[] q : sites) ds = Math.min(ds, Math.hypot(px - q[0], pz - q[1]));
+                        if (hain > 0.74f && e < 35 && ds < 450 && rnd.nextDouble() < 0.85) grove.aspen(mb, px, y, pz, rnd, ds < 200 ? 0 : ds < 330 ? 1 : 2);
+                        else grove.pine(mb, px, y, pz, rnd, e < 25 && ds < 200);
                         trees++;
                     } else if (sn > 0.12f && sn < 0.55f && fo < 0.5f && bank > 8 && rnd.nextDouble() < 0.035) {
                         snag(mb, px, t.sample(px, pz), pz, rnd);
@@ -479,46 +490,6 @@ public final class Basin {
         mb.swayFn = null;
         mb.swayValue = 0;
         return new int[]{trees, snags};
-    }
-
-    /**
-     * Drehkiefern aus dem Wald-Paket ({@link com.dan.forest}): echte Modelle der Art wachsen einmal in
-     * einigen Varianten; im Becken steht von jedem Baum die Silhouette (Stamm und Krone mit den Stufen
-     * der Quirle, gut 50 Dreiecke), gedreht und auf die gewünschte Höhe gebracht. Im Wind schwingt die
-     * Krone über den Ausschlag je Ecke wie bisher.
-     */
-    private static com.dan.forest.TreeMesh[] PINES;
-
-    private static synchronized com.dan.forest.TreeMesh[] pines() {
-        if (PINES == null) {
-            PINES = new com.dan.forest.TreeMesh[8];
-            com.dan.forest.Species sp = com.dan.forest.Species.lodgepolePine();
-            for (int i = 0; i < PINES.length; i++) PINES[i] = com.dan.forest.TreeMesh.silhouette(com.dan.forest.TreeGenerator.grow(sp, 1872 + i * 31L, 1), 5, 5);
-        }
-        return PINES;
-    }
-
-    /** Drehkiefer: eine der Varianten, auf 13 bis 24 m gebracht und zufällig gedreht. */
-    static void tree(MeshBuilder mb, double x, double y, double z, java.util.Random rnd) {
-        com.dan.forest.TreeMesh m = pines()[rnd.nextInt(PINES.length)];
-        double H = 13 + 11 * rnd.nextDouble();
-        double k = H / m.model.height, yaw = rnd.nextDouble() * 2 * Math.PI, cs = Math.cos(yaw), sn = Math.sin(yaw);
-        final double yb = y;
-        mb.swayFn = (px, py, pz) -> 0.35 * Math.pow(Math.max(0, (py - yb) / H), 1.6);
-        int keep = mb.group;
-        mb.group = 1;                                    // von beiden Seiten sichtbar
-        int[] id = new int[m.nv];
-        for (int i = 0; i < m.nv; i++) {
-            double px = m.pos[3 * i], py = m.pos[3 * i + 1], pz = m.pos[3 * i + 2];
-            double nx = m.nrm[3 * i], ny = m.nrm[3 * i + 1], nz = m.nrm[3 * i + 2];
-            id[i] = mb.v(x + (px * cs - pz * sn) * k, y - 0.3 + py * k, z + (px * sn + pz * cs) * k, nx * cs - nz * sn, ny, nx * sn + nz * cs);
-        }
-        for (int t = 0; t < m.nt; t++) {
-            int a = m.tri[3 * t], b = m.tri[3 * t + 1], c = m.tri[3 * t + 2];
-            mb.tri(id[a], id[b], id[c], m.part[a] == com.dan.forest.TreeMesh.BARK ? Mat.BARK : Mat.NEEDLES);
-        }
-        mb.group = keep;
-        mb.swayFn = null;
     }
 
     /** Tote Kiefer: grauer Stamm, oben abgebrochen, ein paar Aststummel; unten weiß („Bobby Socks“). */
