@@ -80,9 +80,9 @@ public final class Geysers {
         return null;
     }
 
-    /** Läuft gerade ein Ausbruch (Wasserphase)? */
+    /** Läuft gerade ein Ausbruch (Wasserphase) eines Hauptgeysirs (Nebengeysire wie Turban zählen nicht)? */
     public GeyserModel erupting() {
-        for (GeyserModel g : list) if (g.phase == GeyserModel.Phase.ERUPTION) return g;
+        for (GeyserModel g : list) if (g.phase == GeyserModel.Phase.ERUPTION && !g.minor) return g;
         return null;
     }
 

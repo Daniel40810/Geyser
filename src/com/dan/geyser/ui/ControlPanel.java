@@ -63,6 +63,9 @@ public final class ControlPanel extends JPanel {
         FButton now = new FButton("Ausbruch jetzt");
         now.addActionListener(e -> { scene.trigger((String) which.getSelectedItem()); scene.requestFocusInWindow(); });
         add(row(now));
+        FButton quiz = new FButton("Rätsel · Wann bricht er aus?");
+        quiz.addActionListener(e -> scene.openGuess());
+        add(row(quiz));
         FButton proto = new FButton("Eruptionsprotokoll");
         proto.addActionListener(e -> { scene.openProtocol(); });
         add(row(proto));

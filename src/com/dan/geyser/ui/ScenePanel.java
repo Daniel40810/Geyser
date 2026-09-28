@@ -164,6 +164,7 @@ public final class ScenePanel extends JPanel {
             case KeyEvent.VK_O: setSound(!soundOn); return;
             case KeyEvent.VK_N: setFauna(!faunaOn); return;
             case KeyEvent.VK_F3: setVisitors(!visitorsOn); return;
+            case KeyEvent.VK_F2: openGuess(); return;
             case KeyEvent.VK_Z: playSinterLapse(); return;
             case KeyEvent.VK_J: playMorningGlory(); return;
             case KeyEvent.VK_Y: setWeather((weather.mode + 1) % com.dan.geyser.effects.Weather.MODES.length); return;
@@ -241,6 +242,84 @@ public final class ScenePanel extends JPanel {
     }
 
     public void stopDirector() { takeOver(); }
+
+    // ------------------------------------------------------------ Rätsel „Wann bricht er aus?“
+
+    private final Guess guess = new Guess();
+    private GeyserModel.Phase ofGuessPhase;
+    { guess.load(); }
+
+    /** Tipp auf den nächsten Ausbruch von Old Faithful abgeben (F2, Knopf im Bedienfeld). */
+    public void openGuess() {
+        Geysers gs = geysers;
+        GeyserModel of = gs == null ? null : gs.byName("Old Faithful");
+        if (of == null) return;
+        if (guess.open()) { showToast("Dein Tipp steht schon: " + clockAt(guess.tipAt) + ". V kürzt das Warten ab.", 3500); return; }
+        boolean after = of.phase == GeyserModel.Phase.STEAM || (of.phase == GeyserModel.Phase.RECHARGE && !Double.isNaN(of.lastDuration));
+        if (!after || of.silenced()) {
+            showToast("Tippen kann man nach einem Ausbruch von Old Faithful, solange er sich wieder füllt (X löst ihn aus).", 4000);
+            return;
+        }
+        double dur = of.lastEruptionDuration();
+        String[] lines = {
+                String.format(java.util.Locale.GERMANY, "Letzter Ausbruch: %d:%02d min, Beginn %s", (int) dur / 60, (int) dur % 60, clockAt(of.lastStart)),
+                "Wann beginnt der nächste?",
+                "Jetzt ist es " + DayNightCycle.timeLabel(hour) + ".",
+                "Die Ranger rechnen nach Ausbrüchen unter 2½ min",
+                "mit 65 min Abstand, sonst mit 91 min (±10 min)."};
+        SwingUtilities.invokeLater(() -> {
+            Guess.ask(this, lines, in -> {
+                double mins = Guess.parse(in, hour);
+                if (Double.isNaN(mins) || mins > 600) { showToast("Nicht verstanden: „" + in + "“ – etwa 10:45 oder +70", 3500); requestFocusInWindow(); return; }
+                cmds.add(() -> {
+                    GeyserModel o = geysers.byName("Old Faithful");
+                    if (o.phase == GeyserModel.Phase.ERUPTION) { showToast("Zu spät, er bricht schon aus", 3000); return; }
+                    guess.tipAt = gClock + mins * 60;
+                    guess.rangerAt = o.rulePrediction();
+                    showToast("Dein Tipp: " + clockAt(guess.tipAt) + ". Die Tafel der Ranger ist verdeckt, bis er ausbricht. V kürzt das Warten ab.", 4000);
+                });
+                requestFocusInWindow();
+            });
+            requestFocusInWindow();
+        });
+    }
+
+    /** Beim Beginn eines Ausbruchs von Old Faithful: Tipp auswerten. */
+    private void checkGuess(GeyserModel of) {
+        if (!guess.open()) return;
+        if (of.manual) {
+            guess.tipAt = Double.NaN; guess.rangerAt = Double.NaN;
+            showToast("Von Hand ausgelöst: der Tipp zählt nicht", 3500);
+            return;
+        }
+        guess.result = guess.score(of.lastStart, clockAt(guess.tipAt), Double.isNaN(guess.rangerAt) ? "–" : clockAt(guess.rangerAt), clockAt(of.lastStart));
+        guess.resultUntil = System.currentTimeMillis() + 30000;
+    }
+
+    /** Ergebnis des Tipps, oben in der Mitte. */
+    private void guessHud(Graphics2D g) {
+        String[] r = guess.result;
+        if (r == null || System.currentTimeMillis() > guess.resultUntil) return;
+        int W = getWidth();
+        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        int w = 0;
+        for (int i = 1; i < r.length; i++) w = Math.max(w, g.getFontMetrics().stringWidth(r[i]));
+        g.setFont(new Font("SansSerif", Font.BOLD, 14));
+        w = Math.max(w, g.getFontMetrics().stringWidth(r[0]));
+        int bw = w + 40, bh = 100, x = (W - bw) / 2, y = 96;
+        g.setColor(new Color(58, 40, 26, 215));
+        g.fillRoundRect(x, y, bw, bh, 10, 10);
+        g.setColor(new Color(244, 234, 216, 90));
+        g.drawRoundRect(x, y, bw, bh, 10, 10);
+        g.setColor(SULFUR);
+        g.drawString(r[0], x + 20, y + 24);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        g.setColor(new Color(250, 244, 232));
+        g.drawString(r[1], x + 20, y + 46);
+        g.drawString(r[2], x + 20, y + 66);
+        g.setColor(new Color(220, 206, 184));
+        g.drawString(r[3], x + 20, y + 86);
+    }
 
     // ------------------------------------------------------------ Eruptionsprotokoll und Zustand
 
@@ -818,7 +897,8 @@ public final class ScenePanel extends JPanel {
             GeyserModel g = gs.byName(m.name);
             if (g == null) continue;
             String st = g.state(gClock);
-            if (g.phase == GeyserModel.Phase.RECHARGE && !Double.isNaN(g.predicted) && !g.silenced()) st = "nächster etwa " + clockAt(g.predicted) + "  ·  " + st;
+            boolean hidden = guess.open() && g.name.equals("Old Faithful");
+            if (g.phase == GeyserModel.Phase.RECHARGE && !Double.isNaN(g.predicted) && !g.silenced() && !hidden) st = "nächster etwa " + clockAt(g.predicted) + "  ·  " + st;
             if (g.phase == GeyserModel.Phase.RECHARGE && g.tremor() > 0.45) st += "  ·  der Boden zittert";
             m.live = st;
         }
@@ -979,6 +1059,7 @@ public final class ScenePanel extends JPanel {
                 GeyserModel best = null;
                 double bd = Double.MAX_VALUE;
                 for (GeyserModel g : gs.list) {
+                    if (g.minor) continue;
                     double d = Math.hypot(g.x - pz[0], g.z - pz[2]);
                     if (d < bd) { bd = d; best = g; }
                 }
@@ -1025,6 +1106,11 @@ public final class ScenePanel extends JPanel {
             }
             r.animals = animals.n > 0 ? animals : null;
             r.thermo = thermoOn;
+            GeyserModel ofg = gs.byName("Old Faithful");
+            if (ofg != null) {
+                if (ofg.phase == GeyserModel.Phase.ERUPTION && ofGuessPhase != GeyserModel.Phase.ERUPTION) checkGuess(ofg);
+                ofGuessPhase = ofg.phase;
+            }
             GeyserModel now2 = gs.erupting();
             if (now2 != null && now2 != was && ff) {
                 fast = false;
@@ -1471,6 +1557,7 @@ public final class ScenePanel extends JPanel {
             caption(g);
             sinterHud(g);
             gloryHud(g);
+            guessHud(g);
             if (help) helpHud(g);
             if (toast != null && System.currentTimeMillis() < toastUntil) {
                 g.setFont(new Font("SansSerif", Font.PLAIN, 13));
@@ -1583,7 +1670,7 @@ public final class ScenePanel extends JPanel {
         GeyserModel er = null;
         double bd = 3000;
         for (GeyserModel g0 : gs.list) {
-            if (g0.phase != GeyserModel.Phase.ERUPTION) continue;
+            if (g0.phase != GeyserModel.Phase.ERUPTION || g0.minor) continue;
             double d = Math.hypot(g0.x - cam.ex, g0.z - cam.ez);
             if (d < bd) { bd = d; er = g0; }
         }
@@ -1595,7 +1682,11 @@ public final class ScenePanel extends JPanel {
             small = String.format("Ausbruch seit %d:%02d", (int) er.tPhase / 60, (int) er.tPhase % 60);
         } else if (of != null && of.phase == GeyserModel.Phase.PREPLAY) {
             head = "OLD FAITHFUL"; big = "gleich"; small = "Vorspiel: Wasser schwappt über";
-        } else if (of != null && !Double.isNaN(of.predicted)) {
+        } else if (of != null && guess.open()) {
+            head = "OLD FAITHFUL · DEIN TIPP";
+            big = clockAt(guess.tipAt) + " " + DayNightCycle.zone(day, hour);
+            small = "Tafel der Ranger verdeckt, bis er ausbricht";
+        } else if (of != null && !Double.isNaN(of.predicted) && !of.silenced()) {
             head = "OLD FAITHFUL · NÄCHSTER AUSBRUCH";
             big = clockAt(of.predicted) + " " + DayNightCycle.zone(day, hour);
             small = Double.isNaN(of.lastDuration) ? "± 10 min" : String.format(java.util.Locale.GERMANY, "± 10 min · letzter Ausbruch %d:%02d min", (int) of.lastDuration / 60, (int) of.lastDuration % 60);

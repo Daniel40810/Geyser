@@ -187,6 +187,15 @@ public final class GeyserModel {
         beginEruption(now);
     }
 
+    /** Dauer des letzten beendeten oder gerade laufenden Wasserausbruchs (s), NaN: keiner. */
+    public double lastEruptionDuration() { return phase == Phase.ERUPTION || phase == Phase.STEAM ? duration : lastDuration; }
+
+    /** Vorhersage nach der Regel der Ranger aus dem letzten Ausbruch (auch schon in der Dampfphase). */
+    public double rulePrediction() {
+        if (Double.isNaN(lastStart)) return Double.NaN;
+        return lastStart + (shortOne && intShort > 0 ? intShort : intLong);
+    }
+
     /** Ist ein Ausbruch durch eine Kopplung geplant? */
     public boolean pending() { return !Double.isNaN(pendingAt); }
 
