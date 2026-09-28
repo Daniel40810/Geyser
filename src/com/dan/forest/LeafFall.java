@@ -12,6 +12,18 @@ public final class LeafFall {
     final float[] x, y, z, vx, vy, vz, ax, ay, az, wx, wy, wz, size, r, g, b, age, ground, phase;
     /** Wie lange ein Blatt am Boden liegt, bis es weg ist (s). */
     public float lieTime = 45;
+
+    /** Wasser, auf dem Blätter landen können (etwa ein Fluss, der sie weiterträgt). */
+    public interface Water {
+        /** Wasserspiegel an (x, z) oder NaN, wo kein Wasser ist. */
+        float level(float x, float z);
+
+        /** Ein Blatt landet auf dem Wasser; true = übernommen (hier verschwindet es dann). */
+        boolean take(float x, float y, float z, float r, float g, float b, float size);
+    }
+
+    /** Wasser unter den Bäumen (null = keins). */
+    public volatile Water water;
     private final java.util.Random rnd = new java.util.Random(1776);
 
     public LeafFall(int capacity) {
@@ -64,6 +76,11 @@ public final class LeafFall {
             // Trudeln, schneller bei Wind
             float spin = 1 + 0.2f * s.speed;
             ax[i] += wx[i] * dt * spin; ay[i] += wy[i] * dt * spin; az[i] += wz[i] * dt * spin;
+            Water wa = water;
+            if (wa != null) {
+                float wl = wa.level(x[i], z[i]);
+                if (!Float.isNaN(wl) && y[i] <= wl + 0.02f && wa.take(x[i], wl, z[i], r[i], g[i], b[i], size[i])) { remove(i); i--; continue; }
+            }
             float h = gr.height(x[i], z[i]);
             if (y[i] <= h + 0.02f) {
                 y[i] = h + 0.02f + 0.01f * rnd.nextFloat();

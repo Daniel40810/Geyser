@@ -504,6 +504,7 @@ public final class ScenePanel extends JPanel {
     private volatile com.dan.geyser.world.Fauna fauna;
     private volatile com.dan.geyser.world.Visitors visitors;
     private volatile com.dan.geyser.world.Grove grove;
+    private volatile com.dan.geyser.world.Firehole firehole;
     private volatile boolean visitorsOn = true;
     private boolean ofWasErupting;
 
@@ -943,6 +944,7 @@ public final class ScenePanel extends JPanel {
             Scene sc = world.scene;
             geysers = world.geysers;
             grove = world.grove;
+            firehole = world.firehole;
             // Old Faithful beginnt gleich mit dem Vorspiel, die anderen irgendwo in ihrem Abstand
             java.util.Random rr = new java.util.Random();
             for (GeyserModel g : geysers.list) {
@@ -954,6 +956,8 @@ public final class ScenePanel extends JPanel {
             loading = "Die Sonne steht über dem Plateau …";
             repaint();
             r = new Engine3D(sc, 4096);
+            r.riverFlow = world.firehole.flow;
+            r.riverSurface = world.firehole.surface;
             r.wetness = geysers.wet;
             r.particles = ps;
             cycle.set(day, hour);
@@ -1078,6 +1082,11 @@ public final class ScenePanel extends JPanel {
                 gv.setSeason(day, Thermal.snow);
                 gv.update(dt, wind, r.windX, r.windZ, cam.ex, cam.ez, scene.terrain);
                 r.leaves = gv.quads;
+            }
+            com.dan.geyser.world.Firehole fh = firehole;
+            if (fh != null) {
+                fh.update(dt, wind, r.windX, r.windZ, cam.ex, cam.ez);
+                r.floats = fh.quads;
             }
             r.thermo = thermoOn;
             GeyserModel ofg = gs.byName("Old Faithful");

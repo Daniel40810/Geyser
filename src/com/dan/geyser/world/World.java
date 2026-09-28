@@ -8,6 +8,8 @@ public final class World {
     public final Geysers geysers;
     /** Kiefern und Espen: Jahreszeit des Laubs und fallende Blätter. */
     public final Grove grove;
+    /** Der Fluss: Strömung, Wellen, Schaum, Treibgut. */
+    public final Firehole firehole;
     /** Drehpunkte für die Ortswahl: Upper Geyser Basin, Midway und Lower Geyser Basin (x, z). */
     public static final double[] UPPER = {-520, -700}, MIDWAY = {-760, -7180}, LOWER = {1742, -10013};
     /** Namen der Orte. */
@@ -24,9 +26,10 @@ public final class World {
     public static final java.util.List<double[][]> ROUTES = new java.util.ArrayList<>();
     public static double[] OVERLOOK = {-900, 0, -6880};
 
-    World(Scene scene, Geysers geysers, Grove grove) {
+    World(Scene scene, Geysers geysers, Grove grove, Firehole firehole) {
         this.scene = scene;
         this.geysers = geysers;
         this.grove = grove;
+        this.firehole = firehole;
     }
 }

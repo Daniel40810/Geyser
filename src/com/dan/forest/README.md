@@ -58,7 +58,7 @@ Mit `TreeGenerator.grow(species, seed, age)` und `TreeMesh.build(model, lod)` be
 | `ForestPlanter` | Verteilung mit Mindestabstand und Artengruppen |
 | `Forest` | hält alles zusammen: Varianten je Art, LOD nach Entfernung, parallele Bewegung |
 
-Nur die `maxAnimated` nächsten Bäume (voreingestellt 40) werden je Punkt bewegt, die übrigen stehen still. Die Entfernungen für die LOD-Stufen stehen in `lodDistance`.
+Mit `forest.leaves.water` lassen sich Blätter, die auf Wasser landen, an ein Wasser übergeben (Schnittstelle `LeafFall.Water`, etwa ein Fluss aus `com.dan.river`, der sie weiterträgt). Nur die `maxAnimated` nächsten Bäume (voreingestellt 40) werden je Punkt bewegt, die übrigen stehen still. Die Entfernungen für die LOD-Stufen stehen in `lodDistance`.
 
 ## Demo und Selbsttest
 

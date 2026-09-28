@@ -80,6 +80,28 @@ public final class ForestCheck {
             maxLanded = Math.max(maxLanded, lf.n - lf.flying());
         }
         check("Laubfall: Blätter gefallen (bis " + maxN + ", davon am Boden bis " + maxLanded + ")", maxN > 500 && maxLanded > 100);
+        // Wasser: auf der Hälfte x > 0 liegt ein See 0,5 m über dem Boden; Blätter, die dort landen, übernimmt er
+        LeafFall wf = new LeafFall(400);
+        int[] taken = {0};
+        boolean[] wrongSide = {false};
+        wf.water = new LeafFall.Water() {
+            @Override public float level(float x, float z) { return x > 0 ? 0.5f : Float.NaN; }
+            @Override public boolean take(float x, float y, float z, float r, float g, float b, float size) {
+                if (x <= 0 || Math.abs(y - 0.5f) > 1e-3f) wrongSide[0] = true;
+                taken[0]++;
+                return true;
+            }
+        };
+        java.util.Random wr = new java.util.Random(3);
+        for (int i = 0; i < 300; i++) wf.add(wr.nextFloat() * 20 - 10, 4 + wr.nextFloat() * 4, wr.nextFloat() * 20 - 10, 0.5f, 0.3f, 0.05f, 0.07f);
+        WindField calm = new WindField();
+        calm.speed = 0.5f;
+        for (int k = 0; k < 300; k++) wf.step(0.05f, calm, k * 0.05, Ground.FLAT);
+        // keines der übrigen darf im See liegen
+        float[] wq = new float[12 * wf.capacity], wrgb = new float[3 * wf.capacity], wnr = new float[3 * wf.capacity];
+        int onGroundWet = 0, nw = wf.quads(wq, wrgb, wnr);
+        for (int i = 0; i < nw; i++) if ((wq[12 * i] + wq[12 * i + 6]) / 2 > 0.3f) onGroundWet++;
+        check("Laubfall: Blätter auf dem Wasser gehen ans Wasser (" + taken[0] + " übernommen, " + wf.n + " an Land)", taken[0] > 60 && wf.n > 60 && !wrongSide[0] && onGroundWet == 0);
         System.out.println(fails == 0 ? "Alles in Ordnung." : fails + " Prüfungen fehlgeschlagen.");
         if (fails > 0) System.exit(1);
     }

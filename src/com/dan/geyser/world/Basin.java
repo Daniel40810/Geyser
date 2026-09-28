@@ -114,6 +114,8 @@ public final class Basin {
         grid(mb, t, t.mid, true);
         grid(mb, t, t.far, false);
         river(mb, t);
+        Firehole fh = new Firehole(t);
+        fh.rocks(mb, t, new java.util.Random(1807));
         // Kegel und Hügel der Geysire
         formation(mb, of[0], 0, of[1], 13, 10.5, OF_TOP, 0.75, 0.55, 0.6, 0.12, 0, 0, 1.9, 11);
         formation(mb, bh[0], 4, bh[1], 0.95, 0.95, BEEHIVE_TOP, 0.2, 0.35, 0.08, 0.06, 0, 0, 1.6, 23);
@@ -196,7 +198,8 @@ public final class Basin {
                 0, 0, 60, 90, 0, 0, 16 * 3600, 8 * 3600, 20, 0, 0, 0, 0, wiki, 73));
         g.minor = true;
         gs.couplings.init();
-        return new World(sc, gs, grove);
+        grove.fall.water = fh;
+        return new World(sc, gs, grove, fh);
     }
 
     private static double[] xz(int i) { return new double[]{Sites.ALL[i].x(), Sites.ALL[i].z()}; }
