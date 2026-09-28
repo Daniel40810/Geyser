@@ -28,7 +28,9 @@ public final class Mat {
     public static final int LEAVES = 19;
     /** Rinde der Espe: hell, grünlich weiß, mit dunklen Narben. */
     public static final int WHITEBARK = 20;
-    public static final int COUNT = 21;
+    /** Nadeln von Fichte und Tanne: dunkler und blaugrüner als die der Kiefern. */
+    public static final int SPRUCE = 21;
+    public static final int COUNT = 22;
 
     public static boolean water(int m) { return m >= WATER && m <= 18; }
 

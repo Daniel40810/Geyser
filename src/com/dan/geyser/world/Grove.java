@@ -84,6 +84,52 @@ public final class Grove {
         }
     }
 
+    // ------------------------------------------------------------ weitere Nadelbäume
+
+    /** Weitere Nadelbäume des Beckens (neben der Drehkiefer). */
+    enum Conifer {
+        /** Engelmann-Fichte: feuchte Senken, am Fluss. */ SPRUCE,
+        /** Felsengebirgs-Tanne: mit der Fichte, schmaler Turm. */ FIR,
+        /** Douglasie: trockene, steile Hänge. */ DOUGLAS,
+        /** junge Drehkiefern, wo der Brand von 1988 den Wald erneuert hat. */ YOUNG
+    }
+
+    private static TreeMesh[][] CON_FAR, CON_NEAR;
+    public int spruces, firs, douglas, young;
+
+    private static synchronized void coniferVariants() {
+        if (CON_FAR != null) return;
+        Species[] sp = {Species.engelmannSpruce(), Species.subalpineFir(), Species.douglasFir(), Species.lodgepolePine()};
+        CON_FAR = new TreeMesh[4][];
+        CON_NEAR = new TreeMesh[4][];
+        for (int k = 0; k < 4; k++) {
+            Species s = sp[k];
+            if (k < 3) s.count[1] *= 0.7f;                   // wie bei der Drehkiefer: weniger Quirläste für das Becken
+            CON_FAR[k] = new TreeMesh[5];
+            CON_NEAR[k] = new TreeMesh[4];
+            float age = k == 3 ? 0.25f : 1;
+            for (int i = 0; i < 5; i++) CON_FAR[k][i] = TreeMesh.silhouette(TreeGenerator.grow(s, 3301 + k * 97L + i * 31L, age), 5, 5);
+            for (int i = 0; i < 4; i++) CON_NEAR[k][i] = TreeMesh.build(TreeGenerator.grow(s, 4409 + k * 89L + i * 37L, age), 2);
+        }
+    }
+
+    /** Ein Nadelbaum der Art c; nahe mit Ästen und Nadelballen, sonst als Silhouette. */
+    void conifer(MeshBuilder mb, Conifer c, double x, double y, double z, java.util.Random rnd, boolean detailed) {
+        coniferVariants();
+        int k = c.ordinal();
+        TreeMesh[] set = detailed ? CON_NEAR[k] : CON_FAR[k];
+        TreeMesh m = set[rnd.nextInt(set.length)];
+        double H;
+        switch (c) {
+            case SPRUCE: H = 18 + 12 * rnd.nextDouble(); spruces++; break;
+            case FIR: H = 11 + 9 * rnd.nextDouble(); firs++; break;
+            case DOUGLAS: H = 20 + 12 * rnd.nextDouble(); douglas++; break;
+            default: H = 1.5 + 4 * rnd.nextDouble(); young++;
+        }
+        emit(mb, m, x, y, z, H, rnd.nextDouble() * 2 * Math.PI, c == Conifer.YOUNG ? 0.15 : 0.3, 1.6, false,
+                c == Conifer.SPRUCE || c == Conifer.FIR ? Mat.SPRUCE : Mat.NEEDLES);
+    }
+
     // ------------------------------------------------------------ Bau
 
     /** Drehkiefer: nahe = mit Ästen und Nadelballen, sonst als Silhouette; 13 bis 24 m hoch. */
@@ -111,6 +157,10 @@ public final class Grove {
     }
 
     private void emit(MeshBuilder mb, TreeMesh m, double x, double y, double z, double H, double yaw, double sway, double pw, boolean broadleaf) {
+        emit(mb, m, x, y, z, H, yaw, sway, pw, broadleaf, Mat.NEEDLES);
+    }
+
+    private void emit(MeshBuilder mb, TreeMesh m, double x, double y, double z, double H, double yaw, double sway, double pw, boolean broadleaf, int needles) {
         double k = H / m.model.height, cs = Math.cos(yaw), sn = Math.sin(yaw);
         final double yb = y;
         mb.swayFn = (px, py, pz) -> sway * Math.pow(Math.max(0, (py - yb) / H), pw);
@@ -127,7 +177,8 @@ public final class Grove {
         mb.flutterValue = 0;
         for (int t = 0; t < m.nt; t++) {
             int a = m.tri[3 * t], b = m.tri[3 * t + 1], c = m.tri[3 * t + 2];
-            int mat = m.part[a] == TreeMesh.BARK ? (broadleaf ? Mat.WHITEBARK : Mat.BARK) : broadleaf ? Mat.LEAVES : Mat.NEEDLES;
+            byte pa = m.part[a];
+            int mat = pa == TreeMesh.BARK || pa == TreeMesh.CONE ? (broadleaf && pa == TreeMesh.BARK ? Mat.WHITEBARK : Mat.BARK) : broadleaf ? Mat.LEAVES : needles;
             mb.tri(id[a], id[b], id[c], mat);
         }
         mb.group = keep;

@@ -58,6 +58,14 @@ public final class TreeModel {
     public final long seed;
     public final List<Branch> branches = new ArrayList<>();
     public final List<LeafSpot> leaves = new ArrayList<>();
+
+    /** Ein Zapfen: Ast, Stelle, Mitte, Richtung (nach oben oder hängend), Länge. */
+    public static final class Cone {
+        public int branch;
+        public float s, x, y, z, dx, dy, dz, size;
+    }
+
+    public final List<Cone> cones = new ArrayList<>();
     /** Höhe und größter Radius der Krone (m). */
     public float height, crownRadius;
 

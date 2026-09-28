@@ -20,7 +20,12 @@ public final class Season {
     public static Season of(Species sp, int day, float snow) {
         Season s = new Season(!sp.deciduous, day);
         s.snow = Math.max(0, Math.min(1, snow));
-        if (!sp.deciduous) { s.foliage = 1; return s; }
+        if (!sp.deciduous) {
+            s.foliage = 1;
+            // Maitriebe: die neuen Spitzen treiben hell aus und dunkeln im Sommer nach
+            if (sp.shoots != null) s.flush = smooth(sp.leafOut - 5, sp.leafOut + 12, day) * (1 - smooth(sp.leafOut + 35, sp.leafOut + 80, day));
+            return s;
+        }
         float d = day;
         if (d < sp.leafOut - 12 || d >= sp.bare) { s.foliage = 0; s.drop = 1; return s; }
         s.foliage = smooth(sp.leafOut - 12, sp.leafOut + 10, d);
@@ -50,7 +55,13 @@ public final class Season {
     /** Farbe eines Blatts (linear) nach Jahreszeit und seinem Zufallswert tone; out bekommt r, g, b. */
     public void leafColor(Species sp, float tone, float[] out) {
         float[] a = sp.summer, b = sp.spring;
-        float r = a[0] + (b[0] - a[0]) * flush, g = a[1] + (b[1] - a[1]) * flush, bl = a[2] + (b[2] - a[2]) * flush;
+        float fl = flush;
+        if (evergreen && sp.shoots != null) {
+            // nur die Spitzen (etwa jede dritte Stelle) tragen neue, helle Triebe
+            b = sp.shoots;
+            fl *= Math.max(0, Math.min(1, (tone - 0.6f) / 0.15f));
+        }
+        float r = a[0] + (b[0] - a[0]) * fl, g = a[1] + (b[1] - a[1]) * fl, bl = a[2] + (b[2] - a[2]) * fl;
         if (evergreen) {
             // Winter: Nadeln dunkler und olivstichig
             float w = (float) Math.max(0, Math.cos(2 * Math.PI * (day - 15) / 365.0));
@@ -76,7 +87,7 @@ public final class Season {
         for (int i = 0; i < m.nv; i++) {
             float r = m.col[3 * i], g = m.col[3 * i + 1], b = m.col[3 * i + 2];
             byte p = m.part[i];
-            if (p != TreeMesh.BARK) {
+            if (p != TreeMesh.BARK && p != TreeMesh.CONE) {
                 int li = m.leaf[i];
                 float tone = li >= 0 ? m.model.leaves.get(m.leafIds[li]).tone : 0.5f;
                 if (li != lastLeaf) { leafColor(sp, tone, c); lastLeaf = li; }
@@ -84,7 +95,7 @@ public final class Season {
             }
             if (snow > 0) {
                 float up = m.nrm[3 * i + 1];
-                float k = snow * Math.max(0, Math.min(1, (up - 0.25f) / 0.55f)) * (p == TreeMesh.BARK ? 0.7f : 0.9f);
+                float k = snow * Math.max(0, Math.min(1, (up - 0.25f) / 0.55f)) * (p == TreeMesh.BARK || p == TreeMesh.CONE ? 0.7f : 0.9f);
                 float ao = m.ao == null ? 1 : m.ao[i];
                 float white = 0.8f * (0.5f + 0.5f * ao);
                 r += (white - r) * k; g += (white - g) * k; b += (white * 1.03f - b) * k;

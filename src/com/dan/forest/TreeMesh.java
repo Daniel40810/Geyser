@@ -12,7 +12,7 @@ package com.dan.forest;
  * Zeichner sollte sie nicht nach der Rückseite verwerfen ({@link #doubleSided}).
  */
 public final class TreeMesh {
-    public static final byte BARK = 0, LEAF = 1, NEEDLES = 2, CLUMP = 3;
+    public static final byte BARK = 0, LEAF = 1, NEEDLES = 2, CLUMP = 3, CONE = 4;
 
     public final TreeModel model;
     public final int lod;
@@ -75,6 +75,7 @@ public final class TreeMesh {
             }
             // Nadelbäume: dunkle Ballen innen an den Ästen füllen die Lücken zwischen den Bürsten
             if (sp.conifer) t.clumps(0.6f, 0.45f);
+            for (TreeModel.Cone c : m.cones) t.cone(c);
             t.leafIds = new int[ids.size()];
             t.leafScale = new float[ids.size()];
             t.leafVertex = new int[ids.size()];
@@ -139,7 +140,7 @@ public final class TreeMesh {
                 double an = 2 * Math.PI * j / n;
                 float cs = (float) Math.cos(an), sn = (float) Math.sin(an);
                 float nx = ux * cs + vx * sn, ny = uy * cs + vy * sn, nz = uz * cs + vz * sn;
-                float[] c3 = barkColor(sp, b.x[i] + nx * b.r[i], b.y[i], b.z[i] + nz * b.r[i], j);
+                float[] c3 = barkColor(sp, b.x[i] + nx * b.r[i], b.y[i], b.z[i] + nz * b.r[i], j, model.height);
                 vertex(b.x[i] + nx * b.r[i], b.y[i] + ny * b.r[i], b.z[i] + nz * b.r[i], nx, ny, nz, c3[0], c3[1], c3[2], b.id, s, -1, BARK);
             }
             if (prev >= 0) {
@@ -153,11 +154,16 @@ public final class TreeMesh {
         }
     }
 
-    /** Rinde mit etwas Streuung; Birke und Espe mit dunklen Querbändern. */
-    private static float[] barkColor(Species sp, float x, float y, float z, int j) {
+    /** Rinde mit etwas Streuung; Birke und Espe mit dunklen Querbändern; oben andere Farbe (Waldkiefer). */
+    private static float[] barkColor(Species sp, float x, float y, float z, int j, float H) {
         float n = Noise2.value(x * 3.1f + z * 2.3f, y * 1.7f);
         float k = 0.8f + 0.4f * n;
         float r = sp.bark[0] * k, g = sp.bark[1] * k, b = sp.bark[2] * k;
+        if (sp.barkTop != null) {
+            float from = sp.barkTopFrom * H;
+            float u = Math.max(0, Math.min(1, (y - from) / (0.15f * H) + (n - 0.5f) * 0.6f));
+            r += (sp.barkTop[0] * k - r) * u; g += (sp.barkTop[1] * k - g) * u; b += (sp.barkTop[2] * k - b) * u;
+        }
         if (sp.barkMarks > 0) {
             float band = Noise2.value(y * 5.5f, (x + z) * 9.0f);
             if (band > 1 - sp.barkMarks) { r = sp.barkMark[0]; g = sp.barkMark[1]; b = sp.barkMark[2]; }
@@ -214,6 +220,32 @@ public final class TreeMesh {
             vertex(px, py, pz, nx + (ca * dx + sa * wx) * 0.35f, ny + 0.2f, nz + (ca * dz + sa * wz) * 0.35f, c[0] * lit, c[1] * lit, c[2] * lit, bone, s, li, LEAF);
         }
         for (int k = 0; k < m; k++) triangle(center, first + k, first + (k + 1) % m, true);
+    }
+
+    /** Zapfen: schlanke Doppelpyramide mit sechs Seiten entlang seiner Richtung. */
+    private void cone(TreeModel.Cone c) {
+        Species sp = model.species;
+        float L = c.size, R = L * 0.28f;
+        float ux = -c.dz, uz = c.dx, ul = (float) Math.sqrt(ux * ux + uz * uz);
+        if (ul < 1e-4f) { ux = 1; uz = 0; ul = 1; }
+        ux /= ul; uz /= ul;
+        float uy = 0;
+        float vx = c.dy * uz - c.dz * uy, vy = c.dz * ux - c.dx * uz, vz = c.dx * uy - c.dy * ux;
+        float[] col = sp.coneColor;
+        int base = vertex(c.x - c.dx * L * 0.45f, c.y - c.dy * L * 0.45f, c.z - c.dz * L * 0.45f, -c.dx, -c.dy, -c.dz, col[0] * 0.7f, col[1] * 0.7f, col[2] * 0.7f, c.branch, c.s, -1, CONE);
+        int tip = vertex(c.x + c.dx * L * 0.55f, c.y + c.dy * L * 0.55f, c.z + c.dz * L * 0.55f, c.dx, c.dy, c.dz, col[0], col[1], col[2], c.branch, c.s, -1, CONE);
+        int[] ring = new int[6];
+        for (int k = 0; k < 6; k++) {
+            double a = k * Math.PI / 3;
+            float ca = (float) Math.cos(a) * R, sa = (float) Math.sin(a) * R;
+            float nx = ux * ca + vx * sa, ny = uy * ca + vy * sa, nz = uz * ca + vz * sa;
+            ring[k] = vertex(c.x + nx, c.y + ny, c.z + nz, nx, ny, nz, col[0] * 1.1f, col[1] * 1.1f, col[2] * 1.1f, c.branch, c.s, -1, CONE);
+        }
+        for (int k = 0; k < 6; k++) {
+            int k1 = (k + 1) % 6;
+            triangle(tip, ring[k], ring[k1], false);
+            triangle(base, ring[k1], ring[k], false);
+        }
     }
 
     /**

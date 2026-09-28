@@ -14,7 +14,22 @@ Zum Herauskopieren reicht `src/com/dan/forest/`. Nur `demo/ForestDemo` braucht z
 | Eiche | *Quercus robur* | breit ausladend |
 | Buche | *Fagus sylvatica* | rund |
 | Birke | *Betula pendula* | oval, hängende Zweige |
-| Fichte | *Picea abies* | kegelförmig, Quirle |
+| Fichte | *Picea abies* | kegelförmig, Quirle, hängende Zapfen |
+| Engelmann-Fichte | *Picea engelmannii* | schmal kegelförmig, blaugrün, hängende Zapfen |
+| Felsengebirgs-Tanne | *Abies lasiocarpa* | schmaler Turm bis zum Boden, aufrechte violette Zapfen |
+| Weißstämmige Kiefer | *Pinus albicaulis* | rundlich, früh verzweigt, helle Rinde |
+| Weißtanne | *Abies alba* | mächtiger Kegel, silbergraue Rinde, aufrechte Zapfen |
+| Waldkiefer | *Pinus sylvestris* | Schirm, oben orange Rinde |
+| Europäische Lärche | *Larix decidua* | lichter Kegel, im Herbst golden, im Winter kahl |
+| Zirbe | *Pinus cembra* | dicht, säulenförmig, aufrechte blaue Zapfen |
+
+**Nadelbäume** haben ein paar eigene Werte in `Species`:
+
+- **Kronen:** `Crown.SPIRE` für den schmalen Turm der Hochlagentannen, `Crown.UMBRELLA` für den flachen Schirm alter Kiefern.
+- **Zapfen:** `cones`, `coneSize`, `coneColor`, `coneUpright`, `coneZone`. Sie stehen aufrecht oder hängen, und zwar nur im oberen Teil der Krone. Sie bewegen sich mit ihrem Ast und bekommen im Winter Schnee.
+- **Rinde oben:** `barkTop`, `barkTopFrom`, zum Beispiel die orange „Spiegelrinde“ der Waldkiefer.
+- **Maitriebe:** `shoots` ist die Farbe der neuen Spitzen. Sie treiben ab `leafOut` hell aus und dunkeln bis zum Hochsommer nach.
+- **Lärche:** Ein Nadelbaum mit `deciduous = true` wirft seine Nadeln ab wie ein Laubbaum. Die Nadeln färben sich vorher und fallen als Laub.
 
 `Species.ALL` enthält Erzeuger für alle Arten, jeder Aufruf liefert eine frische Kopie. `Species.byName("Buche")` sucht eine Art nach Namen. Alle Felder sind öffentlich und lassen sich ändern, zum Beispiel Höhe, Astebenen, Winkel, Blattform, Biegsamkeit, Farben je Jahreszeit und die Tage für Austrieb, Verfärbung und Laubfall. So entstehen eigene Arten.
 
@@ -62,7 +77,7 @@ Mit `forest.leaves.water` lassen sich Blätter, die auf Wasser landen, an ein Wa
 
 ## Demo und Selbsttest
 
-- `com.dan.forest.demo.ForestDemo [ansicht art tag]`: Ansicht 0 = Einzelbaum, 1 = Wald Yellowstone, 2 = Wald Mitteleuropa. Die Regler steuern Wind, Böen, Jahreszeit und Schnee.
+- `com.dan.forest.demo.ForestDemo [ansicht art tag]`: Ansicht 0 = Einzelbaum, 1 = Wald Yellowstone, 2 = Wald Mitteleuropa, 3 = Nadelwald Yellowstone, 4 = Bergwald Alpen; Art 0 bis 13 in der Reihenfolge der Tabelle. Die Regler steuern Wind, Böen, Jahreszeit und Schnee.
 - `com.dan.forest.demo.ForestCheck`: prüft Aufbau, Wind, Jahreszeit und Laubfall ohne Fenster und endet mit „Alles in Ordnung.“
 
 ## Grenzen

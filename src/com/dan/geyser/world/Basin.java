@@ -451,7 +451,9 @@ public final class Basin {
 
     /**
      * Drehkiefern entlang der Waldränder (bis 280 m in den Wald, dahinter trägt die Bodenfarbe),
-     * am Rand Espenhaine, tote Stämme am Sinterrand. Die Bäume setzt {@link Grove}. Liefert die Anzahl
+     * am Rand Espenhaine, in feuchten Senken am Fluss Engelmann-Fichten und Felsengebirgs-Tannen, an
+     * steilen Hängen Douglasien, auf den Brandflächen von 1988 dichter Jungwuchs zwischen toten Stämmen,
+     * tote Stämme am Sinterrand. Die Bäume setzt {@link Grove}. Liefert die Anzahl
      * Bäume und Stämme.
      */
     static int[] forest(MeshBuilder mb, Terrain t, Thermal th, java.util.Random rnd, Grove grove) {
@@ -480,8 +482,25 @@ public final class Basin {
                         float hain = com.dan.forest.Noise2.value((float) (px * 0.011 + 40), (float) (pz * 0.011 + 17));
                         double ds = 1e9;
                         for (double[] q : sites) ds = Math.min(ds, Math.hypot(px - q[0], pz - q[1]));
+                        boolean near = e < 25 && ds < 200;
+                        // Brandflächen von 1988: dichter Jungwuchs der Drehkiefer zwischen toten Stämmen
+                        float burn = com.dan.forest.Noise2.value((float) (px * 0.0045 + 23), (float) (pz * 0.0045 + 2));
+                        // feuchte Senken am Fluss: Engelmann-Fichte und Felsengebirgs-Tanne
+                        float moist = (1 - smooth01(150, 700, bank)) * com.dan.forest.Noise2.value((float) (px * 0.02 + 11), (float) (pz * 0.02 + 5));
+                        // steile, trockene Hänge: Douglasie
+                        double slope = Math.hypot(t.sample(px + 3, pz) - y, t.sample(px, pz + 3) - y) / 3;
                         if (hain > 0.74f && e < 35 && ds < 450 && rnd.nextDouble() < 0.85) grove.aspen(mb, px, y, pz, rnd, ds < 200 ? 0 : ds < 330 ? 1 : 2);
-                        else grove.pine(mb, px, y, pz, rnd, e < 25 && ds < 200);
+                        else if (burn > 0.74f && e < 150) {
+                            int k = 2 + rnd.nextInt(3);
+                            for (int j = 0; j < k; j++) {
+                                double qx = px + (rnd.nextDouble() - 0.5) * step, qz = pz + (rnd.nextDouble() - 0.5) * step;
+                                grove.conifer(mb, Grove.Conifer.YOUNG, qx, t.sample(qx, qz), qz, rnd, near && j == 0);
+                            }
+                            if (rnd.nextDouble() < 0.35) { snag(mb, px, y, pz, rnd); snags++; }
+                        }
+                        else if (moist > 0.4f && rnd.nextDouble() < 0.8) grove.conifer(mb, rnd.nextDouble() < 0.55 ? Grove.Conifer.SPRUCE : Grove.Conifer.FIR, px, y, pz, rnd, near);
+                        else if (slope > 0.4 && rnd.nextDouble() < 0.25) grove.conifer(mb, Grove.Conifer.DOUGLAS, px, y, pz, rnd, near);
+                        else grove.pine(mb, px, y, pz, rnd, near);
                         trees++;
                     } else if (sn > 0.12f && sn < 0.55f && fo < 0.5f && bank > 8 && rnd.nextDouble() < 0.035) {
                         snag(mb, px, t.sample(px, pz), pz, rnd);
@@ -494,6 +513,11 @@ public final class Basin {
         mb.swayFn = null;
         mb.swayValue = 0;
         return new int[]{trees, snags};
+    }
+
+    private static float smooth01(float a, float b, float x) {
+        float u = Math.max(0, Math.min(1, (x - a) / (b - a)));
+        return u * u * (3 - 2 * u);
     }
 
     /** Tote Kiefer: grauer Stamm, oben abgebrochen, ein paar Aststummel; unten weiß („Bobby Socks“). */

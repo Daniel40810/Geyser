@@ -37,7 +37,7 @@ import java.awt.image.BufferedImage;
  */
 public final class ForestDemo {
     static final Color BG = new Color(14, 20, 24), INK = new Color(226, 230, 226), MUTED = new Color(142, 154, 156), ACCENT = new Color(226, 190, 72);
-    static final String[] VIEWS = {"Einzelbaum", "Wald · Yellowstone", "Wald · Mitteleuropa"};
+    static final String[] VIEWS = {"Einzelbaum", "Wald · Yellowstone", "Wald · Mitteleuropa", "Nadelwald · Yellowstone", "Bergwald · Alpen"};
     static final String[] MONTHS = {"Jan.", "Feb.", "März", "Apr.", "Mai", "Juni", "Juli", "Aug.", "Sep.", "Okt.", "Nov.", "Dez."};
     static final int[] MONTH_START = {1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
 
@@ -54,7 +54,8 @@ public final class ForestDemo {
 
     /**
      * Startet die Vorschau; wahlweise mit Ansicht (0 Einzelbaum, 1 Wald Yellowstone, 2 Wald
-     * Mitteleuropa), Art (0..6, siehe {@link Species#ALL}) und Tag im Jahr, etwa {@code 1 0 280}.
+     * Mitteleuropa, 3 Nadelwald Yellowstone, 4 Bergwald Alpen), Art (0..13, siehe {@link Species#ALL}) und
+     * Tag im Jahr, etwa {@code 1 0 280}.
      */
     public static void main(String[] a) {
         ForestDemo d = new ForestDemo();
@@ -232,14 +233,17 @@ public final class ForestDemo {
         } else {
             forest.variants = 4;
             java.util.List<Species> list = mode == 1 ? java.util.List.of(Species.lodgepolePine(), Species.aspen(), Species.douglasFir())
-                    : java.util.List.of(Species.oak(), Species.beech(), Species.birch(), Species.spruce());
+                    : mode == 2 ? java.util.List.of(Species.oak(), Species.beech(), Species.birch(), Species.spruce())
+                    : mode == 3 ? java.util.List.of(Species.lodgepolePine(), Species.engelmannSpruce(), Species.subalpineFir(), Species.douglasFir(), Species.whitebarkPine())
+                    : java.util.List.of(Species.spruce(), Species.silverFir(), Species.larch(), Species.stonePine(), Species.scotsPine());
             int[] idx = new int[list.size()];
             for (int i = 0; i < idx.length; i++) idx[i] = forest.addSpecies(list.get(i));
             forest.prepare();
-            float[] w = mode == 1 ? new float[]{3, 1.2f, 0.8f} : new float[]{1, 1.3f, 0.8f, 1};
+            float[] w = mode == 1 ? new float[]{3, 1.2f, 0.8f} : mode == 2 ? new float[]{1, 1.3f, 0.8f, 1}
+                    : mode == 3 ? new float[]{2.5f, 1.2f, 1.2f, 0.8f, 0.4f} : new float[]{1.5f, 1, 1, 0.7f, 0.7f};
             // Lichtung um die Kamera, nach außen dichter
-            ForestPlanter.plant(forest, -110, -110, 110, 110, mode == 1 ? 5.5f : 8f,
-                    (x, z) -> (float) Math.min(1, Math.max(0, (Math.hypot(x, z) - 8) / 30)), idx, w, 35, Ground.FLAT, seed);
+            ForestPlanter.plant(forest, -110, -110, 110, 110, mode == 2 ? 8f : mode == 4 ? 6.5f : 5.5f,
+                    (x, z) -> (float) Math.min(1, Math.max(0, (Math.hypot(x, z) - (mode >= 3 ? 14 : 8)) / 30)), idx, w, 35, Ground.FLAT, seed);
         }
     }
 

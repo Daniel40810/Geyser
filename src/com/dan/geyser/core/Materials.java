@@ -19,6 +19,8 @@ public final class Materials {
         SPEC[Mat.CONE] = 0.05f; SHIN[Mat.CONE] = 30;
         SPEC[Mat.NEEDLES] = 0.03f; SHIN[Mat.NEEDLES] = 14;
         TRANS[Mat.NEEDLES] = 0.18f;
+        SPEC[Mat.SPRUCE] = 0.03f; SHIN[Mat.SPRUCE] = 14;
+        TRANS[Mat.SPRUCE] = 0.12f;
         SPEC[Mat.LEAVES] = 0.05f; SHIN[Mat.LEAVES] = 20;
         TRANS[Mat.LEAVES] = 0.35f;
     }
@@ -170,6 +172,16 @@ public final class Materials {
                 else { o[0] = 0.42f * k; o[1] = 0.45f * k; o[2] = 0.36f * k; }
                 frost(x, z, n[1], a, 0.7f, o);
                 return 0.9f;
+            }
+            case Mat.SPRUCE: {
+                // Fichte und Tanne: dunkel, blaugrün, dichte Büschel
+                bump(n, x, y, z, 0.4f, 1.6f);
+                float tree = Noise.tex(x * 0.21f + 3, z * 0.21f + 9);
+                float a = Noise.tex(x * 2.1f + y * 0.7f, z * 2.1f + y * 0.5f);
+                float k = 0.72f + 0.5f * (a - 0.5f);
+                o[0] = (0.020f + 0.008f * tree) * k; o[1] = (0.046f + 0.014f * tree) * k; o[2] = (0.036f + 0.012f * tree) * k;
+                frost(x, z, n[1], a, 0.85f, o);
+                return 0.5f + 0.45f * a;
             }
             case Mat.SNAG: {
                 // abgestorbene Kiefer: silbergrau, unten weiß von aufgesogener Kieselsäure
