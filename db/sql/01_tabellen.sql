@@ -46,7 +46,7 @@ CREATE TABLE gey_fact (
   bezug          VARCHAR2(30 CHAR),
   text           VARCHAR2(400 CHAR) NOT NULL,
   wert           NUMBER,
-  einheit        VARCHAR2(12 CHAR),
+  einheit        VARCHAR2(20 CHAR),
   reihenfolge    NUMBER(3),
   source_id      NUMBER        NOT NULL CONSTRAINT gey_fact_source_fk REFERENCES gey_source (source_id)
 )
