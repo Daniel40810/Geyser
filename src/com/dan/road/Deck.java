@@ -4,7 +4,7 @@ package com.dan.road;
  * Baut die feste Geometrie eines Wegstücks von {@link #LEN} Metern in einer Detailstufe: Fahrbahn,
  * Bankett, Böschungsschürze, Markierung, Leitpfosten, Schneestangen, Schutzplanken, Schilder,
  * Schneewälle und Brücken. Die Farben sind die Grundfarben ohne Wetter; das Wetter kommt je Bild in
- * {@link Roads} dazu.
+ * {@link Roads} dazu. Ein Baumeister gehört einem Thread (er hat Rechenpuffer).
  */
 final class Deck {
     static final float LEN = 32;

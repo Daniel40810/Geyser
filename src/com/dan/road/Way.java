@@ -168,7 +168,7 @@ public final class Way {
             for (int i = n - 2; i >= 0; i--) y[i] = Math.max(Math.min(y[i], y[i + 1] + gmax), Math.max(y[i + 1] - gmax, need[i]));
         }
         // Brücke: über Wasser oder hoch über dem Boden
-        float high = type.kind == WayType.Kind.PATH ? 1.6f : 5;
+        float high = type.kind == WayType.Kind.PATH ? 2 : type.kind == WayType.Kind.TRACK ? 4 : 10;
         for (int i = 0; i < n; i++) bridge[i] = span[i] || y[i] - ground[i] > high;
         // einzelne Lücken schließen
         for (int i = 0; i < n; i++) if (!bridge[i] && bridge[nb(i, -1)] && bridge[nb(i, 1)]) bridge[i] = true;

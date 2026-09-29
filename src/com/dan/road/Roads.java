@@ -20,12 +20,13 @@ public final class Roads {
     public float radius = 1200, near = 70, mid = 380;
     /** Fahrzeuge bis zu dieser Entfernung (m). */
     public float vehicleRange = 900;
+    /** Lichtstärke eines Scheinwerfers (je nach Belichtung des Zeichners anzupassen). */
+    public float headlight = 260;
     /** Helligkeit der Lichthöfe um die Leuchten (1 = etwa so hell wie der Nachthimmel mal 10). */
     public float glowScale = 0.08f;
     /** Ohne Verkehr nur die Wege. */
     public boolean showTraffic = true;
     private final Ground site;
-    private final Deck[] decks;
     private final java.util.concurrent.ConcurrentHashMap<Long, Deck.Piece> cache = new java.util.concurrent.ConcurrentHashMap<>();
     private final Dust dust = new Dust();
     private long frame;
@@ -43,8 +44,6 @@ public final class Roads {
     public Roads(Network net, Ground site, long seed) {
         this.net = net;
         this.site = site;
-        decks = new Deck[net.ways.size()];
-        for (Way w : net.ways) decks[w.index] = new Deck(w, site);
         traffic = new Traffic(net, seed);
         traffic.populate();
     }
@@ -95,7 +94,8 @@ public final class Roads {
             }
         }
         // fehlende Stücke parallel bauen
-        want.parallelStream().forEach(k -> cache.computeIfAbsent(key(k), q -> decks[(int) k[0]].build((int) k[1], (int) k[2])));
+        // je Stück ein eigener Baumeister: seine Rechenpuffer gehören dann nur einem Thread
+        want.parallelStream().forEach(k -> cache.computeIfAbsent(key(k), q -> new Deck(net.ways.get((int) k[0]), site).build((int) k[1], (int) k[2])));
         java.util.List<Use> use = new java.util.ArrayList<>();
         boolean poles = weather.poles, banks = weather.snow > 0.02f;
         for (long[] k : want) { Deck.Piece p = cache.get(key(k)); p.used = frame; use.add(new Use(p, poles, banks)); }
@@ -140,7 +140,7 @@ public final class Roads {
                     if (!flat) dark *= 0.5f;
                     float k = 1 - dark * wv;
                     r *= k; g *= k; bl *= k;
-                    gloss = flat ? (paved ? 0.08f + 0.72f * wv : zn == Deck.GRASS ? 0.08f * wv : 0.3f * wv) : 0.1f * wv;
+                    gloss = flat ? (paved ? 0.08f + 0.5f * wv : zn == Deck.GRASS ? 0.08f * wv : 0.3f * wv) : 0.1f * wv;
                     if (zn == Deck.WHITE || zn == Deck.YELLOW) gloss *= 0.6f;
                     // Pfützen: tiefe Stellen laufen zuerst voll
                     float lo = p.low[i];
@@ -223,7 +223,7 @@ public final class Roads {
             float dy = -0.07f + (float) Math.sin(m.pitch);
             float l = (float) Math.sqrt(1 + dy * dy);
             lights[o + 3] = m.hx / l; lights[o + 4] = dy / l; lights[o + 5] = m.hz / l;
-            lights[o + 6] = m.kind == Vehicle.MOTORBIKE ? 120 : 260;
+            lights[o + 6] = headlight * (m.kind == Vehicle.MOTORBIKE ? 0.45f : 1);
         }
     }
 

@@ -101,6 +101,19 @@ public final class Terrain {
         pads.add(new double[]{x, z, r, level, blend});
     }
 
+    /**
+     * Formt das Gelände nach der Formel, etwa Straßen mit Damm und Einschnitt, und färbt den Boden (die
+     * Fahrbahn aus der Ferne). Wird vor {@link #build} gesetzt.
+     */
+    public interface Shaper {
+        double shape(double x, double z, double h);
+
+        /** Färbt die Bodenfarbe rgb (linear) an (x, z); foot ist die Größe eines Pixels in Metern. */
+        default void paint(float x, float z, float foot, float[] rgb) { }
+    }
+
+    public volatile Shaper shaper;
+
     /** Hügel oder Mulde: Gauß-Beule der Höhe h und Breite r. */
     private final java.util.List<double[]> bumps = new java.util.ArrayList<>();
 
@@ -267,6 +280,8 @@ public final class Terrain {
             double w = 1 - smoothD(p[2], p[2] + p[4], dd);
             h += (lvl - h) * w;
         }
+        Shaper sh = shaper;
+        if (sh != null) h = sh.shape(x, z, h);
         return h;
     }
 
@@ -541,6 +556,8 @@ public final class Terrain {
                 o[0] += (sr - o[0]) * cover; o[1] += (sg - o[1]) * cover; o[2] += (sb - o[2]) * cover;
             }
         }
+        Shaper sh = shaper;
+        if (sh != null) sh.paint(x, z, foot, o);
         o[0] = Math.max(0.005f, o[0]); o[1] = Math.max(0.005f, o[1]); o[2] = Math.max(0.005f, o[2]);
     }
 }

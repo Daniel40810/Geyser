@@ -30,8 +30,10 @@ public final class Sward implements Site {
     private final float gc = 6;
     private final java.util.Map<Long, float[]> walks = new java.util.HashMap<>();
 
-    Sward(Terrain t, Thermal th) {
-        terrain = t; thermal = th;
+    private final Roadways roads;
+
+    Sward(Terrain t, Thermal th, Roadways rw) {
+        terrain = t; thermal = th; roads = rw;
         meadow = new Meadow(Biome.yellowstone(), this);
         meadow.radius = 26;
         meadow.near = 7;
@@ -87,13 +89,17 @@ public final class Sward implements Site {
         float wet = bank < 0.2f ? 0 : 1;                                     // im Wasser wächst nichts
         float shore = 1 - smooth(1.5f, 7, bank);
         float walk = smooth(1.2f, 2.2f, walkDist(x, z));
+        // Straßen und Wege: auf der Fahrbahn nichts, am Bankett Kies
+        float road = roads == null ? 30 : roads.clearance(x, z);
+        float verge = 1 - smooth(-0.2f, 1.2f, road);
+        walk *= smooth(-1.0f, 0.6f, road);
         float live = wet * walk * (1 - smooth(0.05f, 0.35f, sinter)) * (1 - hot);
         float n1 = GNoise.value(fx * 0.07f, fz * 0.07f), n2 = GNoise.value(fx * 0.045f + 9, fz * 0.045f + 3);
         // Suhlen der Bisons: flache Mulden mit offener Erde, verstreut über die Wiese
         float wallow = smooth(0.8f, 0.86f, GNoise.value(fx * 0.03f + 5.5f, fz * 0.03f + 1.2f)) * (1 - forest) * (1 - shore);
         out[0] = live * (0.55f + 0.45f * n1) * (1 - 0.75f * forest) * (1 - rocky) * (1 - wallow) * (1 - 0.6f * kill);
         out[1] = live * (0.12f + Math.max(0, n2 * 1.6f - 0.6f)) * (1 - forest) * (1 - rocky) * (1 - shore) * (1 - wallow) * (1 - kill);
-        out[2] = wet * walk * Math.min(1, rocky + shore * 0.9f + sinter * (1 - sinter) * 1.2f + 0.06f * (1 - sinter));
+        out[2] = wet * Math.max(walk * Math.min(1, rocky + shore * 0.9f + sinter * (1 - sinter) * 1.2f + 0.06f * (1 - sinter)), 0.5f * verge * smooth(-1.0f, -0.2f, road));
         out[3] = wet * walk * Math.min(1, wallow + kill * (1 - sinter) * 0.9f);
         out[4] = Math.max(1 - smooth(2, 18, bank), 0.3f * forest);
     }

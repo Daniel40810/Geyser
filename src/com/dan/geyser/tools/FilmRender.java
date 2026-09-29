@@ -132,7 +132,11 @@ public final class FilmRender {
             boolean er = of.phase == GeyserModel.Phase.ERUPTION;
             visitors.update(dt, day, hour, weather.rain, er ? Double.NaN : 5, er, false);
             visitors.fill(animals);
+            w.roadways.fillAnimals(animals);
             r.animals = animals.n > 0 ? animals : null;
+            w.roadways.update((float) clock, dt, day, weather.rain, Thermal.snow, com.dan.geyser.world.Roadways.dark(dc.elevationDeg),
+                    (float) wind, 0.8, 0.6, animals, 1, cam.ex, cam.ey, cam.ez);
+            r.roads = w.roadways.roads;
             w.grove.setSeason(day, Thermal.snow);
             w.grove.update(dt, wind, 0.8, 0.6, cam.ex, cam.ez, w.scene.terrain);
             r.leaves = w.grove.quads;

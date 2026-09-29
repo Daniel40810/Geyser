@@ -76,6 +76,8 @@ public final class StillRender {
                 if (vp == null) throw new IllegalArgumentException("Blickpunkt unbekannt: " + v);
                 pose = vp.pose;
                 site = vp.site;
+                // am Blickpunkt der Herde steht sie auf der Straße
+                if (vp.name.contains("Bisons")) w.roadways.herdOnRoad();
             }
             double[] cc = World.center(site);
             LightingEngine.centerX = site == 0 ? LightingEngine.FCX : cc[0];
@@ -129,6 +131,13 @@ public final class StillRender {
             boolean ofOn = "Old Faithful".equals(gey);
             for (int k = 0; k < 4000; k++) vis.update(0.25, day, hour, Math.max(wx.rain, wx.snow * 0.5), ofOn ? 2 : 40, false, false);
             vis.fill(an);
+            // Straßen: Verkehr einschwingen, dann um die Kamera
+            float dark = com.dan.geyser.world.Roadways.dark(dc.elevationDeg);
+            for (int k = 0; k < 600; k++) w.roadways.update(k * 0.1f, 0.1, day, wx.rain, Thermal.snow, dark, 0.35f, 0.8, 0.6, an, 1, pose[0], pose[1] + 5000, pose[2]);
+            w.roadways.roads.weather.settle();
+            w.roadways.fillAnimals(an);
+            w.roadways.update(60, 0.03, day, wx.rain, Thermal.snow, dark, 0.35f, 0.8, 0.6, an, 1, pose[0], pose[1], pose[2]);
+            r.roads = w.roadways.roads;
             r.animals = an;
             // Laub nach der Jahreszeit; im Herbst eine Minute Blätterfall um die Kamera
             w.grove.setSeason(day, Thermal.snow);
