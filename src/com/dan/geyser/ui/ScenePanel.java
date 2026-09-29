@@ -222,7 +222,14 @@ public final class ScenePanel extends JPanel {
     /** Übergang zum Blickpunkt i (Liste in {@link Viewpoint#NAMES}). */
     public void goViewpoint(int i) {
         nextVp = i;
-        cmds.add(() -> { Scene sc = scene; director.goTo(Viewpoint.all(sc.terrain)[i], cam); });
+        cmds.add(() -> {
+            Scene sc = scene;
+            Viewpoint vp = Viewpoint.all(sc.terrain)[i];
+            // am Blickpunkt der Herde: sie tritt gerade auf die Straße
+            com.dan.geyser.world.Roadways rw = roadways;
+            if (rw != null && vp.name.contains("Bisons")) rw.herdOnRoad();
+            director.goTo(vp, cam);
+        });
     }
 
     public void playFlight(int i) {
@@ -506,6 +513,7 @@ public final class ScenePanel extends JPanel {
     private volatile com.dan.geyser.world.Grove grove;
     private volatile com.dan.geyser.world.Firehole firehole;
     private volatile com.dan.geyser.world.Sward sward;
+    private volatile com.dan.geyser.world.Roadways roadways;
     private volatile boolean visitorsOn = true;
     private boolean ofWasErupting;
 
@@ -947,6 +955,7 @@ public final class ScenePanel extends JPanel {
             grove = world.grove;
             firehole = world.firehole;
             sward = world.sward;
+            roadways = world.roadways;
             // Old Faithful beginnt gleich mit dem Vorspiel, die anderen irgendwo in ihrem Abstand
             java.util.Random rr = new java.util.Random();
             for (GeyserModel g : geysers.list) {
@@ -1077,6 +1086,8 @@ public final class ScenePanel extends JPanel {
                     vi.fill(animals);
                 }
             }
+            com.dan.geyser.world.Roadways rwy = roadways;
+            if (rwy != null && faunaOn) rwy.fillAnimals(animals);
             r.animals = animals.n > 0 ? animals : null;
             // Espen: Laub nach der Jahreszeit, im Herbst fallende Blätter um die Kamera
             com.dan.geyser.world.Grove gv = grove;
@@ -1089,6 +1100,12 @@ public final class ScenePanel extends JPanel {
             if (sw != null) {
                 sw.update((float) t, day, Thermal.snow, wind, r.windX, r.windZ, animals, cam.ex, cam.ey, cam.ez);
                 r.foliage = sw.meadow.batch;
+            }
+            // Straßen: Verkehr, Wetter, Licht; Tiere auf der Fahrbahn halten ihn an
+            if (rwy != null) {
+                rwy.update((float) t, dt, day, weather.rain, Thermal.snow, com.dan.geyser.world.Roadways.dark(cycle.elevationDeg),
+                        wind, r.windX, r.windZ, animals, ff ? 20 : 1, cam.ex, cam.ey, cam.ez);
+                r.roads = rwy.roads;
             }
             com.dan.geyser.world.Firehole fh = firehole;
             if (fh != null) {

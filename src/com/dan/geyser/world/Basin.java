@@ -71,7 +71,18 @@ public final class Basin {
         // Lower Geyser Basin: ein weiter, flacher Talboden östlich des Firehole. Das Gelände hier hätte
         // an seiner Stelle ein Plateau; die Höhe ist dem Talboden angeglichen (Fountain Paint Pot 2227 m)
         t.pad(1300, -10000, 700, LOWER_FLOOR, 520);
+        // Fountain Flats: der Talboden zieht sich vom Fluss ins Lower Geyser Basin und weiter nach Norden
+        // zurück ans Ufer (dort führt die Straße entlang)
+        for (int k = 0; k <= 8; k++) {
+            double f = k / 8.0;
+            t.pad(-120 + f * 1150, -9050 - f * 850, 200, -29 + f * 6, 320);
+            t.pad(1150 - f * 1000, -10600 - f * 1100, 200, LOWER_FLOOR - f * 9, 320);
+        }
+        t.pad(100, -12300, 200, LOWER_FLOOR - 11, 320);
+        // Straßen und Wege: Profil nach dem Gelände, dann ebnen sie es beim Bau
+        Roadways rw = new Roadways(t);
         t.build();
+        rw.attach();
 
         // ------------------------------------------------------------ Quellen fürs Temperaturfeld
         Thermal th = new Thermal();
@@ -141,9 +152,9 @@ public final class Basin {
         // Wald, tote Stämme, Stege
         java.util.Random rnd = new java.util.Random(1872);
         Grove grove = new Grove();
-        int[] counts = forest(mb, t, th, rnd, grove);
+        int[] counts = forest(mb, t, th, rnd, grove, rw);
         Walks.build(mb, t, of, bh, ca, gr, rs, mg, gps, exc, fpp);
-        Sward sward = new Sward(t, th);
+        Sward sward = new Sward(t, th, rw);
 
         Scene sc = new Scene("Upper Geyser Basin", mb.build(64), t, th);
         grove.attach(sc.mesh);
@@ -200,7 +211,7 @@ public final class Basin {
         g.minor = true;
         gs.couplings.init();
         grove.fall.water = fh;
-        return new World(sc, gs, grove, fh, sward);
+        return new World(sc, gs, grove, fh, sward, rw);
     }
 
     private static double[] xz(int i) { return new double[]{Sites.ALL[i].x(), Sites.ALL[i].z()}; }
@@ -456,7 +467,7 @@ public final class Basin {
      * tote Stämme am Sinterrand. Die Bäume setzt {@link Grove}. Liefert die Anzahl
      * Bäume und Stämme.
      */
-    static int[] forest(MeshBuilder mb, Terrain t, Thermal th, java.util.Random rnd, Grove grove) {
+    static int[] forest(MeshBuilder mb, Terrain t, Thermal th, java.util.Random rnd, Grove grove, Roadways rw) {
         double[][] sites = new double[Sites.ALL.length][];
         for (int i = 0; i < sites.length; i++) sites[i] = new double[]{Sites.ALL[i].x(), Sites.ALL[i].z()};
         double keepEdge = mb.maxEdge;
@@ -470,6 +481,8 @@ public final class Basin {
             for (double z = bx[2]; z < bx[3]; z += step) {
                 for (double x = bx[0]; x < bx[1]; x += step) {
                     double px = x + (rnd.nextDouble() - 0.5) * step * 0.9, pz = z + (rnd.nextDouble() - 0.5) * step * 0.9;
+                    // Schneise für Straßen und Wege
+                    if (rw != null && rw.clearance(px, pz) < 5) continue;
                     t.ground((float) px, (float) pz, gm);
                     float fo = gm[4], sn = gm[3], bank = gm[0];
                     if (th.tempExact(px, pz) > Thermal.ambient + 4) continue;

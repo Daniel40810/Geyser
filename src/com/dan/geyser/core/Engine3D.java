@@ -263,6 +263,8 @@ public final class Engine3D {
         IntStream.range(0, strips).parallel().forEach(s -> shadeStrip(s * rowsPer, Math.min(H, (s + 1) * rowsPer)));
         cacheHit = hitAcc.get() / (double) Math.max(1, eligAcc.get());
         IntStream.range(0, strips).parallel().forEach(s -> shadeWaterStrip(s * rowsPer, Math.min(H, (s + 1) * rowsPer)));
+        com.dan.road.Roads rds = roads;
+        if (rds != null && rds.batch.nt > 0 && !thermo) drawWays(rds, rowsPer);
         com.dan.ground.Batch fb = foliage;
         if (fb != null && fb.nt > 0 && !thermo) drawFoliage(fb, rowsPer);
         long t3 = System.nanoTime();
@@ -1949,6 +1951,165 @@ public final class Engine3D {
                 hr[p] = (fcr[a] * k0 + fcr[b] * k1 + fcr[c] * k2) * o + hr[p] * f;
                 hg[p] = (fcg[a] * k0 + fcg[b] * k1 + fcg[c] * k2) * o + hg[p] * f;
                 hb[p] = (fcb[a] * k0 + fcb[b] * k1 + fcb[c] * k2) * o + hb[p] * f;
+            }
+        }
+    }
+
+    // ------------------------------------------------------------ Straßen und Wege
+
+    /** Straßen, Wege und Verkehr (com.dan.road); null = keine. */
+    public volatile com.dan.road.Roads roads;
+    /** Zeit fürs Zeichnen der Wege im letzten Bild (ms). */
+    public volatile double msWays;
+    private float[] wpx = new float[0], wpy, wpz, wcr, wcg, wcb, wfd;
+    private byte[] wkd = new byte[0];
+    private short[] wLo = new short[0], wHi = new short[0];
+
+    /**
+     * Wege und Fahrzeuge als Dreiecke mit Farbe je Ecke: Sonne mit Schattenkarte, Himmel, nachts die
+     * Scheinwerfer; glänzende Flächen (nasse Fahrbahn, Pfützen, Glas, Lack) spiegeln den Himmel nach
+     * Fresnel und die Sonne. Leuchten strahlen selbst, Lichthöfe werden addiert und verdecken nichts.
+     */
+    private void drawWays(com.dan.road.Roads rd, int rowsPer) {
+        long f0 = System.nanoTime();
+        final com.dan.road.Batch b = rd.batch;
+        final int n = b.nv;
+        if (wpx.length < n) {
+            int c = n + n / 4;
+            wpx = new float[c]; wpy = new float[c]; wpz = new float[c]; wcr = new float[c]; wcg = new float[c]; wcb = new float[c]; wfd = new float[c]; wkd = new byte[c];
+        }
+        final Sky s = sky;
+        final LightingEngine li = L;
+        final boolean sunUp = s.sunR + s.sunG + s.sunB > 1e-4f;
+        final float lx = (float) s.sun[0], ly = (float) s.sun[1], lz = (float) s.sun[2];
+        final float air = AIR0 + AIR1 * s.haze;
+        final float[] hzc = new float[3];
+        s.haze((float) cfx, (float) cfy, (float) cfz, hzc);
+        final float[] P = b.xyz, N = b.nrm, C = b.rgb, G = b.gloss;
+        final byte[] K = b.kind;
+        final boolean lamps = rd.lightCount > 0;
+        System.arraycopy(b.fade, 0, wfd, 0, n);
+        System.arraycopy(K, 0, wkd, 0, n);
+        IntStream.range(0, 64).parallel().forEach(k -> {
+            int a = n * k / 64, e = n * (k + 1) / 64;
+            float[] sk = new float[3], il = new float[3];
+            for (int i = a; i < e; i++) {
+                double x = P[3 * i], y = P[3 * i + 1], z = P[3 * i + 2];
+                double dx = x - ex, dy = y - ey, dz = z - ez;
+                double vz = dx * cfx + dy * cfy + dz * cfz;
+                wpz[i] = (float) vz;
+                if (vz < 0.15) continue;
+                wpx[i] = (float) (W / 2.0 + (dx * crx + dy * cry + dz * crz) / vz * pfx);
+                wpy[i] = (float) (H / 2.0 - (dx * cux + dy * cuy + dz * cuz) / vz * pfy);
+                float r = C[3 * i], g = C[3 * i + 1], bl = C[3 * i + 2];
+                float dl = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+                byte kind = K[i];
+                float cr, cg, cb;
+                if (kind == com.dan.road.Batch.LAMP || kind == com.dan.road.Batch.GLOW) { cr = r; cg = g; cb = bl; }
+                else {
+                    float nx = N[3 * i], ny = N[3 * i + 1], nz = N[3 * i + 2];
+                    float d = nx * lx + ny * ly + nz * lz;
+                    boolean thin = kind == com.dan.road.Batch.THIN;
+                    float lam = thin ? 0.35f + 0.65f * Math.abs(d) : Math.max(0, d);
+                    float lit = sunUp && lam > 0 ? li.lit(x, y + 0.05, z, 0.3, false) : 0;
+                    float kSun = lit * lam * (float) Math.max(0, ly + 0.1);
+                    float amb = 0.5f + 0.4f * Math.abs(ny);
+                    float eR = s.sunR * kSun + (s.upR + s.sideR) * amb, eG = s.sunG * kSun + (s.upG + s.sideG) * amb, eB = s.sunB * kSun + (s.upB + s.sideB) * amb;
+                    if (lamps && dl < 300) {
+                        il[0] = il[1] = il[2] = 0;
+                        rd.illuminate((float) x, (float) y, (float) z, nx, ny, nz, il);
+                        eR += il[0]; eG += il[1]; eB += il[2];
+                    }
+                    float gl = G[i], dif = 1 - 0.6f * gl;
+                    cr = r * eR * dif; cg = g * eG * dif; cb = bl * eB * dif;
+                    if (gl > 0.01f) {
+                        float vx = (float) (dx / dl), vy = (float) (dy / dl), vw = (float) (dz / dl);
+                        float vn = vx * nx + vy * ny + vw * nz;
+                        float rx = vx - 2 * vn * nx, ry = vy - 2 * vn * ny, rw = vw - 2 * vn * nz;
+                        float cos = Math.max(0, -vn), f5 = (1 - cos) * (1 - cos);
+                        f5 = f5 * f5 * (1 - cos);
+                        float F = (0.03f + 0.97f * f5) * gl;
+                        s.radiance(rx, Math.max(0.02f, ry), rw, sk);
+                        float sp = (float) (rx * s.sun[0] + ry * s.sun[1] + rw * s.sun[2]);
+                        float glint = sp > 0.9f ? (float) Math.pow(sp, 300 * gl + 20) * 30 * gl * lit : 0;
+                        cr += (sk[0] + s.sunR * glint) * F; cg += (sk[1] + s.sunG * glint) * F; cb += (sk[2] + s.sunB * glint) * F;
+                    }
+                }
+                float fa = 1 - Noise.expNeg(dl * air);
+                if (kind == com.dan.road.Batch.GLOW) { cr *= 1 - fa; cg *= 1 - fa; cb *= 1 - fa; }
+                else { cr += (hzc[0] - cr) * fa; cg += (hzc[1] - cg) * fa; cb += (hzc[2] - cb) * fa; }
+                wcr[i] = cr; wcg[i] = cg; wcb[i] = cb;
+            }
+        });
+        final int nt = b.nt;
+        final int[] T = b.tri;
+        final int ns = strips;
+        int[] cnt = new int[ns];
+        if (wLo.length < nt) { wLo = new short[nt + nt / 4]; wHi = new short[nt + nt / 4]; }
+        for (int t = 0; t < nt; t++) {
+            int a = T[3 * t], c1 = T[3 * t + 1], c2 = T[3 * t + 2];
+            wLo[t] = -1;
+            if (wpz[a] < 0.15f || wpz[c1] < 0.15f || wpz[c2] < 0.15f) continue;
+            float mnY = Math.min(wpy[a], Math.min(wpy[c1], wpy[c2])), mxY = Math.max(wpy[a], Math.max(wpy[c1], wpy[c2]));
+            float mnX = Math.min(wpx[a], Math.min(wpx[c1], wpx[c2])), mxX = Math.max(wpx[a], Math.max(wpx[c1], wpx[c2]));
+            if (mxY < 0 || mnY >= H || mxX < 0 || mnX >= W) continue;
+            int s0 = Math.max(0, (int) Math.floor(Math.max(0, mnY)) / rowsPer), s1 = Math.min(ns - 1, (int) Math.floor(Math.min(H - 1, mxY)) / rowsPer);
+            wLo[t] = (short) s0; wHi[t] = (short) s1;
+            for (int q = s0; q <= s1; q++) cnt[q]++;
+        }
+        final int[][] bins = new int[ns][];
+        for (int q = 0; q < ns; q++) bins[q] = new int[cnt[q]];
+        int[] fill = new int[ns];
+        for (int t = 0; t < nt; t++) { if (wLo[t] < 0) continue; for (int q = wLo[t]; q <= wHi[t]; q++) bins[q][fill[q]++] = t; }
+        final byte code = (byte) (Mat.TERRAIN + 1);
+        IntStream.range(0, ns).parallel().forEach(q -> {
+            int y0 = q * rowsPer, y1 = Math.min(H, (q + 1) * rowsPer);
+            for (int t : bins[q]) if (wkd[T[3 * t]] != com.dan.road.Batch.GLOW) wayTri(T[3 * t], T[3 * t + 1], T[3 * t + 2], y0, y1, code, false);
+            for (int t : bins[q]) if (wkd[T[3 * t]] == com.dan.road.Batch.GLOW) wayTri(T[3 * t], T[3 * t + 1], T[3 * t + 2], y0, y1, code, true);
+        });
+        msWays = (System.nanoTime() - f0) / 1e6;
+    }
+
+    private void wayTri(int a, int b, int c, int y0, int y1, byte code, boolean add) {
+        float xa = wpx[a], ya = wpy[a], xb = wpx[b], yb = wpy[b], xc = wpx[c], yc = wpy[c];
+        float area = (xb - xa) * (yc - ya) - (xc - xa) * (yb - ya);
+        if (Math.abs(area) < 1e-7f) return;
+        float minX = Math.min(xa, Math.min(xb, xc)), maxX = Math.max(xa, Math.max(xb, xc));
+        float minY = Math.min(ya, Math.min(yb, yc)), maxY = Math.max(ya, Math.max(yb, yc));
+        int ix0 = Math.max(0, (int) Math.floor(minX)), ix1 = Math.min(W - 1, (int) Math.ceil(maxX));
+        int iy0 = Math.max(y0, (int) Math.floor(minY)), iy1 = Math.min(y1 - 1, (int) Math.ceil(maxY));
+        if (ix0 > ix1 || iy0 > iy1) return;
+        float za = wpz[a], zb = wpz[b], zc = wpz[c];
+        if (ix1 - ix0 <= 1 && iy1 - iy0 <= 1) {
+            int x = (int) ((xa + xb + xc) / 3), y = (int) ((ya + yb + yc) / 3);
+            if (x < 0 || y < y0 || x >= W || y >= y1) return;
+            float z = (za + zb + zc) / 3;
+            int p = y * W + x;
+            if (z >= gz[p]) return;
+            float cov = Math.min(1, Math.abs(area) * 0.5f + 0.2f) * (1 - (wfd[a] + wfd[b] + wfd[c]) / 3);
+            float r = (wcr[a] + wcr[b] + wcr[c]) / 3, g = (wcg[a] + wcg[b] + wcg[c]) / 3, bl = (wcb[a] + wcb[b] + wcb[c]) / 3;
+            if (add) { hr[p] += r * cov; hg[p] += g * cov; hb[p] += bl * cov; return; }
+            hr[p] += (r - hr[p]) * cov; hg[p] += (g - hg[p]) * cov; hb[p] += (bl - hb[p]) * cov;
+            return;
+        }
+        float inv = 1 / area, ia = 1 / za, ib = 1 / zb, ic = 1 / zc;
+        for (int y = iy0; y <= iy1; y++) {
+            float sy = y + 0.5f;
+            for (int x = ix0; x <= ix1; x++) {
+                float sx = x + 0.5f;
+                float w0 = ((xb - sx) * (yc - sy) - (xc - sx) * (yb - sy)) * inv;
+                float w1 = ((xc - sx) * (ya - sy) - (xa - sx) * (yc - sy)) * inv;
+                float w2 = 1 - w0 - w1;
+                if (w0 < 0 || w1 < 0 || w2 < 0) continue;
+                float iz = w0 * ia + w1 * ib + w2 * ic, z = 1 / iz;
+                int p = y * W + x;
+                if (z >= gz[p]) continue;
+                float k0 = w0 * ia * z, k1 = w1 * ib * z, k2 = w2 * ic * z;
+                float r = wcr[a] * k0 + wcr[b] * k1 + wcr[c] * k2, g = wcg[a] * k0 + wcg[b] * k1 + wcg[c] * k2, bl = wcb[a] * k0 + wcb[b] * k1 + wcb[c] * k2;
+                if (add) { hr[p] += r; hg[p] += g; hb[p] += bl; continue; }
+                float f = wfd[a] * k0 + wfd[b] * k1 + wfd[c] * k2, o = 1 - f;
+                if (f < 0.6f) { gz[p] = z; gm[p] = code; }
+                hr[p] = r * o + hr[p] * f; hg[p] = g * o + hg[p] * f; hb[p] = bl * o + hb[p] * f;
             }
         }
     }

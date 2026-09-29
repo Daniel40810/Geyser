@@ -22,6 +22,7 @@ Das Upper Geyser Basin im Yellowstone-Nationalpark als 3D-Szene in reinem Java, 
 - [Wald-Paket](#wald-paket)
 - [Fluss-Paket](#fluss-paket)
 - [Boden-Paket](#boden-paket)
+- [Wege-Paket](#wege-paket)
 - [Datenbank](#datenbank)
 - [Bedienung](#bedienung)
 - [Bauen und starten](#bauen-und-starten)
@@ -64,7 +65,7 @@ Dazu kommen der Firehole River, Stege und Brücken, rund 8 700 Drehkiefern, 600 
 - die hellen Sterne an ihren Örtern für 2026 und die Milchstraße mit dem Großen Riss
 - Schnee, der über warmem Boden taut, und Raureif an den Bäumen nahe den Quellen
 
-**Regie.** Elf Blickpunkte, vier Kamerafahrten, ein Rundgang auf den Stegen und das Drehbuch „Ein Tag am Old Faithful“: vom Morgengrauen über den Regenbogen im Vormittagslicht, Castle, Grand und Grand Prismatic bis zur Nacht unter der Milchstraße, mit Tafeln und Quellen.
+**Regie.** Vierzehn Blickpunkte, vier Kamerafahrten, ein Rundgang auf den Stegen und das Drehbuch „Ein Tag am Old Faithful“: vom Morgengrauen über den Regenbogen im Vormittagslicht, Castle, Grand und Grand Prismatic bis zur Nacht unter der Milchstraße, mit Tafeln und Quellen.
 
 | | | |
 |---|---|---|
@@ -232,6 +233,46 @@ Besucher und Tiere treten das Gras nieder. Wind, Jahreszeit und Schnee kommen au
 | ![Lupinen und Indian Paintbrush im Juli](docs/bilder/boden/lupinen.png) | ![Seggen, trockenes Gras und Kies am Firehole im August](docs/bilder/boden/firehole_ufer.png) |
 | Lupinen und Indian Paintbrush im Juli | Seggen und trockenes Gras am Firehole im August |
 
+## Wege-Paket
+
+`src/com/dan/road/` ist ein eigenes Paket für Pfade, Feldwege, Straßen und Autobahnen. Es ist unabhängig von Geyser und lässt sich herauskopieren:
+
+- Trasse mit begrenzter Steigung, Querneigung in Kurven und Brücken über Wasser; das Gelände wird darunter geebnet, daneben entstehen Damm und Einschnitt
+- Fahrbahn in drei Detailstufen mit Markierung, Leitpfosten, Schutzplanken, Schildern und Schneestangen
+- Verkehr: Autos, Wohnmobile, Busse, Lastwagen, Motorräder, Radfahrer, Traktoren und Wanderer. Sie halten Abstand, bremsen vor Kurven und wechseln mit Blinker die Spur. Vor einem Hindernis stauen sie sich.
+- Wetter: nasse Fahrbahn, die in den Radspuren zuerst abtrocknet, Pfützen, geräumter Schnee mit Schneewällen, Staub und Gischt
+- Licht: Scheinwerfer, Brems- und Blinklichter mit Lichthöfen, Lichtkegel auf der Fahrbahn, aufleuchtende Rückstrahler
+
+Einzelheiten stehen in [`src/com/dan/road/README.md`](src/com/dan/road/README.md). Zum Ausprobieren startet man `com.dan.road.demo.RoadDemo`, der Selbsttest ist `com.dan.road.demo.RoadCheck`.
+
+![Autobahn in der Vorschau](docs/bilder/wege/autobahn.png)
+
+| | |
+|---|---|
+| ![Mitfahren nachts im Regen](docs/bilder/wege/nacht_regen.png) | ![Stau vor einer Bisonherde, das erste Auto blinkt warnend](docs/bilder/wege/stau.png) |
+| Nachts im Regen: nasse Fahrbahn, Rücklichter, Radfahrer im Scheinwerferlicht | Stau vor einer Bisonherde in der Dämmerung |
+| ![Feldweg mit Staub und Wanderern](docs/bilder/wege/feldweg.png) | ![Brücke der Landstraße im Schnee](docs/bilder/wege/bruecke_schnee.png) |
+| Feldweg: Staub hinter dem Wagen, Wanderer | Landstraße im Winter: geräumt, Schneestangen |
+
+**Im Park.** Das Paket legt drei Arten von Wegen in den Park (`world/Roadways`):
+
+- **Grand Loop Road:** Sie kommt von Süden und führt am Old Faithful vorbei. Am Westrand des Upper Geyser Basin läuft sie auf einer Terrasse an der Daisy-Gruppe vorbei nach Norden und quert dann auf einer Brücke den Firehole. Am Ostufer führt sie nach Midway, danach über die Fountain Flats in das Lower Geyser Basin, westlich am Fountain Paint Pot vorbei.
+- **Fairy Falls Trail:** ein Kiesweg südlich von Midway. Er führt auf einer Holzbrücke über den Fluss.
+- **Pfade:** einer zur Aussichtsplattform über Grand Prismatic, einer von Geyser Hill hinauf zum Observation Point.
+
+Die Linien sind nach Karten genähert. Auf der Straße fahren Autos, Wohnmobile, Busse und Radfahrer, auf den Wegen sind Wanderer unterwegs.
+
+Das Gelände wird unter den Wegen geebnet. Bäume und Gras halten Abstand, und aus der Ferne malt die Bodenfarbe die Fahrbahn. Regen, Schnee und Tageszeit kommen aus der Szene. Schneestangen stehen von Oktober bis Mai.
+
+Im Lower Geyser Basin quert ab und zu eine kleine Bisonherde die Straße und bleibt eine Weile darauf stehen. Der Verkehr staut sich. Der Blickpunkt „Grand Loop Road · Bisons“ zeigt das sofort, „Grand Loop Road · Firehole-Brücke“ zeigt die Brücke. Ein Bild braucht mit den Straßen 3 bis 7 ms länger.
+
+| | |
+|---|---|
+| ![Bisons auf der Grand Loop Road, dahinter der Stau](docs/bilder/wege/geyser_bisonstau.png) | ![Die Brücke der Grand Loop Road über den Firehole](docs/bilder/wege/geyser_bruecke.png) |
+| Bisons auf der Grand Loop Road im Lower Geyser Basin | Die Brücke über den Firehole im September |
+| ![Grand Loop Road am Old Faithful](docs/bilder/wege/geyser_strasse.png) | ![Fairy Falls Trail mit Holzbrücke](docs/bilder/wege/geyser_fairy_falls.png) |
+| Grand Loop Road südwestlich von Old Faithful | Fairy Falls Trail mit Holzbrücke über den Firehole |
+
 ## Datenbank
 
 Die App läuft auch ohne Datenbank. Mit Oracle (getestet mit 21c, Schema DEMO, Präfix `GEY_`) kommt mehr dazu:
@@ -333,7 +374,7 @@ src/com/dan/geyser/
   GeyserApp.java    Einstieg, FFrame
   core/             Renderer, Gelände, Temperaturfeld, Materialien, Schatten, Tiere
   effects/          Himmel, Sonne und Mond, Sterne, Klima, Wetter, Teilchen, Klang
-  world/            Becken, Geysire und Röhrenmodell, Kopplungen, Stellen, Wege, Bäume, Fluss, Bodendecke, Tiere, Besucher, Morning Glory
+  world/            Becken, Geysire und Röhrenmodell, Kopplungen, Stellen, Stege, Straßen, Bäume, Fluss, Bodendecke, Tiere, Besucher, Morning Glory
   camera/           Kamerasteuerung, Pfade, Blickpunkte, Regie
   atom/             Mineral-Lupe, Mineralien, Elemente, Sinter-Zeitraffer
   db/               Datenbankzugriff, Belege, Einrichter
@@ -342,12 +383,14 @@ src/com/dan/geyser/
 src/com/dan/forest/ Wald-Paket: Arten, Baumerzeuger, Wind, Jahreszeit, Laubfall, Demo
 src/com/dan/river/  Fluss-Paket: Lauf, Strömung, Steine, Oberfläche, Optik, Treibgut, Demo
 src/com/dan/ground/ Boden-Paket: Gras, Blumen, Steine, Erde, Wind, Jahreszeit, Niedertreten, Demo
+src/com/dan/road/   Wege-Paket: Pfad, Feldweg, Straße, Autobahn, Brücken, Verkehr, Wetter, Licht, Demo
 db/sql/             SQL-Skripte 01 bis 04 und 99_abbau
 docs/bilder/readme/ Bilder dieser Seite
 docs/bilder/app/    Bildschirmfotos der App
 docs/bilder/wald/   Bilder zum Wald-Paket
 docs/bilder/fluss/  Bilder zum Fluss-Paket
 docs/bilder/boden/  Bilder zum Boden-Paket
+docs/bilder/wege/   Bilder zum Wege-Paket
 docs/bilder/phase*/ Prüfbilder aus der Entwicklung, nach Phasen
 ```
 

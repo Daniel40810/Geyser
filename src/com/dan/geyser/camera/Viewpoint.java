@@ -20,7 +20,7 @@ public final class Viewpoint {
     /** Namen in der Reihenfolge von {@link #all}, schon vor dem Bau bekannt (für das Bedienfeld). */
     public static final String[] NAMES = {"Übersicht", "Old Faithful · Bänke", "Geyser Hill · Beehive", "Castle Geyser", "Grand Geyser",
             "Riverside Geyser", "Morning Glory Pool", "Luftbild", "Grand Prismatic · Aussicht", "Excelsior · Steg", "Grand Prismatic · Luftbild",
-            "Fountain Paint Pot"};
+            "Fountain Paint Pot", "Grand Loop Road · Bisons", "Grand Loop Road · Firehole-Brücke"};
 
     private static Viewpoint[] all;
 
@@ -52,7 +52,11 @@ public final class Viewpoint {
                         new double[]{-640, 190, -7020, -789, -24, -7171}),
                 new Viewpoint("Fountain Paint Pot", "Vom Steg in die Schlammtöpfe des Lower Geyser Basin", 2,
                         new double[]{World.LOWER[0] - 26, deck(t, World.LOWER[0] - 26, World.LOWER[1] + 20) + 1.0, World.LOWER[1] + 20,
-                                World.LOWER[0], t.sample(World.LOWER[0], World.LOWER[1]), World.LOWER[1]})};
+                                World.LOWER[0], t.sample(World.LOWER[0], World.LOWER[1]), World.LOWER[1]}),
+                new Viewpoint("Grand Loop Road · Bisons", "Am Rand der Straße im Lower Geyser Basin, wo die Herde sie quert", 2,
+                        new double[]{1040, t.sample(1040, -9750) + 6, -9750, 1117, t.sample(1117, -9817) + 1, -9817}),
+                new Viewpoint("Grand Loop Road · Firehole-Brücke", "Vom Ufer auf die Brücke der Straße über den Fluss", 0,
+                        new double[]{-1460, t.sample(-1460, -2230) + 7, -2230, -1550, t.sample(-1550, -2285), -2285})};
         return all;
     }
 
