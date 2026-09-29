@@ -61,6 +61,8 @@ public final class RoadDemo {
     private volatile boolean herd;
     private volatile float trafficK = 1;
     private volatile String status = "";
+    private volatile boolean repopulate;
+    private volatile int pendingView = -1;
     private final JLabel statusLbl = new JLabel(" ");
     private Mover follow;
 
@@ -104,6 +106,9 @@ public final class RoadDemo {
             case 4 -> { Way w = way(WayType.Kind.PATH); w.at(w.length * 0.3, 0, f); aim(f, 12, 0.35, 0.32); }
             case 5 -> {
                 for (Mover m : roads.traffic.movers) if (m.kind == Vehicle.CAR && m.way().type.kind == WayType.Kind.ROAD) { follow = m; break; }
+                if (follow == null) {
+                    for (Mover m : roads.traffic.movers) if (!m.kind.walks() && !m.kind.pedals()) { follow = m; break; }
+                }
                 dist = 10; pitch = 0.2; yaw = 0;
             }
         }
@@ -286,7 +291,7 @@ public final class RoadDemo {
         FComboBox cams = new FComboBox(VIEWS);
         camera(1);
         cams.setSelectedIndex(1);
-        cams.addActionListener(e -> camera(cams.getSelectedIndex()));
+        cams.addActionListener(e -> pendingView = cams.getSelectedIndex());
         add(cams);
         note("Autobahn, Landstraße mit Brücken über den Bach, Feldweg und Pfad, jeweils als Rundkurs mit Verkehr.");
 
@@ -331,14 +336,7 @@ public final class RoadDemo {
         ds.addChangeListener(e -> { trafficK = ds.getValue() / 100f; dl.setText("Dichte  " + ds.getValue() + " %"); });
         add(ds);
         FButton fill = new FButton("Neu verteilen");
-        fill.addActionListener(e -> {
-            Roads r = roads;
-            float[] f0 = defaults;
-            for (int i = 0; i < r.traffic.flow.length; i++) r.traffic.flow[i] = f0[i] * trafficK;
-            r.traffic.rates();
-            r.traffic.populate();
-            if (viewIdx == 5) camera(5);
-        });
+        fill.addActionListener(e -> repopulate = true);
         add(fill);
         FCheckBox hb = new FCheckBox("Bisons auf der Straße");
         hb.setTextColor(INK);
@@ -407,6 +405,20 @@ public final class RoadDemo {
         double fpsAcc = 0, fps = 0;
         int frames = 0;
         while (true) {
+            int pv = pendingView;
+            if (pv >= 0) {
+                pendingView = -1;
+                camera(pv);
+            }
+            if (repopulate) {
+                repopulate = false;
+                Roads r = roads;
+                float[] f0 = defaults;
+                for (int i = 0; i < r.traffic.flow.length; i++) r.traffic.flow[i] = f0[i] * trafficK;
+                r.traffic.rates();
+                r.traffic.populate();
+                if (viewIdx == 5) camera(5);
+            }
             long now = System.nanoTime();
             float dt = (float) Math.min(0.1, (now - last) / 1e9);
             last = now;

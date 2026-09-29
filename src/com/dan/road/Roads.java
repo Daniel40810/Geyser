@@ -25,7 +25,7 @@ public final class Roads {
     /** Helligkeit der Lichthöfe um die Leuchten (1 = etwa so hell wie der Nachthimmel mal 10). */
     public float glowScale = 0.08f;
     /** Ohne Verkehr nur die Wege. */
-    public boolean showTraffic = true;
+    public volatile boolean showTraffic = true;
     private final Ground site;
     private final java.util.concurrent.ConcurrentHashMap<Long, Deck.Piece> cache = new java.util.concurrent.ConcurrentHashMap<>();
     private final Dust dust = new Dust();
